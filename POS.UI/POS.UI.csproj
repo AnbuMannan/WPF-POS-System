@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Modules\Admin\TaxProfiles\" />
+		<Folder Include="Modules\Billing\Payments\" />
+
+		<Folder Include="Modules\Purchase\GRN\" />
+		<Folder Include="Modules\Purchase\Suppliers\" />
+		<Folder Include="Modules\Inventory\Adjustments\" />
+		<Folder Include="Modules\Reports\SalesReports\" />
+
+		<Folder Include="Modules\Returns\SalesReturn\" />
+		<Folder Include="Modules\Returns\PurchaseReturn\" />
+		<Folder Include="Controls\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Modules\Admin\Categories\CategoryFormView.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	</ItemGroup>
+
+</Project>

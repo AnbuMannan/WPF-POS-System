@@ -1,0 +1,72 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<Style x:Key="PosTextBoxStyle" TargetType="TextBox">
+		<Setter Property="Margin" Value="0,6"/>
+		<Setter Property="Padding" Value="8"/>
+		<Setter Property="FontSize" Value="14"/>
+	</Style>
+
+    <!-- 🔥 Watermark (Placeholder) TextBox Style -->
+    <Style x:Key="WatermarkTextBox" TargetType="TextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <!-- Actual text host -->
+                        <ScrollViewer x:Name="PART_ContentHost"/>
+
+                        <!-- Watermark text -->
+                        <TextBlock Text="{TemplateBinding Tag}"
+                               Foreground="Gray"
+                               Margin="6,2,0,0"
+                               IsHitTestVisible="False"
+                               Visibility="Collapsed"
+                               x:Name="Watermark"/>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Show watermark when empty -->
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Watermark"
+                                Property="Visibility"
+                                Value="Visible"/>
+                        </Trigger>
+
+                        <!-- Hide watermark when focused -->
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Watermark"
+                                Property="Visibility"
+                                Value="Collapsed"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--<Style x:Key="FormTextBoxWithValidation" TargetType="TextBox" BasedOn="{StaticResource FormTextBox}">
+
+        <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+                <ControlTemplate>
+                    <StackPanel>
+
+                        --><!-- The original control --><!--
+                        <AdornedElementPlaceholder/>
+
+                        --><!-- 🔥 ERROR TEXT BELOW CONTROL --><!--
+                        <TextBlock Foreground="Red"
+                               FontSize="11"
+                               Margin="4,2,0,0"
+                               Text="{Binding [0].ErrorContent}"/>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>-->
+
+
+</ResourceDictionary>

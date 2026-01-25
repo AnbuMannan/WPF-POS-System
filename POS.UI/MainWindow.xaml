@@ -1,0 +1,64 @@
+﻿<Window x:Class="POS.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="POS System"
+        Height="720"
+        Width="1280"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <!-- App Header -->
+            <RowDefinition Height="45"/>
+            <!-- Top Menu -->
+            <RowDefinition Height="*"/>
+            <!-- Content -->
+            <RowDefinition Height="30"/>
+            <!-- Status Bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ================= HEADER ================= -->
+        <Border Grid.Row="0"
+                Background="#2D2D30"
+                Padding="15">
+            <TextBlock Text="POS SYSTEM"
+                       Foreground="White"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <!-- ================= TOP MENU BAR ================= -->
+        <Border Grid.Row="1"
+                Background="#3F3F46"
+                Padding="5">
+            <Menu x:Name="TopMenu"
+              Background="#3F3F46"
+              Foreground="White"
+              BorderThickness="0"
+              VerticalAlignment="Center"
+              ItemContainerStyle="{StaticResource PosTopMenuItemStyle}"/>
+
+
+        </Border>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <Border Grid.Row="2"
+                Background="White"
+                Padding="15">
+            <ContentControl x:Name="MainContent"/>
+        </Border>
+
+        <!-- ================= STATUS BAR ================= -->
+        <Border Grid.Row="3"
+                Background="#2D2D30"
+                Padding="5">
+            <TextBlock Text="Ready"
+                       Foreground="White"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+    </Grid>
+</Window>

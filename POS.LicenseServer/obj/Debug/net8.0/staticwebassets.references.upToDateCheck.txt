@@ -1,0 +1,17 @@
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json
+D:\Projects\POS\POS.AuthService\obj\Debug\net8.0\staticwebassets.build.json

@@ -1,0 +1,37 @@
+[
+  {
+    "Header": "Master",
+    "Children": [
+      { "Header": "Product Master", "View": "ProductView" },
+      { "Header": "Brand Master", "View": "BrandView" },
+      { "Header": "Category Master", "View": "CategoryView" },
+      { "Header": "Tax Profiles", "View": "TaxProfileView" }
+    ]
+  },
+  {
+    "Header": "Transaction",
+    "Children": [
+      { "Header": "Billing", "View": "BillingView" },
+      { "Header": "Sales Return", "View": "SalesReturnView" },
+      { "Header": "Purchase", "View": "PurchaseView" }
+    ]
+  },
+  {
+    "Header": "Reports",
+    "Children": [
+      { "Header": "GST Reports", "View": "GstReportView" },
+      { "Header": "Stock Reports", "View": "StockReportView" }
+    ]
+  },
+  {
+    "Header": "Utilities",
+    "Children": [
+      { "Header": "User Management", "View": "UserView" },
+      { "Header": "Backup", "View": "BackupView" }
+    ]
+  },
+  {
+    "Header": "Exit",
+    "View": "Exit"
+  }
+]

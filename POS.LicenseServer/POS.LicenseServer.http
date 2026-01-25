@@ -1,0 +1,6 @@
+@POS.LicenseServer_HostAddress = http://localhost:5232
+
+GET {{POS.LicenseServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,175 @@
+﻿<UserControl x:Class="POS.UI.Modules.Admin.Products.ProductView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:POS.UI.Modules.Admin.Products"
+             mc:Ignorable="d">
+
+
+
+    <UserControl.Resources>
+        <local:SearchMatchConverter x:Key="SearchMatchConverter"/>
+    </UserControl.Resources>
+
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Toolbar -->
+            <RowDefinition Height="*"/>
+            <!-- Grid -->
+        </Grid.RowDefinitions>
+
+        <!-- ================= TOOLBAR ================= -->
+        <Border Grid.Row="0"
+                Background="White"
+                Padding="10"
+                BorderBrush="#DDD"
+                BorderThickness="0,0,0,1">
+
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center">
+
+                <Button Content="Add"
+                        Command="{Binding AddCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}"/>
+
+                <Button Content="Edit"
+                        Command="{Binding EditCommand}"
+                        Style="{StaticResource WarningButtonStyle}"/>
+                
+                <!-- 🔥 NEW DISABLE BUTTON -->
+                <Button Content="Disable"
+                        Command="{Binding DisableCommand}"
+                        Style="{StaticResource DangerButtonStyle}"/>
+
+                <Button Content="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Style="{StaticResource SecondaryButtonStyle}"/>
+
+                <TextBox Width="240"
+                         Margin="10,10,0,0"
+                         VerticalContentAlignment="Center"
+                         Style="{StaticResource WatermarkTextBox}"
+                         Tag="Search Name / SKU / Barcode"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                
+                <Button Content="Clear"
+                    Width="60"
+                    Margin="2"
+                    Command="{Binding RefreshCommand}"
+                    Style="{StaticResource SecondaryButtonStyle}"/>
+                
+                <Button Content="Search"
+                        Command="{Binding SearchCommand}"
+                        Style="{StaticResource SuccessButtonStyle}"/>
+
+                <CheckBox Content="Show Inactive"
+                          Margin="10,10,0,0"
+                          IsChecked="{Binding ShowInactive}" />
+
+            </StackPanel>
+        </Border>
+
+        
+        <!-- ================= DATA GRID ================= -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Products}"
+                  SelectedItem="{Binding SelectedProduct}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  FrozenColumnCount="3">
+
+            <DataGrid.Columns>
+
+                <!-- Core -->
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180"/>
+                <DataGridTextColumn Header="SKU" Binding="{Binding SKU}" Width="120"/>
+                <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="140"/>
+                <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="80"/>
+
+                <!-- Pricing -->
+                
+                <DataGridTextColumn Header="Cost" Binding="{Binding CostPrice}" Width="90">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Price" Binding="{Binding SellingPrice}" Width="90">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="MRP" Binding="{Binding MRP}" Width="90">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <!-- Compliance -->
+                <DataGridTextColumn Header="HSN" Binding="{Binding HSNCode}" Width="100"/>
+                <DataGridTextColumn Header="TaxProfile" Binding="{Binding TaxProfileId}" Width="200"/>
+                <DataGridCheckBoxColumn Header="Tax Incl." Binding="{Binding IsTaxInclusive}" Width="80"/>
+
+                <!-- Classification -->
+                <DataGridTextColumn Header="Category" Binding="{Binding CategoryId}" Width="200"/>
+                <DataGridTextColumn Header="Brand" Binding="{Binding BrandId}" Width="200"/>
+
+                <!-- Flags -->
+                <DataGridCheckBoxColumn Header="Weighable" Binding="{Binding IsWeighable}" Width="90"/>
+                <DataGridCheckBoxColumn Header="Mfg" Binding="{Binding IsManufactured}" Width="70"/>
+                <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" Width="70"/>
+
+            </DataGrid.Columns>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+
+                    <!-- Default background -->
+                    <Setter Property="Background" Value="White"/>
+
+                    <Style.Triggers>
+
+                        <!-- 🔥 Highlight matched rows -->
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{StaticResource SearchMatchConverter}">
+                                    <!-- Current row -->
+                                    <Binding />
+
+                                    <!-- Search text from ViewModel -->
+                                    <Binding Path="DataContext.SearchText"
+                     RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+
+                            <Setter Property="Background" Value="#FFFFF3B0"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </DataTrigger>
+
+
+                        <!-- 🔹 Gray inactive products (already useful) -->
+                        <DataTrigger Binding="{Binding IsActive}" Value="False">
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+        </DataGrid>
+
+    </Grid>
+</UserControl>

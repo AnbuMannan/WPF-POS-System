@@ -1,0 +1,17 @@
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.csproj.AssemblyReference.cache
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.AssemblyInfoInputs.cache
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.AssemblyInfo.cs
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.csproj.CoreCompileInputs.cache
+D:\Projects\POS\POS.Core\POS.Application\bin\Debug\net8.0\POS.Application.deps.json
+D:\Projects\POS\POS.Core\POS.Application\bin\Debug\net8.0\POS.Application.dll
+D:\Projects\POS\POS.Core\POS.Application\bin\Debug\net8.0\POS.Application.pdb
+D:\Projects\POS\POS.Core\POS.Application\bin\Debug\net8.0\POS.Domain.dll
+D:\Projects\POS\POS.Core\POS.Application\bin\Debug\net8.0\POS.Shared.dll
+D:\Projects\POS\POS.Core\POS.Application\bin\Debug\net8.0\POS.Domain.pdb
+D:\Projects\POS\POS.Core\POS.Application\bin\Debug\net8.0\POS.Shared.pdb
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Appl.B41D5806.Up2Date
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.dll
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\refint\POS.Application.dll
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.pdb
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\ref\POS.Application.dll
