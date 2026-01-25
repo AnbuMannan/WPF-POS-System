@@ -3,11 +3,11 @@ using System.Data;
 
 namespace POS.Infrastructure.Data;
 
-public class ProductRepository
+public class MySqlConnectionFactory
 {
     private readonly string _connectionString;
 
-    public ProductRepository(string connectionString)
+    public MySqlConnectionFactory(string connectionString)
     {
         _connectionString = connectionString;
     }

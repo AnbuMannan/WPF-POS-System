@@ -12,7 +12,7 @@ namespace POS.UI.Modules.Admin.Products   // 🔥 CHANGED HERE
             if (values.Length < 2)
                 return false;
 
-            var product = values[0] as CategoryDto;
+            var product = values[0] as ProductDto;
             var searchText = values[1] as string;
 
             if (product == null || string.IsNullOrWhiteSpace(searchText))

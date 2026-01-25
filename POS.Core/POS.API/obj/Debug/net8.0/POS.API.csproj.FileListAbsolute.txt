@@ -61,3 +61,4 @@ D:\Projects\POS\POS.Core\POS.API\bin\Debug\net8.0\Microsoft.Extensions.Hosting.A
 D:\Projects\POS\POS.Core\POS.API\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
 D:\Projects\POS\POS.Core\POS.API\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 D:\Projects\POS\POS.Core\POS.API\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Projects\POS\POS.Core\POS.API\obj\Debug\net8.0\POS.API.sourcelink.json

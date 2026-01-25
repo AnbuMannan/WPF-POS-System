@@ -6,9 +6,9 @@ namespace POS.Application.Services;
 
 public class CategoryService : ICategoryService
 {
-    private readonly TaxCalculator _repo;
+    private readonly ICategoryRepository _repo;
 
-    public CategoryService(TaxCalculator repo)
+    public CategoryService(ICategoryRepository repo)
     {
         _repo = repo;
     }
@@ -24,7 +24,7 @@ public class CategoryService : ICategoryService
         if (string.IsNullOrWhiteSpace(category.Name))
             throw new Exception("Category name is required");
 
-        category.Id = Guid.NewGuid();
+        category.CategoryId = Guid.NewGuid();
         category.IsActive = true;
         await _repo.AddAsync(category);
     }

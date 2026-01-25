@@ -17,3 +17,4 @@ D:\Projects\POS\POS.Core\POS.Infrastructure\obj\Debug\net8.0\POS.Infrastructure.
 D:\Projects\POS\POS.Core\POS.Infrastructure\obj\Debug\net8.0\refint\POS.Infrastructure.dll
 D:\Projects\POS\POS.Core\POS.Infrastructure\obj\Debug\net8.0\POS.Infrastructure.pdb
 D:\Projects\POS\POS.Core\POS.Infrastructure\obj\Debug\net8.0\ref\POS.Infrastructure.dll
+D:\Projects\POS\POS.Core\POS.Infrastructure\obj\Debug\net8.0\POS.Infrastructure.sourcelink.json

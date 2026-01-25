@@ -5,7 +5,7 @@ using System.Data;
 
 namespace POS.Infrastructure.Repositories;
 
-public class CategoryRepository : TaxCalculator
+public class CategoryRepository : ICategoryRepository
 {
     private readonly IDbConnection _db;
 

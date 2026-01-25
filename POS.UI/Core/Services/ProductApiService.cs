@@ -18,20 +18,20 @@ namespace POS.UI.Core.Services
             _http = http;
         }
 
-        public Task<List<CategoryDto>> GetAllAsync(bool showInactive = false)
-            => _http.GetFromJsonAsync<List<CategoryDto>>($"api/products/all?showInactive={showInactive}")!;
+        public Task<List<ProductDto>> GetAllAsync(bool showInactive = false)
+            => _http.GetFromJsonAsync<List<ProductDto>>($"api/products/all?showInactive={showInactive}")!;
 
 
-        public Task<CategoryDto> GetByIdAsync(Guid id)
-            => _http.GetFromJsonAsync<CategoryDto>($"api/products/{id}")!;
+        public Task<ProductDto> GetByIdAsync(Guid id)
+            => _http.GetFromJsonAsync<ProductDto>($"api/products/{id}")!;
 
-        public Task<CategoryDto> GetByBarcodeAsync(string code)
-            => _http.GetFromJsonAsync<CategoryDto>($"api/products/barcode/{code}")!;
+        public Task<ProductDto> GetByBarcodeAsync(string code)
+            => _http.GetFromJsonAsync<ProductDto>($"api/products/barcode/{code}")!;
 
-        public Task<List<CategoryDto>> SearchAsync(string q)
-            => _http.GetFromJsonAsync<List<CategoryDto>>($"api/products/search?q={q}")!;
+        public Task<List<ProductDto>> SearchAsync(string q)
+            => _http.GetFromJsonAsync<List<ProductDto>>($"api/products/search?q={q}")!;
 
-        public async Task CreateAsync(CategoryDto dto)
+        public async Task CreateAsync(ProductDto dto)
         {
             var response = await _http.PostAsJsonAsync($"api/products", dto);
 
@@ -49,7 +49,7 @@ namespace POS.UI.Core.Services
 
 
 
-        public async Task UpdateAsync(CategoryDto dto)
+        public async Task UpdateAsync(ProductDto dto)
         {
             var response = await _http.PutAsJsonAsync($"api/products", dto);
 

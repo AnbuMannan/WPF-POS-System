@@ -92,6 +92,8 @@
                       ItemsSource="{Binding Categories}"
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
+                      IsSynchronizedWithCurrentItem="False"
+                      SelectedIndex="-1"
                       SelectedValue="{Binding CategoryId,
                                               Mode=TwoWay,
                                               UpdateSourceTrigger=PropertyChanged,
@@ -106,6 +108,8 @@
                       ItemsSource="{Binding Brands}"
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
+                      IsSynchronizedWithCurrentItem="False"
+                      SelectedIndex="-1"
                       SelectedValue="{Binding BrandId}" />
 
             <!-- ================= TAX PROFILE ================= -->
@@ -117,6 +121,8 @@
                       ItemsSource="{Binding TaxProfiles}"
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
+                      IsSynchronizedWithCurrentItem="False"
+                      SelectedIndex="-1"
                       SelectedValue="{Binding TaxProfileId,
                                               Mode=TwoWay,
                                               UpdateSourceTrigger=PropertyChanged,

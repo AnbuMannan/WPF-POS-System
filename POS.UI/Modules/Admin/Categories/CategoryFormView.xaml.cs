@@ -1,4 +1,5 @@
 ﻿using POS.UI.Core.Exceptions;
+using POS.UI.Core.Models;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Common;
@@ -16,9 +17,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace POS.UI.Modules.Admin.Products
+namespace POS.UI.Modules.Admin.Categories
 {
-    public partial class ProductFormView : Window, INotifyPropertyChanged, INotifyDataErrorInfo
+    public partial class CategoryFormView : Window, INotifyPropertyChanged, INotifyDataErrorInfo
     {
         private readonly ProductApiService _service;
         private bool _isEdit;
@@ -283,9 +284,9 @@ namespace POS.UI.Modules.Admin.Products
         public ICommand CancelCommand { get; }
         public ICommand ResetCommand { get; }
 
-        public ProductFormView() : this(null) { }
+        public CategoryFormView() : this(null) { }
 
-        public ProductFormView(CategoryDto dto)
+        public CategoryFormView(CategoryDto dto)
         {
             InitializeComponent();
             DataContext = this;
@@ -311,32 +312,7 @@ namespace POS.UI.Modules.Admin.Products
         {
             await LoadMastersAsync();
 
-            if (_editDto != null)
-            {
-                _isEdit = true;
-
-                ProductId = _editDto.ProductId;
-                ProductName = _editDto.Name;
-                SKU = _editDto.SKU;
-                Barcode = _editDto.Barcode;
-                Description = _editDto.Description;
-                Unit = _editDto.Unit;
-                HSNCode = _editDto.HSNCode;
-
-                CostPrice = _editDto.CostPrice;
-                SellingPrice = _editDto.SellingPrice;
-                MRP = _editDto.MRP;
-
-                IsWeighable = _editDto.IsWeighable;
-                IsManufactured = _editDto.IsManufactured;
-                IsTaxInclusive = _editDto.IsTaxInclusive;
-                IsProductActive = _editDto.IsActive;
-
-                // 🔥 CRITICAL: Assign AFTER lists are loaded
-                CategoryId = _editDto.CategoryId;
-                BrandId = _editDto.BrandId;
-                TaxProfileId = _editDto.TaxProfileId;
-            }
+            
         }
 
         private async Task LoadMastersAsync()
@@ -368,49 +344,11 @@ namespace POS.UI.Modules.Admin.Products
             _isSaving = true;
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
 
-            var dto = new CategoryDto
-            {
-                ProductId = _isEdit ? ProductId : Guid.NewGuid(),
-                Name = ProductName,
-                SKU = SKU,
-                Barcode = Barcode,
-                Description = Description,
-                Unit = Unit,
-                HSNCode = HSNCode,
-
-                CategoryId = CategoryId,
-                BrandId = BrandId,
-                TaxProfileId = TaxProfileId,
-
-                CostPrice = CostPrice,
-                SellingPrice = SellingPrice,
-                MRP = MRP,
-
-                IsWeighable = IsWeighable,
-                IsManufactured = IsManufactured,
-                IsTaxInclusive = IsTaxInclusive,
-                IsActive = IsProductActive,
-
-            };
+            
 
             try
             {
-                if (_isEdit)
-                {
-                    dto.UpdatedAt = DateTime.Now;
-                    await _service.UpdateAsync(dto);
-
-                    MessageBox.Show("Product updated successfully",
-                        "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    dto.CreatedAt = DateTime.Now;
-                    await _service.CreateAsync(dto);
-
-                    MessageBox.Show("Product created successfully",
-                       "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                
 
                 DialogResult = true;
                 CloseWindow();

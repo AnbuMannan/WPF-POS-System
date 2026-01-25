@@ -3,8 +3,71 @@
   "WorkspaceRootPath": "D:\\Projects\\POS\\POS.UI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\categories\\categoryformview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\categories\\categoryformview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\productformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\productformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\productformview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\productformview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\productview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\productview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\productformview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\productformview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\helpers\\autoselectbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\helpers\\autoselectbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\helpers\\enterkeytraversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\helpers\\enterkeytraversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\categories\\categoryformview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\categories\\categoryformview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\common\\lookupdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\common\\lookupdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\productview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\productview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\models\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\models\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\services\\productapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\services\\productapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\apivalidationerror.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\apivalidationerror.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\exceptions\\apivalidationexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\exceptions\\apivalidationexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\converters\\searchmatchconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\converters\\searchmatchconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\viewmodels\\baseviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:viewmodels\\baseviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\mvvm\\viewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\mvvm\\viewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\anbum\\AppData\\Local\\Temp\\.vsdbgsrc\\9ba3e2ce8baef24cc41c2b65a159420e5c78c9dc4d50194ac06c046de5f1aae4\\ItemCollection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\categories\\categoryviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -27,10 +90,6 @@
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:mainwindow.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\mvvm\\viewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\mvvm\\viewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\navigation\\menuservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\navigation\\menuservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -43,36 +102,12 @@
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\helpers\\enterkeytraversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\helpers\\enterkeytraversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\productview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\productview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\categories\\models\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\categories\\models\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\productformview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\productformview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\models\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\models\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\services\\productapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\services\\productapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\styles\\textboxes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:styles\\textboxes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\products\\productformview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\products\\productformview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Projects\\POS\\POS.UI\\obj\\Debug\\net8.0-windows\\Modules\\Admin\\Products\\ProductFormView.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -83,14 +118,6 @@
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\helpers\\thememanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\apivalidationerror.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\apivalidationerror.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\exceptions\\apivalidationexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\exceptions\\apivalidationexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\styles\\buttons.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:styles\\buttons.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
@@ -99,19 +126,8 @@
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\mvvm\\relaycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\converters\\searchmatchconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\converters\\searchmatchconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\modules\\admin\\common\\lookupdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:modules\\admin\\common\\lookupdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\anbum\\AppData\\Local\\Temp\\.vsdbgsrc\\9ba3e2ce8baef24cc41c2b65a159420e5c78c9dc4d50194ac06c046de5f1aae4\\ItemCollection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\styles\\datagrid.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -124,10 +140,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\styles\\menu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:styles\\menu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\core\\navigation\\viewresolver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|solutionrelative:core\\navigation\\viewresolver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5ABF00C1-3B06-481F-8A6B-3B88B3CA20D9}|POS.UI.csproj|d:\\projects\\pos\\pos.ui\\themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -198,147 +210,121 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "CategoryFormView.xaml",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryFormView.xaml",
-              "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\CategoryFormView.xaml",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryFormView.xaml",
-              "RelativeToolTip": "Modules\\Admin\\Categories\\CategoryFormView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-01-22T14:58:59.278Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\MainWindow.xaml.cs",
-              "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AgIAAGYAAAAAAAAAAAArwHcAAAAAAAAAAAAAAA==",
+              "Title": "ProductFormViewModel.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormViewModel.cs",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Products\\ProductFormViewModel.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormViewModel.cs",
+              "RelativeToolTip": "Modules\\Admin\\Products\\ProductFormViewModel.cs",
+              "ViewState": "AgIAAP8AAAAAAAAAAAAIwAcBAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T12:39:57.086Z",
+              "WhenOpened": "2026-01-25T20:00:10.034Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "CategoryView.xaml.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryView.xaml.cs",
-              "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\CategoryView.xaml.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryView.xaml.cs",
-              "RelativeToolTip": "Modules\\Admin\\Categories\\CategoryView.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAiAAAAAAAAAA==",
+              "Title": "ProductFormView.xaml.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormView.xaml.cs",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Products\\ProductFormView.xaml.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormView.xaml.cs",
+              "RelativeToolTip": "Modules\\Admin\\Products\\ProductFormView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T13:33:19.026Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CategoryApiService.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Services\\CategoryApiService.cs",
-              "RelativeDocumentMoniker": "Core\\Services\\CategoryApiService.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Services\\CategoryApiService.cs",
-              "RelativeToolTip": "Core\\Services\\CategoryApiService.cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAYwC0AAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-22T12:24:29.876Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "MenuItemModel.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\MenuItemModel.cs",
-              "RelativeDocumentMoniker": "Core\\Navigation\\MenuItemModel.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\MenuItemModel.cs",
-              "RelativeToolTip": "Core\\Navigation\\MenuItemModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T12:51:53.522Z",
+              "WhenOpened": "2026-01-20T18:11:14.412Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "CategoryView.xaml",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryView.xaml",
-              "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\CategoryView.xaml",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryView.xaml",
-              "RelativeToolTip": "Modules\\Admin\\Categories\\CategoryView.xaml",
+              "Title": "ProductView.xaml",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductView.xaml",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Products\\ProductView.xaml",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductView.xaml",
+              "RelativeToolTip": "Modules\\Admin\\Products\\ProductView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-01-20T13:20:20.518Z",
+              "WhenOpened": "2026-01-25T19:49:21.601Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LookupDto.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Common\\LookupDto.cs",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Common\\LookupDto.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Common\\LookupDto.cs",
+              "RelativeToolTip": "Modules\\Admin\\Common\\LookupDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-21T14:01:30.942Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AutoSelectBehavior.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Helpers\\AutoSelectBehavior.cs",
+              "RelativeDocumentMoniker": "Core\\Helpers\\AutoSelectBehavior.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Helpers\\AutoSelectBehavior.cs",
+              "RelativeToolTip": "Core\\Helpers\\AutoSelectBehavior.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T20:18:28.921Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "CategoryViewModel.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryViewModel.cs",
-              "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\CategoryViewModel.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryViewModel.cs",
-              "RelativeToolTip": "Modules\\Admin\\Categories\\CategoryViewModel.cs",
-              "ViewState": "AgIAAIcAAAAAAAAAAAAgwJcAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-22T12:37:25.376Z",
+              "Title": "ProductFormView.xaml",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormView.xaml",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Products\\ProductFormView.xaml",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormView.xaml",
+              "RelativeToolTip": "Modules\\Admin\\Products\\ProductFormView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-01-25T20:22:31.394Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 6,
+              "Title": "CategoryFormView.xaml.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryFormView.xaml.cs",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\CategoryFormView.xaml.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryFormView.xaml.cs",
+              "RelativeToolTip": "Modules\\Admin\\Categories\\CategoryFormView.xaml.cs",
+              "ViewState": "AgIAABcBAAAAAAAAAADwvyABAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T19:24:20.248Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "ProductView.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductView.xaml.cs",
               "RelativeDocumentMoniker": "Modules\\Admin\\Products\\ProductView.xaml.cs",
               "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductView.xaml.cs",
               "RelativeToolTip": "Modules\\Admin\\Products\\ProductView.xaml.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAkwBkAAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-20T13:15:29.542Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ViewModelBase.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\MVVM\\ViewModelBase.cs",
-              "RelativeDocumentMoniker": "Core\\MVVM\\ViewModelBase.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\MVVM\\ViewModelBase.cs",
-              "RelativeToolTip": "Core\\MVVM\\ViewModelBase.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T18:08:11.059Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "MenuService.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\MenuService.cs",
-              "RelativeDocumentMoniker": "Core\\Navigation\\MenuService.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\MenuService.cs",
-              "RelativeToolTip": "Core\\Navigation\\MenuService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T12:40:39.421Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "App.xaml.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\App.xaml.cs",
-              "RelativeDocumentMoniker": "App.xaml.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\App.xaml.cs",
-              "RelativeToolTip": "App.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T12:09:32.452Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 10,
+              "Title": "ProductApiService.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Services\\ProductApiService.cs",
+              "RelativeDocumentMoniker": "Core\\Services\\ProductApiService.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Services\\ProductApiService.cs",
+              "RelativeToolTip": "Core\\Services\\ProductApiService.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAswAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T17:43:27.166Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "EnterKeyTraversal.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Helpers\\EnterKeyTraversal.cs",
               "RelativeDocumentMoniker": "Core\\Helpers\\EnterKeyTraversal.cs",
@@ -351,7 +337,193 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ProductDto.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\Models\\ProductDto.cs",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Products\\Models\\ProductDto.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\Models\\ProductDto.cs",
+              "RelativeToolTip": "Modules\\Admin\\Products\\Models\\ProductDto.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAAACIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T17:42:32.719Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ApiValidationError.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\ApiValidationError.cs",
+              "RelativeDocumentMoniker": "Modules\\ApiValidationError.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\ApiValidationError.cs",
+              "RelativeToolTip": "Modules\\ApiValidationError.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-22T05:53:37.367Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 12,
+              "Title": "ApiValidationException.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Exceptions\\ApiValidationException.cs",
+              "RelativeDocumentMoniker": "Core\\Exceptions\\ApiValidationException.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Exceptions\\ApiValidationException.cs",
+              "RelativeToolTip": "Core\\Exceptions\\ApiValidationException.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-22T05:51:54.729Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "SearchMatchConverter.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Converters\\SearchMatchConverter.cs",
+              "RelativeDocumentMoniker": "Core\\Converters\\SearchMatchConverter.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Converters\\SearchMatchConverter.cs",
+              "RelativeToolTip": "Core\\Converters\\SearchMatchConverter.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T19:53:35.738Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "BaseViewModel.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\ViewModels\\BaseViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\BaseViewModel.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\ViewModels\\BaseViewModel.cs",
+              "RelativeToolTip": "ViewModels\\BaseViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T19:38:55.522Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ViewModelBase.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\MVVM\\ViewModelBase.cs",
+              "RelativeDocumentMoniker": "Core\\MVVM\\ViewModelBase.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\MVVM\\ViewModelBase.cs",
+              "RelativeToolTip": "Core\\MVVM\\ViewModelBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T18:08:11.059Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "CategoryViewModel.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryViewModel.cs",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\CategoryViewModel.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryViewModel.cs",
+              "RelativeToolTip": "Modules\\Admin\\Categories\\CategoryViewModel.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAuwBQAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-22T12:37:25.376Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\MainWindow.xaml.cs",
+              "RelativeToolTip": "MainWindow.xaml.cs",
+              "ViewState": "AgIAAGYAAAAAAAAAAAArwHcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T12:39:57.086Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "CategoryView.xaml",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryView.xaml",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\CategoryView.xaml",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryView.xaml",
+              "RelativeToolTip": "Modules\\Admin\\Categories\\CategoryView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-01-20T13:20:20.518Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "MenuItemModel.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\MenuItemModel.cs",
+              "RelativeDocumentMoniker": "Core\\Navigation\\MenuItemModel.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\MenuItemModel.cs",
+              "RelativeToolTip": "Core\\Navigation\\MenuItemModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T12:51:53.522Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ItemCollection.cs",
+              "DocumentMoniker": "C:\\Users\\anbum\\AppData\\Local\\Temp\\.vsdbgsrc\\9ba3e2ce8baef24cc41c2b65a159420e5c78c9dc4d50194ac06c046de5f1aae4\\ItemCollection.cs",
+              "ToolTip": "C:\\Users\\anbum\\AppData\\Local\\Temp\\.vsdbgsrc\\9ba3e2ce8baef24cc41c2b65a159420e5c78c9dc4d50194ac06c046de5f1aae4\\ItemCollection.cs",
+              "ViewState": "AgIAAHwCAAAAAAAAAAAEwI8CAAA2AAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T18:56:41.457Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "CategoryApiService.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Services\\CategoryApiService.cs",
+              "RelativeDocumentMoniker": "Core\\Services\\CategoryApiService.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Services\\CategoryApiService.cs",
+              "RelativeToolTip": "Core\\Services\\CategoryApiService.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAYwC0AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-22T12:24:29.876Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "CategoryView.xaml.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryView.xaml.cs",
+              "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\CategoryView.xaml.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\CategoryView.xaml.cs",
+              "RelativeToolTip": "Modules\\Admin\\Categories\\CategoryView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T13:33:19.026Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "MenuService.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\MenuService.cs",
+              "RelativeDocumentMoniker": "Core\\Navigation\\MenuService.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\MenuService.cs",
+              "RelativeToolTip": "Core\\Navigation\\MenuService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T12:40:39.421Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\App.xaml.cs",
+              "RelativeDocumentMoniker": "App.xaml.cs",
+              "ToolTip": "D:\\Projects\\POS\\POS.UI\\App.xaml.cs",
+              "RelativeToolTip": "App.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T12:09:32.452Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
               "Title": "CategoryDto.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Categories\\Models\\CategoryDto.cs",
               "RelativeDocumentMoniker": "Modules\\Admin\\Categories\\Models\\CategoryDto.cs",
@@ -359,25 +531,11 @@
               "RelativeToolTip": "Modules\\Admin\\Categories\\Models\\CategoryDto.cs",
               "ViewState": "AgIAAC4AAAAAAAAAAAA/wAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-22T12:28:40.623Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-22T12:28:40.623Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "ProductDto.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\Models\\ProductDto.cs",
-              "RelativeDocumentMoniker": "Modules\\Admin\\Products\\Models\\ProductDto.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\Models\\ProductDto.cs",
-              "RelativeToolTip": "Modules\\Admin\\Products\\Models\\ProductDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T17:42:32.719Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 27,
               "Title": "ProductFormView.g.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\obj\\Debug\\net8.0-windows\\Modules\\Admin\\Products\\ProductFormView.g.cs",
               "RelativeDocumentMoniker": "obj\\Debug\\net8.0-windows\\Modules\\Admin\\Products\\ProductFormView.g.cs",
@@ -385,25 +543,11 @@
               "RelativeToolTip": "obj\\Debug\\net8.0-windows\\Modules\\Admin\\Products\\ProductFormView.g.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-22T10:46:24.619Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-22T10:46:24.619Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "ProductFormView.xaml.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormView.xaml.cs",
-              "RelativeDocumentMoniker": "Modules\\Admin\\Products\\ProductFormView.xaml.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormView.xaml.cs",
-              "RelativeToolTip": "Modules\\Admin\\Products\\ProductFormView.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHIBAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T18:11:14.412Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 28,
               "Title": "ThemeManager.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Helpers\\ThemeManager.cs",
               "RelativeDocumentMoniker": "Core\\Helpers\\ThemeManager.cs",
@@ -415,32 +559,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "ProductApiService.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Services\\ProductApiService.cs",
-              "RelativeDocumentMoniker": "Core\\Services\\ProductApiService.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Services\\ProductApiService.cs",
-              "RelativeToolTip": "Core\\Services\\ProductApiService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T17:43:27.166Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "ProductFormView.xaml",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormView.xaml",
-              "RelativeDocumentMoniker": "Modules\\Admin\\Products\\ProductFormView.xaml",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Products\\ProductFormView.xaml",
-              "RelativeToolTip": "Modules\\Admin\\Products\\ProductFormView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-01-20T18:10:52.291Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 26,
               "Title": "TextBoxes.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Styles\\TextBoxes.xaml",
               "RelativeDocumentMoniker": "Styles\\TextBoxes.xaml",
@@ -452,31 +571,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "ApiValidationError.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\ApiValidationError.cs",
-              "RelativeDocumentMoniker": "Modules\\ApiValidationError.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\ApiValidationError.cs",
-              "RelativeToolTip": "Modules\\ApiValidationError.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-22T05:53:37.367Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "ApiValidationException.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Exceptions\\ApiValidationException.cs",
-              "RelativeDocumentMoniker": "Core\\Exceptions\\ApiValidationException.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Exceptions\\ApiValidationException.cs",
-              "RelativeToolTip": "Core\\Exceptions\\ApiValidationException.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-22T05:51:54.729Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 29,
               "Title": "Buttons.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Styles\\Buttons.xaml",
               "RelativeDocumentMoniker": "Styles\\Buttons.xaml",
@@ -488,7 +583,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 30,
               "Title": "RelayCommand.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\MVVM\\RelayCommand.cs",
               "RelativeDocumentMoniker": "Core\\MVVM\\RelayCommand.cs",
@@ -500,20 +595,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "SearchMatchConverter.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Converters\\SearchMatchConverter.cs",
-              "RelativeDocumentMoniker": "Core\\Converters\\SearchMatchConverter.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Converters\\SearchMatchConverter.cs",
-              "RelativeToolTip": "Core\\Converters\\SearchMatchConverter.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T19:48:26.102Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 31,
               "Title": "App.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\App.xaml",
               "RelativeDocumentMoniker": "App.xaml",
@@ -525,29 +607,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "LookupDto.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Common\\LookupDto.cs",
-              "RelativeDocumentMoniker": "Modules\\Admin\\Common\\LookupDto.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Common\\LookupDto.cs",
-              "RelativeToolTip": "Modules\\Admin\\Common\\LookupDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T14:01:30.942Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "ItemCollection.cs",
-              "DocumentMoniker": "C:\\Users\\anbum\\AppData\\Local\\Temp\\.vsdbgsrc\\9ba3e2ce8baef24cc41c2b65a159420e5c78c9dc4d50194ac06c046de5f1aae4\\ItemCollection.cs",
-              "ToolTip": "C:\\Users\\anbum\\AppData\\Local\\Temp\\.vsdbgsrc\\9ba3e2ce8baef24cc41c2b65a159420e5c78c9dc4d50194ac06c046de5f1aae4\\ItemCollection.cs",
-              "ViewState": "AgIAAGIAAAAAAAAAAAAAAGIAAAAoAAAAAQAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T18:56:41.457Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 32,
               "Title": "DataGrid.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Styles\\DataGrid.xaml",
               "RelativeDocumentMoniker": "Styles\\DataGrid.xaml",
@@ -559,7 +619,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 33,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MainWindow.xaml",
@@ -570,19 +630,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "ViewResolver.cs",
-              "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\ViewResolver.cs",
-              "RelativeDocumentMoniker": "Core\\Navigation\\ViewResolver.cs",
-              "ToolTip": "D:\\Projects\\POS\\POS.UI\\Core\\Navigation\\ViewResolver.cs",
-              "RelativeToolTip": "Core\\Navigation\\ViewResolver.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAQwBkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T18:17:08.178Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 34,
               "Title": "Menu.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Styles\\Menu.xaml",
               "RelativeDocumentMoniker": "Styles\\Menu.xaml",
@@ -594,7 +642,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 36,
               "Title": "Dark.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Themes\\Dark.xaml",
               "RelativeDocumentMoniker": "Themes\\Dark.xaml",
@@ -605,7 +653,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 35,
               "Title": "Light.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Themes\\Light.xaml",
               "RelativeDocumentMoniker": "Themes\\Light.xaml",
@@ -616,7 +664,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 37,
               "Title": "TextBoxes.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Styles\\TextBoxes.xaml",
               "RelativeDocumentMoniker": "Styles\\TextBoxes.xaml",
@@ -628,7 +676,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 39,
               "Title": "GstReportView.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Reports\\GSTReports\\GstReportView.xaml",
               "RelativeDocumentMoniker": "Modules\\Reports\\GSTReports\\GstReportView.xaml",
@@ -639,7 +687,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 38,
               "Title": "GstReportView.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Reports\\GSTReports\\GstReportView.xaml.cs",
               "RelativeDocumentMoniker": "Modules\\Reports\\GSTReports\\GstReportView.xaml.cs",
@@ -651,7 +699,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 40,
               "Title": "BrandView.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Brands\\BrandView.xaml.cs",
               "RelativeDocumentMoniker": "Modules\\Admin\\Brands\\BrandView.xaml.cs",
@@ -663,7 +711,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 41,
               "Title": "DataGrid.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Styles\\DataGrid.xaml",
               "RelativeDocumentMoniker": "Styles\\DataGrid.xaml",
@@ -674,7 +722,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 42,
               "Title": "BillingView.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Billing\\BillingScreen\\BillingView.xaml.cs",
               "RelativeDocumentMoniker": "Modules\\Billing\\BillingScreen\\BillingView.xaml.cs",
@@ -686,7 +734,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 43,
               "Title": "StockView.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Inventory\\StockView\\StockView.xaml.cs",
               "RelativeDocumentMoniker": "Modules\\Inventory\\StockView\\StockView.xaml.cs",
@@ -698,7 +746,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 44,
               "Title": "StockView.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Inventory\\StockView\\StockView.xaml",
               "RelativeDocumentMoniker": "Modules\\Inventory\\StockView\\StockView.xaml",
@@ -709,7 +757,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 45,
               "Title": "BillingView.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Billing\\BillingScreen\\BillingView.xaml",
               "RelativeDocumentMoniker": "Modules\\Billing\\BillingScreen\\BillingView.xaml",
@@ -720,7 +768,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 46,
               "Title": "menu.json",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\menu.json",
               "RelativeDocumentMoniker": "menu.json",
@@ -732,7 +780,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 47,
               "Title": "BrandView.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Modules\\Admin\\Brands\\BrandView.xaml",
               "RelativeDocumentMoniker": "Modules\\Admin\\Brands\\BrandView.xaml",
@@ -743,7 +791,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 48,
               "Title": "Buttons.xaml",
               "DocumentMoniker": "D:\\Projects\\POS\\POS.UI\\Styles\\Buttons.xaml",
               "RelativeDocumentMoniker": "Styles\\Buttons.xaml",

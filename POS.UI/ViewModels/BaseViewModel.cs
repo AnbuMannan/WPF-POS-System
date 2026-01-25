@@ -11,3 +11,4 @@ namespace POS.UI.ViewModels
     {
     }
 }
+    

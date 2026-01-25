@@ -15,3 +15,4 @@ D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.dll
 D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\refint\POS.Application.dll
 D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.pdb
 D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\ref\POS.Application.dll
+D:\Projects\POS\POS.Core\POS.Application\obj\Debug\net8.0\POS.Application.sourcelink.json

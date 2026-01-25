@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace POS.UI.Modules.Admin.Products.Models
 {
-    public class CategoryDto
+    public class ProductDto
     {
         public Guid ProductId { get; set; }
 
@@ -36,6 +32,4 @@ namespace POS.UI.Modules.Admin.Products.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
-
-
 }

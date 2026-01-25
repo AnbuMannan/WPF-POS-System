@@ -1,5 +1,5 @@
 ﻿using System;
-using static POS.UI.Modules.Admin.Products.ProductFormView;
+using System.Collections.Generic;
 
 namespace POS.UI.Core.Exceptions
 {
@@ -12,5 +12,10 @@ namespace POS.UI.Core.Exceptions
         {
             Error = error;
         }
+    }
+
+    public class ApiValidationError
+    {
+        public Dictionary<string, string[]> Errors { get; set; }
     }
 }

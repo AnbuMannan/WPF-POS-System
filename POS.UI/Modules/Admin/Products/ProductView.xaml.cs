@@ -1,4 +1,5 @@
-﻿using System;
+﻿using POS.UI.Modules.Admin.Products.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

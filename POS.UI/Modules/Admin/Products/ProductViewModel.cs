@@ -1,7 +1,9 @@
 ﻿using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Products.Models;
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -11,17 +13,18 @@ namespace POS.UI.Modules.Admin.Products
     public class ProductViewModel : ViewModelBase
     {
         private readonly ProductApiService _service;
+        private readonly System.Windows.Threading.DispatcherTimer _searchTimer;
 
-        public ObservableCollection<CategoryDto> Products { get; set; }
+        public ObservableCollection<ProductDto> Products { get; set; }
+
         public ICommand AddCommand { get; }
         public ICommand EditCommand { get; }
         public ICommand DisableCommand { get; }
+        public ICommand RefreshCommand { get; }
+        public ICommand SearchCommand { get; }
 
-        private CategoryDto _selectedProduct;
-
-        private readonly System.Windows.Threading.DispatcherTimer _searchTimer;
-
-        public CategoryDto SelectedProduct
+        private ProductDto _selectedProduct;
+        public ProductDto SelectedProduct
         {
             get => _selectedProduct;
             set
@@ -30,9 +33,7 @@ namespace POS.UI.Modules.Admin.Products
                 OnPropertyChanged();
                 ((RelayCommand)EditCommand).RaiseCanExecuteChanged();
                 ((RelayCommand)DisableCommand).RaiseCanExecuteChanged();
-
             }
-
         }
 
         private string _searchText;
@@ -44,7 +45,7 @@ namespace POS.UI.Modules.Admin.Products
                 _searchText = value;
                 OnPropertyChanged();
 
-                // 🔥 Live search with debounce
+                // Live search with debounce
                 _searchTimer.Stop();
                 _searchTimer.Start();
             }
@@ -58,31 +59,27 @@ namespace POS.UI.Modules.Admin.Products
             {
                 _showInactive = value;
                 OnPropertyChanged();
-                _ = LoadAsync();   // 🔥 Reload when toggled
+                _ = LoadAsync();
             }
         }
-
-        public ICommand RefreshCommand { get; }
-        public ICommand SearchCommand { get; }
 
         public ProductViewModel()
         {
             _service = new ProductApiService(App.ApiClient);
-            Products = new ObservableCollection<CategoryDto>();
+            Products = new ObservableCollection<ProductDto>();
 
             RefreshCommand = new RelayCommand(async () => await LoadAsync());
             SearchCommand = new RelayCommand(async () => await SearchAsync());
 
             _searchTimer = new System.Windows.Threading.DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(400)   // 400ms debounce
+                Interval = TimeSpan.FromMilliseconds(400)
             };
             _searchTimer.Tick += async (s, e) =>
             {
                 _searchTimer.Stop();
                 await SearchAsync();
             };
-
 
             AddCommand = new RelayCommand(OpenAdd);
             EditCommand = new RelayCommand(OpenEdit, () => SelectedProduct != null);
@@ -93,22 +90,26 @@ namespace POS.UI.Modules.Admin.Products
 
         private async Task LoadAsync()
         {
-            Guid? selectedId = SelectedProduct?.ProductId;
-            var list = await _service.GetAllAsync(ShowInactive);
-
-            //System.Windows.MessageBox.Show($"Loaded {list.Count} products");
-
-            Products.Clear();
-            foreach (var p in list)
-                Products.Add(p);
-
-            // 🔥 Restore selection
-            if (selectedId != null)
+            try
             {
-                SelectedProduct = Products.FirstOrDefault(x => x.ProductId == selectedId);
+                Guid? selectedId = SelectedProduct?.ProductId;
+                var list = await _service.GetAllAsync(ShowInactive);
+
+                Products.Clear();
+                foreach (var p in list)
+                    Products.Add(p);
+
+                // Restore selection
+                if (selectedId != null)
+                {
+                    SelectedProduct = Products.FirstOrDefault(x => x.ProductId == selectedId);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load products: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
         private async Task SearchAsync()
         {
@@ -118,15 +119,22 @@ namespace POS.UI.Modules.Admin.Products
                 return;
             }
 
-            var list = await _service.SearchAsync(SearchText);
-            Products.Clear();
-            foreach (var p in list)
-                Products.Add(p);
+            try
+            {
+                var list = await _service.SearchAsync(SearchText);
+                Products.Clear();
+                foreach (var p in list)
+                    Products.Add(p);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Search failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void OpenAdd()
         {
-            var window = new ProductFormView();   // only ONE window
+            var window = new ProductFormView();
             window.Owner = Application.Current.MainWindow;
             window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -134,14 +142,14 @@ namespace POS.UI.Modules.Admin.Products
             {
                 _ = LoadAsync();
             }
-
         }
+
         private void OpenEdit()
         {
             if (SelectedProduct == null)
                 return;
 
-            var window = new ProductFormView(SelectedProduct);   // pass dto here
+            var window = new ProductFormView(SelectedProduct);
             window.Owner = Application.Current.MainWindow;
             window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -149,7 +157,6 @@ namespace POS.UI.Modules.Admin.Products
             {
                 _ = LoadAsync();
             }
-
         }
 
         private async void DisableSelected()
@@ -157,7 +164,6 @@ namespace POS.UI.Modules.Admin.Products
             if (SelectedProduct == null)
                 return;
 
-            // 🔥 Confirmation dialog
             var result = MessageBox.Show(
                 $"Are you sure you want to disable this product?\n\n{SelectedProduct.Name}",
                 "Confirm Disable",
@@ -171,21 +177,14 @@ namespace POS.UI.Modules.Admin.Products
             {
                 await _service.DisableAsync(SelectedProduct.ProductId);
 
-                MessageBox.Show("Product disabled successfully",
-                    "Success",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                MessageBox.Show("Product disabled successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                await LoadAsync();   // 🔥 Refresh grid after disable
+                await LoadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message,
-                    "Disable Failed",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Disable Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
     }
 }

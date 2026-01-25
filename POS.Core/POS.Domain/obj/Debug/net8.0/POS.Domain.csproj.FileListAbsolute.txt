@@ -13,3 +13,4 @@ D:\Projects\POS\POS.Core\POS.Domain\obj\Debug\net8.0\POS.Domain.dll
 D:\Projects\POS\POS.Core\POS.Domain\obj\Debug\net8.0\refint\POS.Domain.dll
 D:\Projects\POS\POS.Core\POS.Domain\obj\Debug\net8.0\POS.Domain.pdb
 D:\Projects\POS\POS.Core\POS.Domain\obj\Debug\net8.0\ref\POS.Domain.dll
+D:\Projects\POS\POS.Core\POS.Domain\obj\Debug\net8.0\POS.Domain.sourcelink.json
