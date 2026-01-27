@@ -1,4 +1,4 @@
-﻿using POS.UI.Core.Exceptions;
+using POS.UI.Core.Exceptions;
 using POS.UI.Core.Models;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
@@ -291,7 +291,23 @@ namespace POS.UI.Modules.Admin.Categories
             InitializeComponent();
             DataContext = this;
 
-            _service = new ProductApiService(App.ApiClient);
+            try
+            {
+                // Get ProductApiService from DI container for SKU/Barcode validation
+                if (App.ServiceProvider != null)
+                {
+                    _service = (ProductApiService)App.ServiceProvider.GetService(typeof(ProductApiService));
+                }
+                else
+                {
+                    throw new InvalidOperationException("Application service provider not initialized.");
+                }
+            }
+            catch (Exception ex)
+            {
+                POS.UI.Components.DialogService.Error("Initialization Error", $"Failed to initialize: {ex.Message}");
+            }
+
             _editDto = dto;
 
             Loaded += ProductFormView_Loaded;
@@ -317,18 +333,42 @@ namespace POS.UI.Modules.Admin.Categories
 
         private async Task LoadMastersAsync()
         {
-            Categories = new ObservableCollection<LookupDto>(
-                await App.ApiClient.GetFromJsonAsync<List<LookupDto>>("api/categories"));
+            try
+            {
+                // Use App.ServiceProvider to get HttpClient if available
+                HttpClient httpClient = null;
+                if (App.ServiceProvider != null)
+                {
+                    try
+                    {
+                        httpClient = (HttpClient)App.ServiceProvider.GetService(typeof(HttpClient));
+                    }
+                    catch
+                    {
+                        // If not available from DI, this form might not need masters
+                    }
+                }
 
-            Brands = new ObservableCollection<LookupDto>(
-                await App.ApiClient.GetFromJsonAsync<List<LookupDto>>("api/brands"));
+                if (httpClient != null)
+                {
+                    Categories = new ObservableCollection<LookupDto>(
+                        await httpClient.GetFromJsonAsync<List<LookupDto>>("api/categories") ?? new List<LookupDto>());
 
-            TaxProfiles = new ObservableCollection<LookupDto>(
-                await App.ApiClient.GetFromJsonAsync<List<LookupDto>>("api/taxprofiles"));
+                    Brands = new ObservableCollection<LookupDto>(
+                        await httpClient.GetFromJsonAsync<List<LookupDto>>("api/brands") ?? new List<LookupDto>());
 
-            OnPropertyChanged(nameof(Categories));
-            OnPropertyChanged(nameof(Brands));
-            OnPropertyChanged(nameof(TaxProfiles));
+                    TaxProfiles = new ObservableCollection<LookupDto>(
+                        await httpClient.GetFromJsonAsync<List<LookupDto>>("api/taxprofiles") ?? new List<LookupDto>());
+
+                    OnPropertyChanged(nameof(Categories));
+                    OnPropertyChanged(nameof(Brands));
+                    OnPropertyChanged(nameof(TaxProfiles));
+                }
+            }
+            catch (Exception ex)
+            {
+                POS.UI.Components.DialogService.Error("Error", $"Failed to load master data: {ex.Message}");
+            }
         }
 
         // ---------------- SAVE ----------------
@@ -371,7 +411,7 @@ namespace POS.UI.Modules.Admin.Categories
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Save Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                POS.UI.Components.DialogService.Error("Save Failed", ex.Message);
             }
             finally
             {

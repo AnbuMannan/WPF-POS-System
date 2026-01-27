@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 using POS.UI.Modules.Admin.Products.Models;
 
-namespace POS.UI.Modules.Admin.Products   // 🔥 CHANGED HERE
+namespace POS.UI.Core.Converters
 {
     public class SearchMatchConverter : IMultiValueConverter
     {

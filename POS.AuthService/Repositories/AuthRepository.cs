@@ -173,7 +173,25 @@ namespace POS.AuthService.Repositories
             return db.ExecuteScalar<int>("SELECT LAST_INSERT_ID();");
         }
 
+        public void SaveRefreshToken(int userId, string refreshToken, DateTime expiryDate)
+        {
+            using var db = _factory.Create();
+            db.Execute(
+                @"UPDATE Users 
+                  SET RefreshToken = @rt, RefreshTokenExpiryDate = @exp, LastLogin = NOW()
+                  WHERE Id = @id",
+                new { rt = refreshToken, exp = expiryDate, id = userId });
+        }
 
+        public bool ValidateRefreshToken(int userId, string refreshToken)
+        {
+            using var db = _factory.Create();
+            var result = db.QueryFirstOrDefault<dynamic>(
+                @"SELECT RefreshToken, RefreshTokenExpiryDate FROM Users 
+                  WHERE Id = @id AND RefreshToken = @rt AND RefreshTokenExpiryDate > NOW()",
+                new { id = userId, rt = refreshToken });
 
+            return result != null;
+        }
     }
 }

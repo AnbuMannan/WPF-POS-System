@@ -90,14 +90,9 @@
             <ComboBox Grid.Row="2" Grid.Column="1"
                       Style="{StaticResource FormComboBoxWithValidation}"
                       ItemsSource="{Binding Categories}"
-                      DisplayMemberPath="Name"
-                      SelectedValuePath="Id"
-                      IsSynchronizedWithCurrentItem="False"
-                      SelectedIndex="-1"
-                      SelectedValue="{Binding CategoryId,
-                                              Mode=TwoWay,
-                                              UpdateSourceTrigger=PropertyChanged,
-                                              ValidatesOnNotifyDataErrors=True}" />
+                      SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                      DisplayMemberPath="Name" />
+
 
             <!-- ================= BRAND ================= -->
 
@@ -106,11 +101,9 @@
             <ComboBox Grid.Row="2" Grid.Column="4"
                       Style="{StaticResource FormComboBox}"
                       ItemsSource="{Binding Brands}"
-                      DisplayMemberPath="Name"
-                      SelectedValuePath="Id"
-                      IsSynchronizedWithCurrentItem="False"
-                      SelectedIndex="-1"
-                      SelectedValue="{Binding BrandId}" />
+                      SelectedItem="{Binding SelectedBrand, Mode=TwoWay}"
+                      DisplayMemberPath="Name" />
+
 
             <!-- ================= TAX PROFILE ================= -->
 
@@ -119,14 +112,9 @@
             <ComboBox Grid.Row="3" Grid.Column="1"
                       Style="{StaticResource FormComboBoxWithValidation}"
                       ItemsSource="{Binding TaxProfiles}"
-                      DisplayMemberPath="Name"
-                      SelectedValuePath="Id"
-                      IsSynchronizedWithCurrentItem="False"
-                      SelectedIndex="-1"
-                      SelectedValue="{Binding TaxProfileId,
-                                              Mode=TwoWay,
-                                              UpdateSourceTrigger=PropertyChanged,
-                                              ValidatesOnNotifyDataErrors=True}" />
+                      SelectedItem="{Binding SelectedTaxProfile, Mode=TwoWay}"
+                      DisplayMemberPath="Name" />
+
 
             <!-- ================= HSN ================= -->
 
@@ -165,10 +153,10 @@
 
             <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5"
                         Orientation="Horizontal" Margin="0,20,0,0">
-                <CheckBox Content="Weighable" IsChecked="{Binding IsWeighable}" Margin="0,0,20,0"/>
-                <CheckBox Content="Manufactured" IsChecked="{Binding IsManufactured}" Margin="0,0,20,0"/>
-                <CheckBox Content="Tax Inclusive" IsChecked="{Binding IsTaxInclusive}" Margin="0,0,20,0"/>
-                <CheckBox Content="Active" IsChecked="{Binding IsProductActive}"/>
+                <CheckBox Content="Weighable" IsChecked="{Binding IsWeighable, Mode=TwoWay}" Margin="0,0,20,0"/>
+                <CheckBox Content="Manufactured" IsChecked="{Binding IsManufactured, Mode=TwoWay}" Margin="0,0,20,0"/>
+                <CheckBox Content="Tax Inclusive" IsChecked="{Binding IsTaxInclusive, Mode=TwoWay}" Margin="0,0,20,0"/>
+                <CheckBox Content="Active" IsChecked="{Binding IsProductActive, Mode=TwoWay}"/>
             </StackPanel>
 
             <!-- ================= BUTTONS ================= -->

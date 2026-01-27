@@ -24,7 +24,7 @@ public class CategoryService : ICategoryService
         if (string.IsNullOrWhiteSpace(category.Name))
             throw new Exception("Category name is required");
 
-        category.CategoryId = Guid.NewGuid();
+        category.Id = Guid.NewGuid();
         category.IsActive = true;
         await _repo.AddAsync(category);
     }

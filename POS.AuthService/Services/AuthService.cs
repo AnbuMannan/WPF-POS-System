@@ -6,10 +6,12 @@ namespace POS.AuthService.Services
     public class AuthService
     {
         private readonly AuthRepository _repo;
+        private readonly ITokenService _tokenService;
 
-        public AuthService(AuthRepository repo)
+        public AuthService(AuthRepository repo, ITokenService tokenService)
         {
             _repo = repo;
+            _tokenService = tokenService;
         }
 
         public bool ValidateUser(string username, string password)
@@ -60,6 +62,21 @@ namespace POS.AuthService.Services
             return LicenseCrypto.Verify(payload, decryptedSig);
         }
 
+        public (string AccessToken, string RefreshToken) GenerateTokens(User user, List<string> permissions)
+        {
+            var accessToken = _tokenService.GenerateAccessToken(user, permissions);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            return (accessToken, refreshToken);
+        }
 
+        public void SaveRefreshToken(int userId, string refreshToken, int expirationDays = 7)
+        {
+            _repo.SaveRefreshToken(userId, refreshToken, DateTime.UtcNow.AddDays(expirationDays));
+        }
+
+        public bool ValidateRefreshToken(int userId, string refreshToken)
+        {
+            return _repo.ValidateRefreshToken(userId, refreshToken);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using POS.UI.Core.Models;
+using POS.UI.Core.Models;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Categories;
@@ -96,7 +96,7 @@ namespace POS.UI.Modules.Admin.Categories
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Failed to load categories", MessageBoxButton.OK, MessageBoxImage.Error);
+                POS.UI.Components.DialogService.Error("Failed to load categories", ex.Message);
             }
         }
 
@@ -167,7 +167,7 @@ namespace POS.UI.Modules.Admin.Categories
             // 🔥 Pass full selected DTO
             var form = new CategoryFormView(SelectedCategory);
 
-            if (form.ShowDialog() == true)
+             if (form.ShowDialog() == true)
             {
                 _ = LoadAsync();
             }
@@ -180,11 +180,7 @@ namespace POS.UI.Modules.Admin.Categories
             if (SelectedCategory == null)
                 return;
 
-            var result = MessageBox.Show(
-                $"Disable category '{SelectedCategory.Name}' ?",
-                "Confirm",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
+            var result = POS.UI.Components.DialogService.Confirm("Confirm Disable", $"Disable category '{SelectedCategory.Name}' ?");
 
             if (result != MessageBoxResult.Yes)
                 return;
@@ -193,14 +189,13 @@ namespace POS.UI.Modules.Admin.Categories
             {
                 await _service.DisableAsync(SelectedCategory.CategoryId);
 
-                MessageBox.Show("Category disabled successfully",
-                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                POS.UI.Components.DialogService.Info("Success", "Category disabled successfully");
 
                 await LoadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Disable failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                POS.UI.Components.DialogService.Error("Disable failed", ex.Message);
             }
         }
     }

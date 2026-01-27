@@ -1,4 +1,4 @@
-﻿using POS.UI.Core.MVVM;
+using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Products.Models;
 using System;
@@ -63,9 +63,9 @@ namespace POS.UI.Modules.Admin.Products
             }
         }
 
-        public ProductViewModel()
+        public ProductViewModel(ProductApiService service)
         {
-            _service = new ProductApiService(App.ApiClient);
+            _service = service ?? throw new ArgumentNullException(nameof(service));
             Products = new ObservableCollection<ProductDto>();
 
             RefreshCommand = new RelayCommand(async () => await LoadAsync());
@@ -107,8 +107,9 @@ namespace POS.UI.Modules.Admin.Products
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load products: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                POS.UI.Components.DialogService.Error("Error", $"Failed to load products:\n\n{ex}\n\nInner: {ex.InnerException?.Message}");
             }
+
         }
 
         private async Task SearchAsync()
@@ -128,7 +129,7 @@ namespace POS.UI.Modules.Admin.Products
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Search failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                POS.UI.Components.DialogService.Error("Error", $"Search failed: {ex.Message}");
             }
         }
 
@@ -164,11 +165,7 @@ namespace POS.UI.Modules.Admin.Products
             if (SelectedProduct == null)
                 return;
 
-            var result = MessageBox.Show(
-                $"Are you sure you want to disable this product?\n\n{SelectedProduct.Name}",
-                "Confirm Disable",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
+            var result = POS.UI.Components.DialogService.Confirm("Confirm Disable", $"Are you sure you want to disable this product?\n\n{SelectedProduct.Name}");
 
             if (result != MessageBoxResult.Yes)
                 return;
@@ -177,13 +174,13 @@ namespace POS.UI.Modules.Admin.Products
             {
                 await _service.DisableAsync(SelectedProduct.ProductId);
 
-                MessageBox.Show("Product disabled successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                POS.UI.Components.DialogService.Info("Success", "Product disabled successfully");
 
                 await LoadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Disable Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                POS.UI.Components.DialogService.Error("Disable Failed", ex.Message);
             }
         }
     }

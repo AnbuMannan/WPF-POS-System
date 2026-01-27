@@ -1,18 +1,7 @@
-﻿using POS.UI.Modules.Admin.Products.ViewModels;
+﻿using POS.UI.Core.Services;
+using POS.UI.Modules.Admin.Products.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace POS.UI.Modules.Admin.Products
 {
@@ -24,8 +13,25 @@ namespace POS.UI.Modules.Admin.Products
         public ProductView()
         {
             InitializeComponent();
-            DataContext = new ProductViewModel(); // THIS IS REQUIRED
+            
+            try
+            {
+                // Get ProductApiService from DI container
+                if (App.ServiceProvider != null)
+                {
+                    var service = (ProductApiService)App.ServiceProvider.GetService(typeof(ProductApiService));
+                    var viewModel = new ProductViewModel(service);
+                    DataContext = viewModel;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Application service provider not initialized.");
+                }
+            }
+            catch (Exception ex)
+            {
+                POS.UI.Components.DialogService.Error("Initialization Error", $"Failed to initialize ProductView: {ex.Message}");
+            }
         }
     }
-
 }

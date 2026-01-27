@@ -59,6 +59,7 @@ public class ProductRepository : IProductRepository
         CostPrice=@CostPrice,SellingPrice=@SellingPrice,MRP=@MRP,
         TaxProfileId=@TaxProfileId,
         IsWeighable=@IsWeighable,IsManufactured=@IsManufactured,
+        IsTaxInclusive = @IsTaxInclusive, IsActive= @IsActive,
         UpdatedAt=@UpdatedAt
         WHERE ProductId=@ProductId", product);
     }

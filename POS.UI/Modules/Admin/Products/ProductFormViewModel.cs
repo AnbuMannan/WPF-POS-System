@@ -1,4 +1,4 @@
-﻿using POS.UI.Core.Exceptions;
+using POS.UI.Core.Exceptions;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Common;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,6 +19,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
     public class ProductFormViewModel : ViewModelBase, INotifyDataErrorInfo
     {
         private readonly ProductApiService _service;
+        private readonly HttpClient _httpClient;
         private bool _isEdit;
         private ProductDto _editDto;
         private bool _isSaving;
@@ -271,10 +273,46 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
                     CategoryId = SelectedCategory.Id;   // 🔥 Sync to real Guid
                     ClearErrors(nameof(CategoryId));
                 }
+                //else
+                //{
+                //    CategoryId = Guid.Empty;
+                //}
+            }
+        }
+
+        // ================= BRAND SELECTION =================
+
+        private LookupDto _selectedBrand;
+        public LookupDto SelectedBrand
+        {
+            get => _selectedBrand;
+            set
+            {
+                _selectedBrand = value;
+                OnPropertyChanged(nameof(SelectedBrand));
+
+                if (SelectedBrand != null)
+                    BrandId = SelectedBrand.Id;
                 else
-                {
-                    CategoryId = Guid.Empty;
-                }
+                    BrandId = Guid.Empty;
+            }
+        }
+
+        // ================= TAX PROFILE SELECTION =================
+
+        private LookupDto _selectedTaxProfile;
+        public LookupDto SelectedTaxProfile
+        {
+            get => _selectedTaxProfile;
+            set
+            {
+                _selectedTaxProfile = value;
+                OnPropertyChanged(nameof(SelectedTaxProfile));
+
+                if (SelectedTaxProfile != null)
+                    TaxProfileId = SelectedTaxProfile.Id;
+                else
+                    TaxProfileId = Guid.Empty;
             }
         }
 
@@ -319,9 +357,10 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
         // ================= CONSTRUCTOR =================
 
-        public ProductFormViewModel(ProductDto editDto = null)
+        public ProductFormViewModel(ProductApiService service, HttpClient httpClient = null, ProductDto editDto = null)
         {
-            _service = new ProductApiService(App.ApiClient);
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _httpClient = httpClient;  // Can be null if only using ProductApiService
             _editDto = editDto;
             _isEdit = editDto != null;
 
@@ -346,62 +385,105 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             {
                 LoadProductData(_editDto);
 
-                // 🔥 Force refresh selection after categories loaded
-                OnPropertyChanged(nameof(CategoryId));
+                // 🔥 FIX: Auto-select Category / Brand / Tax after masters loaded
+                SelectedCategory = Categories.FirstOrDefault(x => x.Id == CategoryId);
+                SelectedBrand = Brands.FirstOrDefault(x => x.Id == BrandId);
+                SelectedTaxProfile = TaxProfiles.FirstOrDefault(x => x.Id == TaxProfileId);
+
+                //var found = Categories.FirstOrDefault(x => x.Id == CategoryId);
+
+                //if (found == null)
+                //{
+                //    MessageBox.Show(
+                //        $"Category NOT FOUND in master list!\n\nProduct CategoryId:\n{CategoryId}\n\nAvailable Categories:\n" +
+                //        string.Join("\n", Categories.Select(c => $"{c.Id} - {c.Name}")),
+                //        "Debug",
+                //        MessageBoxButton.OK,
+                //        MessageBoxImage.Warning);
+                //}
             }
             else
             {
                 // Do NOT validate Category immediately on new form load
                 ValidateAll();
             }
-
         }
+
 
         private async Task LoadMastersAsync()
         {
             try
             {
-                var categories = await App.ApiClient.GetFromJsonAsync<List<LookupDto>>("api/categories");
-                var brands = await App.ApiClient.GetFromJsonAsync<List<LookupDto>>("api/brands");
-                var taxProfiles = await App.ApiClient.GetFromJsonAsync<List<LookupDto>>("api/taxprofiles");
+                // Use injected HttpClient if available, otherwise resolve from IHttpClientFactory
+                var httpClient = _httpClient;
+
+                if (httpClient == null && App.ServiceProvider != null)
+                {
+                    var factory = App.ServiceProvider.GetService(typeof(IHttpClientFactory)) as IHttpClientFactory;
+
+                    if (factory == null)
+                        throw new InvalidOperationException("Unable to load master data: IHttpClientFactory not configured.");
+
+                    // 🔥 Use the named client that has BaseAddress configured
+                    httpClient = factory.CreateClient("DefaultApi");
+                }
+
+                if (httpClient == null)
+                    throw new InvalidOperationException("Unable to load master data: HttpClient not available.");
+
+                // 🔥 These now use BaseAddress correctly
+                var categories = await httpClient.GetFromJsonAsync<List<LookupDto>>("api/categories");
+                var brands = await httpClient.GetFromJsonAsync<List<LookupDto>>("api/brands");
+                var taxProfiles = await httpClient.GetFromJsonAsync<List<LookupDto>>("api/taxprofiles");
 
                 Categories.Clear();
 
-                // 🔥 Add placeholder first item
-                Categories.Add(new LookupDto
+                // 🔥 Add placeholder ONLY in ADD MODE
+                if (!_isEdit)
                 {
-                    Id = Guid.Empty,
-                    Name = "-- Select Category --"
-                });
+                    Categories.Add(new LookupDto
+                    {
+                        Id = Guid.Empty,
+                        Name = "-- Select Category --"
+                    });
+                }
 
                 foreach (var cat in categories ?? new List<LookupDto>())
                     Categories.Add(cat);
 
 
                 Brands.Clear();
-                // 🔥 Add placeholder first item
-                Brands.Add(new LookupDto
+                if (!_isEdit)
                 {
-                    Id = Guid.Empty,
-                    Name = "-- Select Brand --"
-                });
+                    Brands.Add(new LookupDto
+                    {
+                        Id = Guid.Empty,
+                        Name = "-- Select Brand --"
+                    });
+                }
+
                 foreach (var brand in brands ?? new List<LookupDto>())
                     Brands.Add(brand);
 
                 TaxProfiles.Clear();
-                TaxProfiles.Add(new LookupDto
+                if (!_isEdit)
                 {
-                    Id = Guid.Empty,
-                    Name = "-- Select Tax --"
-                });
+                    TaxProfiles.Add(new LookupDto
+                    {
+                        Id = Guid.Empty,
+                        Name = "-- Select Tax --"
+                    });
+                }
+
                 foreach (var tax in taxProfiles ?? new List<LookupDto>())
                     TaxProfiles.Add(tax);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load master data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                POS.UI.Components.DialogService.Error("Error", $"Failed to load master data:\n\n{ex}");
             }
         }
+
 
         private void LoadProductData(ProductDto dto)
         {
@@ -520,7 +602,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
         {
             if (HasErrors)
             {
-                MessageBox.Show("Please fix validation errors before saving.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                POS.UI.Components.DialogService.Info("Validation Error", "Please fix validation errors before saving.");
                 return;
             }
 
@@ -558,14 +640,14 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
                     dto.UpdatedAt = DateTime.Now;
                     await _service.UpdateAsync(dto);
 
-                    MessageBox.Show("Product updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    POS.UI.Components.DialogService.Info("Success", "Product updated successfully");
                 }
                 else
                 {
                     dto.CreatedAt = DateTime.Now;
                     await _service.CreateAsync(dto);
 
-                    MessageBox.Show("Product created successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    POS.UI.Components.DialogService.Info("Success", "Product created successfully");
                 }
 
                 RequestCloseWithResult?.Invoke(this, true);
@@ -585,7 +667,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Save Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                POS.UI.Components.DialogService.Error("Save Failed", ex.Message);
             }
             finally
             {

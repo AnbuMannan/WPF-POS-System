@@ -1,15 +1,16 @@
-﻿<UserControl x:Class="POS.UI.Modules.Admin.Products.ProductView"
+<UserControl x:Class="POS.UI.Modules.Admin.Products.ProductView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:POS.UI.Modules.Admin.Products"
+             xmlns:conv="clr-namespace:POS.UI.Core.Converters"
              mc:Ignorable="d">
 
 
 
     <UserControl.Resources>
-        <local:SearchMatchConverter x:Key="SearchMatchConverter"/>
+        <conv:SearchMatchConverter x:Key="SearchMatchConverter"/>
     </UserControl.Resources>
 
 
