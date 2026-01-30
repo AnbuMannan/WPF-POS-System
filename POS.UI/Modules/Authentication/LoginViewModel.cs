@@ -166,25 +166,26 @@ namespace POS.UI.Modules.Authentication
             {
                 _logger.Information("Login attempt for user: {Username}", Username);
 
-                //var loginResponse = await _authService.LoginAsync(Username!, Password!);
+                // TODO: Enable actual authentication when backend is ready
+                // For now, we simulate a successful login for development
+                bool simulateLogin = true; 
 
-                //if (loginResponse.Success && _authService.IsAuthenticated)
+                if (simulateLogin /* || (await _authService.LoginAsync(Username!, Password!)).Success */)
                 {
                     _logger.Information("Login successful for user: {Username}", Username);
                     StatusMessage = "Login successful!";
                     
                     // Validate license after successful login
-                   // await ValidateLicenseAsync();
+                    await ValidateLicenseAsync();
 
                     // Raise event to navigate to main window
                     LoginSucceeded?.Invoke(this, EventArgs.Empty);
                 }
-                //else
-                //{
-                //    _logger.Warning("Login failed: {Message}", loginResponse.Message);
-                //    IsLoginFailed = true;
-                //    StatusMessage = loginResponse.Message ?? "Login failed. Please check your credentials.";
-                //}
+                else
+                {
+                    IsLoginFailed = true;
+                    StatusMessage = "Login failed. Please check your credentials.";
+                }
             }
             catch (Exception ex)
             {
@@ -209,7 +210,8 @@ namespace POS.UI.Modules.Authentication
                 StatusMessage = "Validating license...";
 
                 // In a real implementation, you might get license key from config or user input
-                const string licenseKey = "YOUR-LICENSE-KEY-HERE";  // Get from config
+                // TODO: Retrieve this from a secure configuration or local storage
+                string licenseKey = Environment.GetEnvironmentVariable("POS_LICENSE_KEY") ?? "DEMO-LICENSE-KEY";
 
                 var licenseResponse = await _licenseService.ValidateLicenseAsync(licenseKey);
 

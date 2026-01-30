@@ -132,5 +132,24 @@ namespace POS.UI.Core.Services
             
             throw new HttpRequestException(message);
         }
+
+        protected async Task<string?> TryGetJsonAsync(params string[] urls)
+        {
+            foreach (var url in urls)
+            {
+                try
+                {
+                    var resp = await _http.GetAsync(url);
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        return await resp.Content.ReadAsStringAsync();
+                    }
+                }
+                catch
+                {
+                }
+            }
+            return null;
+        }
     }
 }

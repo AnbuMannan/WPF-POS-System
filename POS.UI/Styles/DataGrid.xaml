@@ -26,8 +26,8 @@
         <Setter Property="BorderBrush" Value="#DDD"/>
     </Style>
 
-    <!-- Row Style with POS Enhancements -->
-    <Style TargetType="DataGridRow">
+    <!-- Row Style with POS Enhancements (keyed so ProductView can BasedOn and add triggers) -->
+    <Style x:Key="DefaultDataGridRowStyle" TargetType="DataGridRow">
         <Setter Property="Height" Value="34"/>
 
         <Style.Triggers>
@@ -43,17 +43,15 @@
                 <Setter Property="Foreground" Value="Black"/>
             </Trigger>
 
-            <!-- Inactive Product -->
+            <!-- Inactive row (Category/Brand/TaxProfile/Product have IsActive) -->
             <DataTrigger Binding="{Binding IsActive}" Value="False">
                 <Setter Property="Foreground" Value="Gray"/>
             </DataTrigger>
 
-            <!-- Highlight Zero Price -->
-            <DataTrigger Binding="{Binding SellingPrice}" Value="0">
-                <Setter Property="Background" Value="#FFF3E0"/>
-            </DataTrigger>
-
         </Style.Triggers>
     </Style>
+
+    <!-- Default apply to all DataGridRow when no explicit style -->
+    <Style TargetType="DataGridRow" BasedOn="{StaticResource DefaultDataGridRowStyle}"/>
 
 </ResourceDictionary>

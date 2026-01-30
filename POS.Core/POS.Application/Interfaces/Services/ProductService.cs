@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using POS.Application.Exceptions;
 using POS.Application.Interfaces.Repositories;
 using POS.Application.Interfaces.Services;
 using POS.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
-using POS.Application.Exceptions;
+using POS.Shared.Models;
 
 namespace POS.Application.Services;
 
@@ -11,92 +10,124 @@ public class ProductService : IProductService
 {
     private readonly IProductRepository _repo;
 
-    public ProductService(IProductRepository repo)
+    public ProductService(IProductRepository repo) => _repo = repo;
+
+    public async Task<ProductDto> GetByIdAsync(long id)
     {
-        _repo = repo;
+        var entity = await _repo.GetByIdAsync(id);
+        return entity == null ? null! : MapToDto(entity);
     }
 
-    public async Task<Product> GetByIdAsync(Guid id)
-        => await _repo.GetByIdAsync(id);
-
-    public async Task<Product> GetByBarcodeAsync(string barcode)
-        => await _repo.GetByBarcodeAsync(barcode);
-
-    public async Task<List<Product>> SearchAsync(string keyword)
-        => await _repo.SearchAsync(keyword);
-
-    public async Task AddAsync(Product product)
+    public async Task<ProductDto> GetByBarcodeAsync(string barcode)
     {
+        var entity = await _repo.GetByBarcodeAsync(barcode);
+        return entity == null ? null! : MapToDto(entity);
+    }
+
+    public async Task<List<ProductDto>> SearchAsync(string keyword)
+        => (await _repo.SearchAsync(keyword)).Select(MapToDto).ToList();
+
+    public async Task AddAsync(ProductDto dto)
+    {
+        var product = MapToEntity(dto);
         Validate(product);
 
-        // 🔥 UNIQUE CHECKS
-        if (!string.IsNullOrWhiteSpace(product.SKU))
-        {
-            if (await _repo.SKUExistsAsync(product.SKU))
-                throw new Exceptions.ValidationException("SKU", "SKU already exists");
-        }
+        if (!string.IsNullOrWhiteSpace(product.SKU) && await _repo.SKUExistsAsync(product.SKU))
+            throw new ValidationException("SKU", "SKU already exists");
+        if (!string.IsNullOrWhiteSpace(product.Barcode) && await _repo.BarcodeExistsAsync(product.Barcode))
+            throw new ValidationException("Barcode", "Barcode already exists");
 
-        if (!string.IsNullOrWhiteSpace(product.Barcode))
-        {
-            if (await _repo.BarcodeExistsAsync(product.Barcode))
-                throw new Exceptions.ValidationException("Barcode", "Barcode already exists");
-        }
-
-        product.ProductId = Guid.NewGuid();
         product.CreatedAt = DateTime.Now;
-        
         product.IsActive = true;
-
         await _repo.AddAsync(product);
     }
 
-
-    public async Task UpdateAsync(Product product)
+    public async Task UpdateAsync(ProductDto dto)
     {
+        var product = MapToEntity(dto);
         Validate(product);
 
-        // 🔥 UNIQUE CHECKS (exclude current product)
-        if (!string.IsNullOrWhiteSpace(product.SKU))
-        {
-            if (await _repo.SKUExistsAsync(product.SKU, product.ProductId))
-                throw new Exceptions.ValidationException("SKU", "SKU already exists");
-        }
-
-        if (!string.IsNullOrWhiteSpace(product.Barcode))
-        {
-            if (await _repo.BarcodeExistsAsync(product.Barcode, product.ProductId))
-                throw new Exceptions.ValidationException("Barcode", "Barcode already exists");
-        }
+        if (!string.IsNullOrWhiteSpace(product.SKU) && await _repo.SKUExistsAsync(product.SKU, product.ProductId))
+            throw new ValidationException("SKU", "SKU already exists");
+        if (!string.IsNullOrWhiteSpace(product.Barcode) && await _repo.BarcodeExistsAsync(product.Barcode, product.ProductId))
+            throw new ValidationException("Barcode", "Barcode already exists");
 
         product.UpdatedAt = DateTime.Now;
         await _repo.UpdateAsync(product);
     }
 
+    public async Task DisableAsync(long id) => await _repo.DisableAsync(id);
 
-    public async Task DisableAsync(Guid id)
-        => await _repo.DisableAsync(id);
+    public async Task<List<ProductDto>> GetAllAsync(bool showInactive = false)
+        => (await _repo.GetAllAsync(showInactive)).Select(MapToDto).ToList();
 
-    private void Validate(Product product)
+    public async Task<bool> SKUExistsAsync(string sku, long? excludeId)
+        => await _repo.SKUExistsAsync(sku, excludeId);
+
+    public async Task<bool> BarcodeExistsAsync(string barcode, long? excludeId)
+        => await _repo.BarcodeExistsAsync(barcode, excludeId);
+
+    private static void Validate(Product product)
     {
         if (string.IsNullOrWhiteSpace(product.Name))
             throw new Exception("Product name required");
-
         if (product.SellingPrice <= 0)
             throw new Exception("Selling price must be > 0");
-
-        if (product.TaxProfileId == Guid.Empty)
+        if (product.TaxProfileId <= 0)
             throw new Exception("Valid Tax Profile is mandatory");
-
         if (string.IsNullOrWhiteSpace(product.HSNCode))
             throw new Exception("HSN Code is required for GST compliance");
-
     }
-    public async Task<List<Product>> GetAllAsync([FromQuery] bool showInactive = false)
-        => await _repo.GetAllAsync(showInactive);
-    public async Task<bool> SKUExistsAsync(string sku, Guid? excludeId)
-    => await _repo.SKUExistsAsync(sku, excludeId);
 
-    public async Task<bool> BarcodeExistsAsync(string barcode, Guid? excludeId)
-        => await _repo.BarcodeExistsAsync(barcode, excludeId);
+    private static ProductDto MapToDto(Product entity) => new ProductDto
+    {
+        ProductId = entity.ProductId,
+        Name = entity.Name,
+        SKU = entity.SKU,
+        Barcode = entity.Barcode,
+        Description = entity.Description,
+        CategoryId = entity.CategoryId,
+        CategoryName = entity.Category?.Name,
+        BrandId = entity.BrandId,
+        BrandName = entity.Brand?.Name,
+        Unit = entity.Unit,
+        CostPrice = entity.CostPrice,
+        SellingPrice = entity.SellingPrice,
+        MRP = entity.MRP,
+        HSNCode = entity.HSNCode,
+        TaxProfileId = entity.TaxProfileId,
+        IsWeighable = entity.IsWeighable,
+        IsManufactured = entity.IsManufactured,
+        IsActive = entity.IsActive,
+        RowVersion = entity.RowVersion == default ? null : BitConverter.GetBytes(entity.RowVersion.Ticks),
+        CreatedAt = entity.CreatedAt,
+        UpdatedAt = entity.UpdatedAt,
+        CreatedBy = entity.CreatedBy,
+        UpdatedBy = entity.UpdatedBy
+    };
 
+    private static Product MapToEntity(ProductDto dto) => new Product
+    {
+        ProductId = dto.ProductId,
+        Name = dto.Name,
+        SKU = dto.SKU,
+        Barcode = dto.Barcode,
+        Description = dto.Description,
+        CategoryId = dto.CategoryId,
+        BrandId = dto.BrandId,
+        Unit = dto.Unit,
+        CostPrice = dto.CostPrice,
+        SellingPrice = dto.SellingPrice,
+        MRP = dto.MRP,
+        HSNCode = dto.HSNCode,
+        TaxProfileId = dto.TaxProfileId,
+        IsWeighable = dto.IsWeighable,
+        IsManufactured = dto.IsManufactured,
+        IsActive = dto.IsActive,
+        RowVersion = dto.RowVersion == null || dto.RowVersion.Length < 8 ? default : new DateTime(BitConverter.ToInt64(dto.RowVersion, 0)),
+        CreatedAt = dto.CreatedAt,
+        UpdatedAt = dto.UpdatedAt,
+        CreatedBy = dto.CreatedBy,
+        UpdatedBy = dto.UpdatedBy
+    };
 }

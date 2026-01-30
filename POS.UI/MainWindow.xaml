@@ -469,10 +469,10 @@
                     <Button x:Name="BtnProductList" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE71D;" Content="Products (Item Master)"/>
                     <Button x:Name="BtnCategories" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8EC;" Content="Categories"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE90C;" Content="Sub-Categories"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80B;" Content="Brands"/>
+                    <Button x:Name="BtnBrands" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80B;" Content="Brands"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9A8;" Content="Units (UOM)"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7F4;" Content="Variants"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE825;" Content="Tax Profiles"/>
+                    <Button x:Name="BtnTaxProfiles" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE825;" Content="Tax Profiles"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE14D;" Content="Price Lists"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE737;" Content="Combo / Bundle Items"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80A;" Content="Barcode Management"/>

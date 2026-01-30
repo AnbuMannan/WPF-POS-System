@@ -7,6 +7,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using POS.UI.Modules.Admin.Products;
 using POS.UI.Modules.Admin.Categories;
+using POS.UI.Modules.Admin.Brands;
+using POS.UI.Modules.Admin.TaxProfiles;
 
 namespace POS.UI
 {
@@ -203,6 +205,14 @@ namespace POS.UI
                     case "BtnCategories":
                         MainContent.Content = new CategoryView();
                         HeaderTitle.Text = "Categories";
+                        break;
+                    case "BtnBrands":
+                        MainContent.Content = new BrandView();
+                        HeaderTitle.Text = "Brands";
+                        break;
+                    case "BtnTaxProfiles":
+                        MainContent.Content = new TaxProfileView();
+                        HeaderTitle.Text = "Tax Profiles";
                         break;
                 }
             }

@@ -1,12 +1,16 @@
-﻿<Window x:Class="POS.UI.Modules.Admin.Categories.CategoryFormView"
+<Window x:Class="POS.UI.Modules.Admin.Categories.CategoryFormView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Category"
-        Height="360" Width="520"
+        Height="560" Width="680"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
-    <Grid Margin="15">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -20,34 +24,82 @@
                    Margin="0,0,0,12" />
 
         <!-- ========== FORM BODY ========== -->
-        <Grid Grid.Row="1">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Parent (Read-only when Sub) -->
-            <StackPanel Margin="0,0,0,12">
-                <TextBlock Text="Parent Category" />
-                <TextBox Height="32"
-                         IsReadOnly="True"
-                         Text="{Binding ParentName}" />
-            </StackPanel>
+            <TextBlock Text="Parent Category" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+            <ComboBox Grid.Row="0" Grid.Column="1"
+                      Style="{StaticResource FormComboBox}"
+                      ItemsSource="{Binding Categories}"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding ParentCategoryId, Mode=TwoWay}"
+                      DisplayMemberPath="Name" />
 
-            <!-- Name -->
-            <StackPanel Grid.Row="1" Margin="0,0,0,12">
-                <TextBlock Text="Category Name" />
-                <TextBox Height="32"
-                         Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
-            </StackPanel>
+            <TextBlock Text="Category Name" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="1" Grid.Column="1"
+                     x:Name="CategoryNameBox"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding CategoryName,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    ValidatesOnNotifyDataErrors=True}" />
+            <TextBlock Grid.Row="2" Grid.Column="1"
+                       Foreground="Red"
+                       FontSize="11"
+                       Margin="4,2,0,8"
+                       Text="{Binding (Validation.Errors), ElementName=CategoryNameBox, Converter={StaticResource FirstValidationErrorConverter}}"
+                       Visibility="{Binding (Validation.HasError), ElementName=CategoryNameBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            <!-- Active -->
-            <CheckBox Grid.Row="2"
-                      Content="Is Active"
-                      IsChecked="{Binding IsActive}" />
-        </Grid>
+            <TextBlock Text="Code" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="3" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding Code}" />
+
+            <TextBlock Text="Slug" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="4" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding Slug}" />
+
+            <TextBlock Text="Display Order" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="5" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding DisplayOrder}" />
+
+            <TextBlock Text="Image URL" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="6" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding ImageUrl}" />
+
+            <TextBlock Text="Description" Grid.Row="7" Grid.Column="0" VerticalAlignment="Top"/>
+            <TextBox Grid.Row="7" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Height="80"
+                     AcceptsReturn="True"
+                     Text="{Binding Description}" />
+            
+            <TextBlock Text="Is Active" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Grid.Row="8" Grid.Column="1"
+                      Content=""
+                      IsChecked="{Binding IsCategoryActive, Mode=TwoWay}" />
+            
+            </Grid>
+        </ScrollViewer>
 
         <!-- ========== FOOTER BUTTONS ========== -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">

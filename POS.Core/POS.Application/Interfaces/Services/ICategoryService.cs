@@ -1,15 +1,16 @@
-﻿using POS.Domain.Entities;
+using POS.Domain.Entities;
+using POS.Shared.Models;
 
 namespace POS.Application.Interfaces.Services;
 
 public interface ICategoryService
 {
-    Task<List<Category>> GetAllAsync();
-    Task<Category> GetByIdAsync(Guid id);
-    Task AddAsync(Category category);
-    Task UpdateAsync(Category category);
-    Task DisableAsync(Guid id);
-    Task<bool> CheckNameExistsAsync(string name, Guid? parentCategoryId, Guid? excludeId);
+    Task<List<CategoryDto>> GetAllAsync(bool includeInactive = false);
+    Task<CategoryDto> GetByIdAsync(int id);
+    Task AddAsync(CategoryDto category);
+    Task UpdateAsync(CategoryDto category);
+    Task DisableAsync(int id);
+    Task<bool> CheckNameExistsAsync(string name, int? parentCategoryId, int? excludeId);
 
 
 }

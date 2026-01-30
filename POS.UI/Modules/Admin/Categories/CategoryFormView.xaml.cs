@@ -1,9 +1,8 @@
 using POS.UI.Core.Exceptions;
-using POS.UI.Core.Models;
+using POS.Shared.Models;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Common;
-using POS.UI.Modules.Admin.Products.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,16 +20,16 @@ namespace POS.UI.Modules.Admin.Categories
 {
     public partial class CategoryFormView : Window, INotifyPropertyChanged, INotifyDataErrorInfo
     {
-        private readonly ProductApiService _service;
+        private readonly CategoryApiService _service;
         private bool _isEdit;
         private CategoryDto _editDto;
         private bool _isSaving;
 
-        public ObservableCollection<LookupDto> Categories { get; set; }
+        public ObservableCollection<LookupDto> Categories { get; set; } = new();
         public ObservableCollection<LookupDto> Brands { get; set; }
         public ObservableCollection<LookupDto> TaxProfiles { get; set; }
 
-        public Guid ProductId { get; set; }
+        public long ProductId { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)
@@ -46,8 +45,7 @@ namespace POS.UI.Modules.Admin.Categories
 
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
-        private CancellationTokenSource _skuCts;
-        private CancellationTokenSource _barcodeCts;
+        // Removed SKU/Barcode debounce fields; Category form does not validate product identifiers
 
         private void FocusFirstInvalidControl()
         {
@@ -113,6 +111,59 @@ namespace POS.UI.Modules.Admin.Categories
 
         // ---------------- BASIC FIELDS ----------------
 
+        private string _categoryName;
+        public string CategoryName
+        {
+            get => _categoryName;
+            set
+            {
+                _categoryName = value;
+                OnPropertyChanged(nameof(CategoryName));
+                ClearErrors(nameof(CategoryName));
+                if (string.IsNullOrWhiteSpace(CategoryName))
+                    AddError(nameof(CategoryName), "Category name is required");
+            }
+        }
+
+        private string _parentCategoryName;
+        public string ParentCategoryName
+        {
+            get => _parentCategoryName;
+            set
+            {
+                _parentCategoryName = value;
+                OnPropertyChanged(nameof(ParentCategoryName));
+            }
+        }
+
+        private bool _isCategoryActive = true;
+        public bool IsCategoryActive
+        {
+            get => _isCategoryActive;
+            set
+            {
+                _isCategoryActive = value;
+                OnPropertyChanged(nameof(IsCategoryActive));
+            }
+        }
+
+        private int _displayOrder;
+        public int DisplayOrder
+        {
+            get => _displayOrder;
+            set
+            {
+                _displayOrder = value;
+                OnPropertyChanged(nameof(DisplayOrder));
+            }
+        }
+
+        /// <summary>0 = no parent. Bound to ComboBox; when saving we send null when 0.</summary>
+        public long ParentCategoryId { get; set; }
+        public string? Code { get; set; }
+        public string? Slug { get; set; }
+        public string? ImageUrl { get; set; }
+
         private string _productName;
         public string ProductName
         {
@@ -138,7 +189,6 @@ namespace POS.UI.Modules.Admin.Categories
             {
                 _sku = value;
                 OnPropertyChanged(nameof(SKU));
-                _ = ValidateSkuAsync();   // 🔥 LIVE CHECK
             }
         }
 
@@ -151,7 +201,6 @@ namespace POS.UI.Modules.Admin.Categories
             {
                 _barcode = value;
                 OnPropertyChanged(nameof(Barcode));
-                _ = ValidateBarcodeAsync();   // 🔥 LIVE CHECK
             }
         }
 
@@ -235,42 +284,34 @@ namespace POS.UI.Modules.Admin.Categories
 
         // ---------------- FK IDS ----------------
 
-        private Guid _categoryId;
-        public Guid CategoryId
+        private int _categoryId;
+        public int CategoryId
         {
             get => _categoryId;
             set
             {
                 _categoryId = value;
                 OnPropertyChanged(nameof(CategoryId));
-
                 ClearErrors(nameof(CategoryId));
-
-                if (CategoryId == Guid.Empty)
+                // Only require CategoryId when editing an existing category (Add Root / Add Sub use CategoryId = 0)
+                if (_editDto != null && _editDto.CategoryId > 0 && CategoryId <= 0)
                     AddError(nameof(CategoryId), "Category is required");
             }
         }
 
+        private int _brandId;
+        public int BrandId { get => _brandId; set { _brandId = value; OnPropertyChanged(nameof(BrandId)); } }
 
-        private Guid _brandId;
-        public Guid BrandId
-        {
-            get => _brandId;
-            set { _brandId = value; OnPropertyChanged(nameof(BrandId)); }
-        }
-
-        private Guid _taxProfileId;
-        public Guid TaxProfileId
+        private int _taxProfileId;
+        public int TaxProfileId
         {
             get => _taxProfileId;
             set
             {
                 _taxProfileId = value;
                 OnPropertyChanged(nameof(TaxProfileId));
-
                 ClearErrors(nameof(TaxProfileId));
-
-                if (TaxProfileId == Guid.Empty)
+                if (TaxProfileId <= 0)
                     AddError(nameof(TaxProfileId), "Tax Profile is required");
             }
         }
@@ -293,10 +334,10 @@ namespace POS.UI.Modules.Admin.Categories
 
             try
             {
-                // Get ProductApiService from DI container for SKU/Barcode validation
+                // Get CategoryApiService from DI container
                 if (App.ServiceProvider != null)
                 {
-                    _service = (ProductApiService)App.ServiceProvider.GetService(typeof(ProductApiService));
+                    _service = (CategoryApiService)App.ServiceProvider.GetService(typeof(CategoryApiService));
                 }
                 else
                 {
@@ -317,78 +358,99 @@ namespace POS.UI.Modules.Admin.Categories
             CancelCommand = new RelayCommand(CloseWindow);
             ResetCommand = new RelayCommand(ResetForm);
 
-            // 🔥 Force initial validation
-            ValidateAll();
+            // Prefill for AddSub/Edit
+            if (_editDto != null)
+            {
+                CategoryId = _editDto.CategoryId;
+                ParentCategoryId = _editDto.ParentCategoryId ?? 0;
+                ParentCategoryName = _editDto.ParentCategoryName;
+                CategoryName = _editDto.Name ?? string.Empty;
+                IsCategoryActive = _editDto.IsActive;
+                DisplayOrder = _editDto.DisplayOrder;
+                Code = _editDto.Code;
+                Slug = _editDto.Slug;
+                Description = _editDto.Description;
+            }
 
+            // Force initial validation after prefill (so CategoryId error is not added for Add Root/Add Sub)
+            ValidateAll();
         }
 
         // ---------------- LOAD ----------------
 
         private async void ProductFormView_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadMastersAsync();
-
-            
+            await LoadCategoriesAsync();
+            OnPropertyChanged(nameof(CategoryName));
+            OnPropertyChanged(nameof(IsCategoryActive));
         }
 
-        private async Task LoadMastersAsync()
+        private async Task LoadCategoriesAsync()
         {
             try
             {
-                // Use App.ServiceProvider to get HttpClient if available
-                HttpClient httpClient = null;
-                if (App.ServiceProvider != null)
-                {
-                    try
-                    {
-                        httpClient = (HttpClient)App.ServiceProvider.GetService(typeof(HttpClient));
-                    }
-                    catch
-                    {
-                        // If not available from DI, this form might not need masters
-                    }
-                }
-
-                if (httpClient != null)
-                {
-                    Categories = new ObservableCollection<LookupDto>(
-                        await httpClient.GetFromJsonAsync<List<LookupDto>>("api/categories") ?? new List<LookupDto>());
-
-                    Brands = new ObservableCollection<LookupDto>(
-                        await httpClient.GetFromJsonAsync<List<LookupDto>>("api/brands") ?? new List<LookupDto>());
-
-                    TaxProfiles = new ObservableCollection<LookupDto>(
-                        await httpClient.GetFromJsonAsync<List<LookupDto>>("api/taxprofiles") ?? new List<LookupDto>());
-
-                    OnPropertyChanged(nameof(Categories));
-                    OnPropertyChanged(nameof(Brands));
-                    OnPropertyChanged(nameof(TaxProfiles));
-                }
+                Categories.Clear();
+                Categories.Add(new LookupDto { Id = 0, Name = "-- No Parent --" });
+                var list = await _service.GetAllAsync();
+                foreach (var c in list)
+                    Categories.Add(new LookupDto { Id = c.CategoryId, Name = c.IndentedName });
             }
             catch (Exception ex)
             {
-                POS.UI.Components.DialogService.Error("Error", $"Failed to load master data: {ex.Message}");
+                POS.UI.Components.DialogService.Error("Failed to load categories", ex.Message);
             }
         }
+
+        // Category form does not need product masters; remove
 
         // ---------------- SAVE ----------------
 
         private async Task SaveAsync()
         {
+            ValidateAll();
             if (HasErrors)
             {
+                var messages = _errors.SelectMany(kv => kv.Value).ToList();
+                var text = messages.Count > 0 ? string.Join("\n", messages) : "Please fix validation errors.";
                 FocusFirstInvalidControl();
+                POS.UI.Components.DialogService.Info("Validation", text);
                 return;
             }
 
             _isSaving = true;
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
 
-            
+            var dto = new CategoryDto
+            {
+                CategoryId = CategoryId <= 0 ? 0 : CategoryId,
+                Name = CategoryName ?? string.Empty,
+                ParentCategoryId = ParentCategoryId <= 0 ? null : (int?)ParentCategoryId,
+                IsActive = IsCategoryActive,
+                DisplayOrder = DisplayOrder,
+                Code = Code,
+                Slug = Slug,
+                Description = Description,
+                CreatedAt = DateTime.Now
+            };
 
             try
             {
-                
+                var exists = await _service.CheckNameExistsAsync(dto.Name, dto.ParentCategoryId, _editDto?.CategoryId);
+                if (exists)
+                {
+                    AddError(nameof(CategoryName), "Category name already exists under selected parent");
+                    FocusFirstInvalidControl();
+                    return;
+                }
+                if (_editDto != null && _editDto.CategoryId > 0)
+                {
+                    dto.UpdatedAt = DateTime.Now;
+                    await _service.UpdateAsync(dto);
+                }
+                else
+                {
+                    await _service.AddAsync(dto);
+                }
 
                 DialogResult = true;
                 CloseWindow();
@@ -423,26 +485,16 @@ namespace POS.UI.Modules.Admin.Categories
 
         private void ResetForm()
         {
-            ProductName = string.Empty;
-            SKU = string.Empty;
-            Barcode = string.Empty;
-            Description = string.Empty;
-            Unit = string.Empty;
-            HSNCode = string.Empty;
-
-            CostPrice = 0;
-            SellingPrice = 0;
-            MRP = 0;
-
-            IsWeighable = false;
-            IsManufactured = false;
-            IsTaxInclusive = false;
-            IsProductActive = true;
-
-            CategoryId = Guid.Empty;
-            BrandId = Guid.Empty;
-            TaxProfileId = Guid.Empty;
-
+            CategoryName = string.Empty;
+            ParentCategoryName = string.Empty;
+            ParentCategoryId = 0;
+            OnPropertyChanged(nameof(ParentCategoryId));
+            Code = null;
+            Slug = null;
+            Description = null;
+            ImageUrl = null;
+            DisplayOrder = 0;
+            IsCategoryActive = true;
         }
 
         private void ValidatePrices()
@@ -458,87 +510,14 @@ namespace POS.UI.Modules.Admin.Categories
         }
         private void ValidateAll()
         {
-            // Trigger validation for required fields
-            ProductName = ProductName;
-            HSNCode = HSNCode;
-            CategoryId = CategoryId;
-            TaxProfileId = TaxProfileId;
-
-            CostPrice = CostPrice;
-            SellingPrice = SellingPrice;
-            MRP = MRP;
+            CategoryName = CategoryName;
         }
         public class ApiValidationError
         {
             public Dictionary<string, string[]> Errors { get; set; }
         }
 
-        private async Task ValidateSkuAsync()
-        {
-            _skuCts?.Cancel();
-            _skuCts = new CancellationTokenSource();
-            var token = _skuCts.Token;
-
-            ClearErrors(nameof(SKU));
-
-            try
-            {
-                // 🔥 debounce delay
-                await Task.Delay(400, token);
-
-                if (string.IsNullOrWhiteSpace(SKU))
-                    return;
-
-                bool exists = await _service.CheckSkuExistsAsync(
-                    SKU,
-                    _isEdit ? ProductId : null);
-
-                if (exists)
-                    AddError(nameof(SKU), "SKU already exists");
-            }
-            catch (TaskCanceledException)
-            {
-                // user typed again – ignore
-            }
-            catch
-            {
-                // ignore API failures silently
-            }
-        }
-
-
-        private async Task ValidateBarcodeAsync()
-        {
-            _barcodeCts?.Cancel();
-            _barcodeCts = new CancellationTokenSource();
-            var token = _barcodeCts.Token;
-
-            ClearErrors(nameof(Barcode));
-
-            try
-            {
-                // 🔥 debounce delay
-                await Task.Delay(400, token);
-
-                if (string.IsNullOrWhiteSpace(Barcode))
-                    return;
-
-                bool exists = await _service.CheckBarcodeExistsAsync(
-                    Barcode,
-                    _isEdit ? ProductId : null);
-
-                if (exists)
-                    AddError(nameof(Barcode), "Barcode already exists");
-            }
-            catch (TaskCanceledException)
-            {
-                // ignore
-            }
-            catch
-            {
-                // ignore API failures
-            }
-        }
+        
 
 
 

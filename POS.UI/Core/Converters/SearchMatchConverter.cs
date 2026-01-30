@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using POS.UI.Modules.Admin.Products.Models;
+using POS.Shared.Models;
 
 namespace POS.UI.Core.Converters
 {

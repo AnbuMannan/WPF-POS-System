@@ -1,5 +1,5 @@
+using POS.Shared.Models;
 using POS.UI.Core.Services;
-using POS.UI.Modules.Admin.Products.Models;
 using POS.UI.Modules.Admin.Products.ViewModels;
 using System;
 using System.Windows;

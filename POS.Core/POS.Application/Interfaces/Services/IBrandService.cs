@@ -1,12 +1,13 @@
-﻿using POS.Domain.Entities;
+using POS.Shared.Models;
 
 namespace POS.Application.Interfaces.Services;
 
 public interface IBrandService
 {
-    Task<List<Brand>> GetAllAsync();
-    Task<Brand> GetByIdAsync(Guid id);
-    Task AddAsync(Brand brand);
-    Task UpdateAsync(Brand brand);
-    Task DisableAsync(Guid id);
+    Task<List<BrandDto>> GetAllAsync(bool includeInactive = false);
+    Task<BrandDto> GetByIdAsync(int id);
+    Task AddAsync(BrandDto brand);
+    Task UpdateAsync(BrandDto brand);
+    Task DisableAsync(int id);
+    Task<bool> CheckNameExistsAsync(string name, int? excludeId);
 }

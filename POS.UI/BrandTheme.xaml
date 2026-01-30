@@ -450,8 +450,25 @@
     <!-- ================= COMPATIBILITY STYLES ================= -->
     <Style x:Key="FormTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}" />
     <Style x:Key="FormTextBoxWithValidation" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}" />
-    <Style x:Key="FormComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}" />
-    <Style x:Key="FormComboBoxWithValidation" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}" />
+    <!-- Form ComboBox: global theme, center-aligned text in display and dropdown list -->
+    <Style x:Key="FormComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Margin" Value="0,4,0,4"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <!-- Small separator between each row in dropdown list -->
+                    <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSoft}"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="Padding" Value="8,6,8,6"/>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="FormComboBoxWithValidation" TargetType="ComboBox" BasedOn="{StaticResource FormComboBox}" />
     <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButton}" />
     <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButton}" />
 

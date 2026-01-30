@@ -1,28 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using POS.UI.Core.MVVM;
+using POS.UI.Core.Services;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace POS.UI.Modules.Admin.Brands
 {
-    /// <summary>
-    /// Interaction logic for BrandView.xaml
-    /// </summary>
     public partial class BrandView : UserControl
     {
         public BrandView()
         {
             InitializeComponent();
+            DataContext = new BrandViewModel(App.ServiceProvider.GetService(typeof(BrandApiService)) as BrandApiService);
         }
     }
 }

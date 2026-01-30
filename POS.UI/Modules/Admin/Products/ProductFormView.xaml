@@ -1,4 +1,4 @@
-﻿<Window x:Class="POS.UI.Modules.Admin.Products.ProductFormView"
+<Window x:Class="POS.UI.Modules.Admin.Products.ProductFormView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:helpers="clr-namespace:POS.UI.Core.Helpers"

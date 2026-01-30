@@ -1,8 +1,8 @@
 using POS.UI.Core.Exceptions;
+using POS.Shared.Models;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Common;
-using POS.UI.Modules.Admin.Products.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +13,8 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Text.Json;
+using System.Globalization;
 
 namespace POS.UI.Modules.Admin.Products.ViewModels
 {
@@ -34,7 +36,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
         // ================= VALIDATION ENGINE =================
 
-        private readonly Dictionary<string, List<string>> _errors = new();
+        private readonly Dictionary<string, List<string>> _errors = new(StringComparer.OrdinalIgnoreCase);
 
         public bool HasErrors => _errors.Any();
 
@@ -63,9 +65,44 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
         private void ClearErrors(string propertyName)
         {
+            if (string.IsNullOrWhiteSpace(propertyName))
+                return;
+
+            var cleared = false;
+
             if (_errors.ContainsKey(propertyName))
             {
                 _errors.Remove(propertyName);
+                cleared = true;
+            }
+
+            var camel = char.ToLowerInvariant(propertyName[0]) + propertyName.Substring(1);
+            if (_errors.ContainsKey(camel))
+            {
+                _errors.Remove(camel);
+                cleared = true;
+            }
+
+            var jsonPath = "$." + camel;
+            if (_errors.ContainsKey(jsonPath))
+            {
+                _errors.Remove(jsonPath);
+                cleared = true;
+            }
+
+            if (propertyName.Equals("HSNCode", StringComparison.OrdinalIgnoreCase) && _errors.ContainsKey("hsnCode"))
+            {
+                _errors.Remove("hsnCode");
+                cleared = true;
+            }
+            if (propertyName.Equals("ProductName", StringComparison.OrdinalIgnoreCase) && _errors.ContainsKey("Name"))
+            {
+                _errors.Remove("Name");
+                cleared = true;
+            }
+
+            if (cleared)
+            {
                 ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
                 ((RelayCommand)SaveCommand)?.RaiseCanExecuteChanged();
             }
@@ -73,14 +110,25 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
         // ================= PROPERTIES =================
 
-        private Guid _productId;
-        public Guid ProductId
+        private long _productId;
+        public long ProductId
         {
             get => _productId;
             set
             {
                 _productId = value;
                 OnPropertyChanged(nameof(ProductId));
+            }
+        }
+
+        private byte[] _rowVersion;
+        public byte[] RowVersion
+        {
+            get => _rowVersion;
+            set
+            {
+                _rowVersion = value;
+                OnPropertyChanged(nameof(RowVersion));
             }
         }
 
@@ -220,17 +268,6 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             }
         }
 
-        private bool _isTaxInclusive;
-        public bool IsTaxInclusive
-        {
-            get => _isTaxInclusive;
-            set
-            {
-                _isTaxInclusive = value;
-                OnPropertyChanged(nameof(IsTaxInclusive));
-            }
-        }
-
         private bool _isProductActive = true;
         public bool IsProductActive
         {
@@ -242,20 +279,29 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             }
         }
 
-        private Guid _categoryId;
-        public Guid CategoryId
+        private bool _isTaxInclusive;
+        /// <summary>Whether price is tax-inclusive. Named to avoid conflict with Window/Control properties.</summary>
+        public bool IsTaxInclusive
+        {
+            get => _isTaxInclusive;
+            set
+            {
+                _isTaxInclusive = value;
+                OnPropertyChanged(nameof(IsTaxInclusive));
+            }
+        }
+
+        private int _categoryId;
+        public int CategoryId
         {
             get => _categoryId;
             set
             {
                 _categoryId = value;
                 OnPropertyChanged(nameof(CategoryId));
-
                 ClearErrors(nameof(CategoryId));
-
-                if (!_isEdit && CategoryId == Guid.Empty)
+                if (!_isEdit && CategoryId <= 0)
                     AddError(nameof(CategoryId), "Category is required");
-
             }
         }
 
@@ -267,20 +313,15 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             {
                 _selectedCategory = value;
                 OnPropertyChanged(nameof(SelectedCategory));
-
-                if (SelectedCategory != null)
+                if (value != null)
                 {
-                    CategoryId = SelectedCategory.Id;   // 🔥 Sync to real Guid
+                    CategoryId = (int)value.Id;
                     ClearErrors(nameof(CategoryId));
                 }
-                //else
-                //{
-                //    CategoryId = Guid.Empty;
-                //}
+                else
+                    CategoryId = 0;
             }
         }
-
-        // ================= BRAND SELECTION =================
 
         private LookupDto _selectedBrand;
         public LookupDto SelectedBrand
@@ -290,15 +331,12 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             {
                 _selectedBrand = value;
                 OnPropertyChanged(nameof(SelectedBrand));
-
                 if (SelectedBrand != null)
-                    BrandId = SelectedBrand.Id;
+                    BrandId = (int)SelectedBrand.Id;
                 else
-                    BrandId = Guid.Empty;
+                    BrandId = 0;
             }
         }
-
-        // ================= TAX PROFILE SELECTION =================
 
         private LookupDto _selectedTaxProfile;
         public LookupDto SelectedTaxProfile
@@ -308,17 +346,18 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             {
                 _selectedTaxProfile = value;
                 OnPropertyChanged(nameof(SelectedTaxProfile));
-
-                if (SelectedTaxProfile != null)
-                    TaxProfileId = SelectedTaxProfile.Id;
+                if (value != null)
+                {
+                    TaxProfileId = (int)value.Id;
+                    ClearErrors(nameof(TaxProfileId));
+                }
                 else
-                    TaxProfileId = Guid.Empty;
+                    TaxProfileId = 0;
             }
         }
 
-
-        private Guid _brandId;
-        public Guid BrandId
+        private int _brandId;
+        public int BrandId
         {
             get => _brandId;
             set
@@ -328,18 +367,16 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             }
         }
 
-        private Guid _taxProfileId;
-        public Guid TaxProfileId
+        private int _taxProfileId;
+        public int TaxProfileId
         {
             get => _taxProfileId;
             set
             {
                 _taxProfileId = value;
                 OnPropertyChanged(nameof(TaxProfileId));
-
                 ClearErrors(nameof(TaxProfileId));
-
-                if (TaxProfileId == Guid.Empty)
+                if (TaxProfileId <= 0)
                     AddError(nameof(TaxProfileId), "Tax Profile is required");
             }
         }
@@ -384,8 +421,8 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             if (_editDto != null)
             {
                 LoadProductData(_editDto);
+                await LoadServerProductAsync(_editDto.ProductId);
 
-                // 🔥 FIX: Auto-select Category / Brand / Tax after masters loaded
                 SelectedCategory = Categories.FirstOrDefault(x => x.Id == CategoryId);
                 SelectedBrand = Brands.FirstOrDefault(x => x.Id == BrandId);
                 SelectedTaxProfile = TaxProfiles.FirstOrDefault(x => x.Id == TaxProfileId);
@@ -407,6 +444,17 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
                 // Do NOT validate Category immediately on new form load
                 ValidateAll();
             }
+        }
+
+        private async Task LoadServerProductAsync(long id)
+        {
+            try
+            {
+                var full = await _service.GetByIdAsync(id);
+                if (full?.RowVersion != null)
+                    RowVersion = full.RowVersion;
+            }
+            catch { }
         }
 
 
@@ -431,52 +479,72 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
                 if (httpClient == null)
                     throw new InvalidOperationException("Unable to load master data: HttpClient not available.");
 
-                // 🔥 These now use BaseAddress correctly
-                var categories = await httpClient.GetFromJsonAsync<List<LookupDto>>("api/categories");
-                var brands = await httpClient.GetFromJsonAsync<List<LookupDto>>("api/brands");
-                var taxProfiles = await httpClient.GetFromJsonAsync<List<LookupDto>>("api/taxprofiles");
+                var categoriesJson = await TryGetJsonAsync(httpClient, "api/categories", "api/categories/all");
+                var brandsJson = await TryGetJsonAsync(httpClient, "api/brands", "api/brands/all");
+                var taxProfilesJson = await TryGetJsonAsync(httpClient, "api/taxprofiles", "api/taxprofiles/all");
+                categoriesJson ??= "[]";
+                brandsJson ??= "[]";
+                taxProfilesJson ??= "[]";
 
                 Categories.Clear();
 
                 // 🔥 Add placeholder ONLY in ADD MODE
                 if (!_isEdit)
+                    Categories.Add(new LookupDto { Id = 0, Name = "-- Select Category --" });
+
+                using (var doc = JsonDocument.Parse(categoriesJson))
                 {
-                    Categories.Add(new LookupDto
+                    if (doc.RootElement.ValueKind == JsonValueKind.Array)
                     {
-                        Id = Guid.Empty,
-                        Name = "-- Select Category --"
-                    });
+                        foreach (var el in doc.RootElement.EnumerateArray())
+                        {
+                            var name = GetStringIgnoreCase(el, "name", "Name");
+                            var id = GetLongIgnoreCase(el, "id", "Id", "categoryId", "CategoryId");
+                            if (!string.IsNullOrWhiteSpace(name))
+                                Categories.Add(new LookupDto { Id = id, Name = name });
+                        }
+                    }
                 }
-
-                foreach (var cat in categories ?? new List<LookupDto>())
-                    Categories.Add(cat);
-
 
                 Brands.Clear();
                 if (!_isEdit)
-                {
-                    Brands.Add(new LookupDto
-                    {
-                        Id = Guid.Empty,
-                        Name = "-- Select Brand --"
-                    });
-                }
+                    Brands.Add(new LookupDto { Id = 0, Name = "-- Select Brand --" });
 
-                foreach (var brand in brands ?? new List<LookupDto>())
-                    Brands.Add(brand);
+                using (var doc = JsonDocument.Parse(brandsJson))
+                {
+                    if (doc.RootElement.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var el in doc.RootElement.EnumerateArray())
+                        {
+                            var name = GetStringIgnoreCase(el, "name", "Name");
+                            var id = GetLongIgnoreCase(el, "id", "Id", "brandId", "BrandId");
+                            if (!string.IsNullOrWhiteSpace(name))
+                                Brands.Add(new LookupDto { Id = id, Name = name });
+                        }
+                    }
+                }
 
                 TaxProfiles.Clear();
                 if (!_isEdit)
+                    TaxProfiles.Add(new LookupDto { Id = 0, Name = "-- Select Tax --" });
+
+                using (var doc = JsonDocument.Parse(taxProfilesJson))
                 {
-                    TaxProfiles.Add(new LookupDto
+                    if (doc.RootElement.ValueKind == JsonValueKind.Array)
                     {
-                        Id = Guid.Empty,
-                        Name = "-- Select Tax --"
-                    });
+                        foreach (var el in doc.RootElement.EnumerateArray())
+                        {
+                            var name = GetStringIgnoreCase(el, "name", "Name");
+                            var id = GetLongIgnoreCase(el, "id", "Id", "taxProfileId", "TaxProfileId");
+                            if (!string.IsNullOrWhiteSpace(name))
+                                TaxProfiles.Add(new LookupDto { Id = id, Name = name });
+                        }
+                    }
                 }
 
-                foreach (var tax in taxProfiles ?? new List<LookupDto>())
-                    TaxProfiles.Add(tax);
+                SelectedCategory = Categories.FirstOrDefault(x => x.Id == CategoryId);
+                SelectedBrand = Brands.FirstOrDefault(x => x.Id == BrandId);
+                SelectedTaxProfile = TaxProfiles.FirstOrDefault(x => x.Id == TaxProfileId);
             }
             catch (Exception ex)
             {
@@ -484,6 +552,55 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             }
         }
 
+        private static string GetStringIgnoreCase(JsonElement el, params string[] names)
+        {
+            foreach (var prop in el.EnumerateObject())
+            {
+                foreach (var n in names)
+                {
+                    if (string.Equals(prop.Name, n, StringComparison.OrdinalIgnoreCase))
+                        return prop.Value.GetString();
+                }
+            }
+            return null;
+        }
+
+        private static long GetLongIgnoreCase(JsonElement el, params string[] names)
+        {
+            foreach (var prop in el.EnumerateObject())
+            {
+                foreach (var n in names)
+                {
+                    if (string.Equals(prop.Name, n, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (prop.Value.ValueKind == JsonValueKind.Number && prop.Value.TryGetInt64(out var l))
+                            return l;
+                        if (prop.Value.ValueKind == JsonValueKind.String && long.TryParse(prop.Value.GetString(), out var parsed))
+                            return parsed;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        private static async Task<string?> TryGetJsonAsync(HttpClient httpClient, params string[] urls)
+        {
+            foreach (var url in urls)
+            {
+                try
+                {
+                    var resp = await httpClient.GetAsync(url);
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        return await resp.Content.ReadAsStringAsync();
+                    }
+                }
+                catch
+                {
+                }
+            }
+            return null;
+        }
 
         private void LoadProductData(ProductDto dto)
         {
@@ -493,7 +610,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             Barcode = dto.Barcode;
             Description = dto.Description;
             Unit = dto.Unit;
-            HSNCode = dto.HSNCode;
+            HSNCode = dto.HSNCode ?? string.Empty;
 
             CostPrice = dto.CostPrice;
             SellingPrice = dto.SellingPrice;
@@ -501,12 +618,12 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
             IsWeighable = dto.IsWeighable;
             IsManufactured = dto.IsManufactured;
-            IsTaxInclusive = dto.IsTaxInclusive;
             IsProductActive = dto.IsActive;
 
             CategoryId = dto.CategoryId;
-            BrandId = dto.BrandId;
+            BrandId = dto.BrandId ?? 0;
             TaxProfileId = dto.TaxProfileId;
+            RowVersion = dto.RowVersion;
         }
 
         // ================= VALIDATION =================
@@ -611,7 +728,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
             var dto = new ProductDto
             {
-                ProductId = _isEdit ? ProductId : Guid.NewGuid(),
+                ProductId = _isEdit ? ProductId : 0,
                 Name = ProductName,
                 SKU = SKU,
                 Barcode = Barcode,
@@ -620,7 +737,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
                 HSNCode = HSNCode,
 
                 CategoryId = CategoryId,
-                BrandId = BrandId,
+                BrandId = BrandId <= 0 ? null : BrandId,
                 TaxProfileId = TaxProfileId,
 
                 CostPrice = CostPrice,
@@ -629,8 +746,8 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
                 IsWeighable = IsWeighable,
                 IsManufactured = IsManufactured,
-                IsTaxInclusive = IsTaxInclusive,
                 IsActive = IsProductActive,
+                RowVersion = _isEdit ? RowVersion : null,
             };
 
             try
@@ -658,10 +775,40 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
                 {
                     foreach (var kv in vex.Error.Errors)
                     {
-                        ClearErrors(kv.Key);
 
-                        foreach (var msg in kv.Value)
-                            AddError(kv.Key, msg);
+                        var key = kv.Key ?? string.Empty;
+                        var messages = kv.Value ?? Array.Empty<string>();
+
+                        if (key.Equals("product", StringComparison.OrdinalIgnoreCase) ||
+                            key.Contains("updatedAt", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var text = string.Join("\n", messages);
+                            if (!string.IsNullOrWhiteSpace(text))
+                                POS.UI.Components.DialogService.Error("Validation Error", text);
+                            continue;
+                        }
+
+                        if (key.StartsWith("product.", StringComparison.OrdinalIgnoreCase))
+                            key = key.Substring("product.".Length);
+
+                        if (key.StartsWith("$.", StringComparison.Ordinal))
+                            key = key.Substring(2);
+
+                        if (string.Equals(key, "hsnCode", StringComparison.OrdinalIgnoreCase))
+                            key = "HSNCode";
+
+                        if (string.Equals(key, "taxProfileId", StringComparison.OrdinalIgnoreCase))
+                            key = "TaxProfileId";
+
+                        if (string.Equals(key, "categoryId", StringComparison.OrdinalIgnoreCase))
+                            key = "CategoryId";
+                        
+                        if (string.Equals(key, "Name", StringComparison.OrdinalIgnoreCase))
+                            key = "ProductName";
+
+                        ClearErrors(key);
+                        foreach (var msg in messages)
+                            AddError(key, msg);
                     }
                 }
             }
@@ -703,9 +850,14 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             IsTaxInclusive = false;
             IsProductActive = true;
 
-            CategoryId = Guid.Empty;
-            BrandId = Guid.Empty;
-            TaxProfileId = Guid.Empty;
+            CategoryId = 0;
+            BrandId = 0;
+            TaxProfileId = 0;
+
+            // Clear dropdown selections so ComboBoxes show no selection
+            SelectedCategory = null;
+            SelectedBrand = null;
+            SelectedTaxProfile = null;
 
             _errors.Clear();
         }

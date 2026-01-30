@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
@@ -34,6 +34,9 @@ namespace POS.UI.Infrastructure
 
             // Add Logging
             services.AddLogging(config => config.AddSerilog());
+
+            // Register Authentication Header Handler
+            //services.AddTransient<AuthenticationHeaderHandler>();
 
             // Configure HttpClients
             ConfigureHttpClients(services, configuration);
@@ -110,6 +113,7 @@ namespace POS.UI.Infrastructure
                 client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
                 client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
             });
+            //.AddHttpMessageHandler<AuthenticationHeaderHandler>();
 
             var logger = Log.ForContext("Component", "HttpClientConfiguration");
             logger.Information("Configuring HttpClient: BaseUrl={BaseUrl}, Timeout={TimeoutSeconds}s, Retries={RetryCount}, CB Threshold={CBThreshold}", 
@@ -166,6 +170,7 @@ namespace POS.UI.Infrastructure
                     client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
                     client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
                 })
+                //.AddHttpMessageHandler<AuthenticationHeaderHandler>()
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(circuitBreakerPolicy);
 
@@ -177,6 +182,43 @@ namespace POS.UI.Infrastructure
                     client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
                     client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
                 })
+                //.AddHttpMessageHandler<AuthenticationHeaderHandler>()
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for CustomerApiService
+            services
+                .AddHttpClient<CustomerApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                //.AddHttpMessageHandler<AuthenticationHeaderHandler>()
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for BrandApiService
+            services
+                .AddHttpClient<BrandApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                //.AddHttpMessageHandler<AuthenticationHeaderHandler>()
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for TaxProfileApiService
+            services
+                .AddHttpClient<TaxProfileApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                //.AddHttpMessageHandler<AuthenticationHeaderHandler>()
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(circuitBreakerPolicy);
 

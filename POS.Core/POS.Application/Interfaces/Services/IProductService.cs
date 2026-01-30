@@ -1,18 +1,19 @@
-﻿using POS.Domain.Entities;
+using POS.Domain.Entities;
+using POS.Shared.Models;
 
 namespace POS.Application.Interfaces.Services;
 
 public interface IProductService
 {
-    Task<Product> GetByIdAsync(Guid id);
-    Task<Product> GetByBarcodeAsync(string barcode);
-    Task<List<Product>> SearchAsync(string keyword);
-    Task AddAsync(Product product);
-    Task UpdateAsync(Product product);
-    Task DisableAsync(Guid id);
-    Task<List<Product>> GetAllAsync(bool showInactive);
-    Task<bool> SKUExistsAsync(string sku, Guid? excludeId);
-    Task<bool> BarcodeExistsAsync(string barcode, Guid? excludeId);
+    Task<ProductDto> GetByIdAsync(long id);
+    Task<ProductDto> GetByBarcodeAsync(string barcode);
+    Task<List<ProductDto>> SearchAsync(string keyword);
+    Task AddAsync(ProductDto product);
+    Task UpdateAsync(ProductDto product);
+    Task DisableAsync(long id);
+    Task<List<ProductDto>> GetAllAsync(bool showInactive);
+    Task<bool> SKUExistsAsync(string sku, long? excludeId);
+    Task<bool> BarcodeExistsAsync(string barcode, long? excludeId);
 
 }
 

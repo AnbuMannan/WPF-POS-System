@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using POS.Application.Exceptions;
 using POS.Application.Interfaces.Services;
-using POS.Domain.Entities;
+using POS.Shared.Models;
 
 [ApiController]
 [Route("api/products")]
@@ -15,7 +15,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
+    public async Task<IActionResult> Get(long id)
         => Ok(await _service.GetByIdAsync(id));
 
     [HttpGet("barcode/{code}")]
@@ -27,7 +27,7 @@ public class ProductsController : ControllerBase
         => Ok(await _service.SearchAsync(q));
 
     [HttpPost]
-    public async Task<IActionResult> Create(Product product)
+    public async Task<IActionResult> Create(ProductDto product)
     {
         try
         {
@@ -53,7 +53,7 @@ public class ProductsController : ControllerBase
 
 
     [HttpPut]
-    public async Task<IActionResult> Update(Product product)
+    public async Task<IActionResult> Update(ProductDto product)
     {
         try
         {
@@ -79,7 +79,7 @@ public class ProductsController : ControllerBase
 
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Disable(Guid id)
+    public async Task<IActionResult> Disable(long id)
     {
         await _service.DisableAsync(id);
         return Ok();
@@ -93,14 +93,14 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("exists/sku")]
-    public async Task<IActionResult> CheckSku(string sku, Guid? excludeId)
+    public async Task<IActionResult> CheckSku(string sku, long? excludeId)
     {
         bool exists = await _service.SKUExistsAsync(sku, excludeId);
         return Ok(exists);
     }
 
     [HttpGet("exists/barcode")]
-    public async Task<IActionResult> CheckBarcode(string barcode, Guid? excludeId)
+    public async Task<IActionResult> CheckBarcode(string barcode, long? excludeId)
     {
         bool exists = await _service.BarcodeExistsAsync(barcode, excludeId);
         return Ok(exists);

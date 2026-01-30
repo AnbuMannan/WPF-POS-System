@@ -1,10 +1,12 @@
-﻿using System;
+namespace POS.UI.Modules.Admin.Common;
 
-namespace POS.UI.Modules.Admin.Common   // 👈 keep same namespace as ProductDto for simplicity
+/// <summary>
+/// Lookup item for ComboBox (Category, Brand, TaxProfile, etc.).
+/// Id is long so it can hold int (CategoryId, BrandId, TaxProfileId) or long (ProductId).
+/// Use 0 for "no selection" / "no parent" where applicable.
+/// </summary>
+public class LookupDto
 {
-    public class LookupDto
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-    }
+    public long Id { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

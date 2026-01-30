@@ -1,0 +1,21 @@
+---
+description: Guidelines for model selection to preserve Pro quota
+globs: **/*
+alwaysApply: true
+---
+
+# AI Quota & Model Strategy
+
+To optimize the use of the 500 Fast Requests quota:
+
+## 1. Complexity Assessment
+Before every task, the AI MUST categorize the request:
+- **COMPLEX:** Architectural changes, cross-project logic (e.g., HAL setup), or deep debugging. 
+- **SIMPLE:** Boilerplate, unit tests, documentation, or minor UI tweaks.
+
+## 2. Model Recommendations
+- If **COMPLEX**: Remind the user: "This is a complex task. Using Claude 3.5 Sonnet or GPT-4o is recommended for accuracy."
+- If **SIMPLE**: Remind the user: "This task is straightforward. Switching to 'cursor-small' or 'gpt-4o-mini' will save your fast request quota."
+
+## 3. Quota Awareness
+- Do not use high-reasoning models for simple file-renaming or adding comments unless explicitly requested.

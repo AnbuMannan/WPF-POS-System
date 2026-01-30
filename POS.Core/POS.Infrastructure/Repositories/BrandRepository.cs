@@ -1,40 +1,55 @@
-﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using POS.Application.Interfaces.Repositories;
 using POS.Domain.Entities;
-using System.Data;
+using POS.Infrastructure.Data;
 
 namespace POS.Infrastructure.Repositories;
 
 public class BrandRepository : IBrandRepository
 {
-    private readonly IDbConnection _db;
+    private readonly PosDbContext _db;
 
-    public BrandRepository(IDbConnection db)
+    public BrandRepository(PosDbContext db) => _db = db;
+
+    public async Task<List<Brand>> GetAllAsync(bool includeInactive = false)
     {
-        _db = db;
+        IQueryable<Brand> query = _db.Brands.AsNoTracking().OrderBy(b => b.Name);
+        if (includeInactive)
+            query = _db.Brands.IgnoreQueryFilters().AsNoTracking().OrderBy(b => b.Name);
+        return await query.ToListAsync();
     }
 
-    public async Task<List<Brand>> GetAllAsync()
-        => (await _db.QueryAsync<Brand>(
-            "SELECT BrandId AS Id,Name FROM Brands WHERE IsActive=1 ORDER BY Name")).ToList();
-
-    public async Task<Brand> GetByIdAsync(Guid id)
-        => await _db.QueryFirstOrDefaultAsync<Brand>(
-            "SELECT * FROM Brands WHERE BrandId=@id", new { id });
+    public async Task<Brand> GetByIdAsync(int id)
+        => await _db.Brands
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(b => b.BrandId == id);
 
     public async Task AddAsync(Brand brand)
     {
-        await _db.ExecuteAsync(
-            "INSERT INTO Brands(BrandId,Name,IsActive) VALUES(@BrandId,@Name,@IsActive)", brand);
+        _db.Brands.Add(brand);
+        await _db.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Brand brand)
     {
-        await _db.ExecuteAsync(
-            "UPDATE Brands SET Name=@Name WHERE BrandId=@BrandId", brand);
+        _db.Entry(brand).Property(b => b.CreatedAt).IsModified = false;
+        _db.Brands.Update(brand);
+        await _db.SaveChangesAsync();
     }
 
-    public async Task DisableAsync(Guid id)
-        => await _db.ExecuteAsync(
-            "UPDATE Brands SET IsActive=0 WHERE BrandId=@id", new { id });
+    public async Task DisableAsync(int id)
+    {
+        var brand = await _db.Brands.FirstOrDefaultAsync(b => b.BrandId == id);
+        if (brand == null) return;
+        brand.IsActive = false;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<bool> CheckNameExistsAsync(string name, int? excludeId)
+    {
+        var query = _db.Brands.AsNoTracking().Where(b => b.Name == name && b.IsActive);
+        if (excludeId != null) query = query.Where(b => b.BrandId != excludeId);
+        return await query.AnyAsync();
+    }
 }

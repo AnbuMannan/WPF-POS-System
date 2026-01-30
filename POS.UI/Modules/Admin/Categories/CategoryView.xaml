@@ -1,4 +1,4 @@
-﻿<!-- =============================
+<!-- =============================
      CategoryView.xaml (FINAL – COMPILE SAFE)
      Flat List Screen – Option A
      Uses only EXISTING styles from your project
@@ -29,15 +29,32 @@
                              Margin="0,0,8,0"
                              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
+                    <Button Content="Clear"
+                            Width="60"
+                            Margin="0,0,6,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Command="{Binding ClearCommand}" />
+
                     <Button Content="Search"
                             Width="90"
                             Margin="0,0,12,0"
-                            Style="{StaticResource PrimaryButtonStyle}"
+                            Style="{StaticResource SuccessButtonStyle}"
                             Command="{Binding SearchCommand}" />
+
+                    <CheckBox Content="Show Inactive"
+                              Margin="10,0,0,0"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding ShowInactive, Mode=TwoWay}" />
                 </StackPanel>
 
                 <!-- Right : Actions -->
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+
+                    <Button Content="Refresh"
+                            Width="90"
+                            Margin="0,0,6,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Command="{Binding RefreshCommand}" />
 
                     <Button Content="Add Root"
                             Width="100"
@@ -83,13 +100,21 @@
                                         Width="2*"
                                         Binding="{Binding Name}" />
 
+                    <DataGridTextColumn Header="Code"
+                                        Width="*"
+                                        Binding="{Binding Code}" />
+
                     <DataGridTextColumn Header="Parent"
                                         Width="2*"
-                                        Binding="{Binding ParentName}" />
+                                        Binding="{Binding ParentCategoryName}" />
 
                     <DataGridTextColumn Header="Level"
                                         Width="*"
                                         Binding="{Binding Level}" />
+
+                    <DataGridTextColumn Header="Order"
+                                        Width="*"
+                                        Binding="{Binding DisplayOrder}" />
 
                     <DataGridCheckBoxColumn Header="Active"
                                              Width="*"

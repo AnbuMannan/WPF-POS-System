@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using POS.Application.Exceptions;
 using POS.Application.Interfaces.Services;
-using POS.Domain.Entities;
+using POS.Shared.Models;
+
+namespace POS.API.Controllers;
 
 [ApiController]
 [Route("api/taxprofiles")]
@@ -14,29 +17,51 @@ public class TaxProfilesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
-        => Ok(await _service.GetAllAsync());
+    public async Task<IActionResult> GetAll([FromQuery] bool includeInactive = false)
+        => Ok(await _service.GetAllAsync(includeInactive));
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
+    public async Task<IActionResult> Get(int id)
         => Ok(await _service.GetByIdAsync(id));
 
     [HttpPost]
-    public async Task<IActionResult> Create(TaxProfile taxProfile)
+    public async Task<IActionResult> Create(TaxProfileDto dto)
     {
-        await _service.AddAsync(taxProfile);
-        return Ok();
+        try
+        {
+            await _service.AddAsync(dto);
+            return Ok();
+        }
+        catch (ValidationException vex)
+        {
+            return BadRequest(new { errors = new Dictionary<string, string[]> { { vex.Field, new[] { vex.Message } } } });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(TaxProfile taxProfile)
+    public async Task<IActionResult> Update(TaxProfileDto dto)
     {
-        await _service.UpdateAsync(taxProfile);
-        return Ok();
+        try
+        {
+            await _service.UpdateAsync(dto);
+            return Ok();
+        }
+        catch (ValidationException vex)
+        {
+            return BadRequest(new { errors = new Dictionary<string, string[]> { { vex.Field, new[] { vex.Message } } } });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Disable(Guid id)
+    public async Task<IActionResult> Disable(int id)
     {
         await _service.DisableAsync(id);
         return Ok();

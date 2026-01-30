@@ -1,47 +1,53 @@
-﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace POS.Domain.Entities
+namespace POS.Domain.Entities;
+
+public class Category
 {
-    /// <summary>
-    /// Category Master Entity (Supports Hierarchy + HSN + Audit)
-    /// </summary>
-    public class Category
-    {
-        // ================= PRIMARY =================
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int CategoryId { get; set; }
 
-        public Guid Id { get; set; }
+    [Required]
+    [MaxLength(150)]
+    public string Name { get; set; } = string.Empty;
 
-        public string Name { get; set; } = string.Empty;
+    public int? ParentCategoryId { get; set; }
 
-        // ================= HIERARCHY =================
+    [ForeignKey(nameof(ParentCategoryId))]
+    public Category? ParentCategory { get; set; }
 
-        /// <summary>
-        /// Parent Category Id (NULL = Root Category)
-        /// </summary>
-        public Guid? ParentCategoryId { get; set; }
+    public ICollection<Category> Children { get; set; } = new List<Category>();
 
-        // Optional navigation property (if using EF later)
-        // public Category? ParentCategory { get; set; }
+    [MaxLength(50)]
+    public string? Code { get; set; }
 
-        // ================= HSN =================
+    [MaxLength(150)]
+    public string? Slug { get; set; }
 
-        /// <summary>
-        /// Optional HSN mapped at category / subcategory level
-        /// </summary>
-        public string? HSNCode { get; set; }
+    [MaxLength(500)]
+    public string? Description { get; set; }
 
-        // ================= ORDERING =================
+    public int Level { get; set; } = 1;
 
-        public int DisplayOrder { get; set; }
+    [MaxLength(20)]
+    public string? HSNCode { get; set; }
 
-        // ================= STATUS =================
+    public int DisplayOrder { get; set; }
 
-        public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
 
-        // ================= AUDIT =================
+    [MaxLength(50)]
+    public string? CreatedBy { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public DateTime? UpdatedAt { get; set; }
-    }
+    [MaxLength(50)]
+    public string? UpdatedBy { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    // Navigation
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }

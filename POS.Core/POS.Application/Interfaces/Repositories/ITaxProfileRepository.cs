@@ -1,12 +1,12 @@
-﻿using POS.Domain.Entities;
+using POS.Domain.Entities;
 
 namespace POS.Application.Interfaces.Repositories;
 
 public interface ITaxProfileRepository
 {
-    Task<List<TaxProfile>> GetAllAsync();
-    Task<TaxProfile> GetByIdAsync(Guid id);
+    Task<List<TaxProfile>> GetAllAsync(bool includeInactive = false);
+    Task<TaxProfile> GetByIdAsync(int id);
     Task AddAsync(TaxProfile taxProfile);
     Task UpdateAsync(TaxProfile taxProfile);
-    Task DisableAsync(Guid id);
+    Task DisableAsync(int id);
 }

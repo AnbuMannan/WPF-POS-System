@@ -1,68 +1,68 @@
-﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using POS.Application.Interfaces.Repositories;
 using POS.Domain.Entities;
-using System.Data;
+using POS.Infrastructure.Data;
 
 namespace POS.Infrastructure.Repositories;
 
 public class CategoryRepository : ICategoryRepository
 {
-    private readonly IDbConnection _db;
+    private readonly PosDbContext _db;
 
-    public CategoryRepository(IDbConnection db)
+    public CategoryRepository(PosDbContext db) => _db = db;
+
+    public async Task<List<Category>> GetAllAsync(bool includeInactive = false)
     {
-        _db = db;
+        IQueryable<Category> query = _db.Categories
+            .Include(c => c.ParentCategory)
+            .AsNoTracking()
+            .OrderBy(c => c.DisplayOrder);
+        if (includeInactive)
+            query = _db.Categories
+                .IgnoreQueryFilters()
+                .Include(c => c.ParentCategory)
+                .AsNoTracking()
+                .OrderBy(c => c.DisplayOrder);
+        return await query.ToListAsync();
     }
 
-    public async Task<List<Category>> GetAllAsync()
-        => (await _db.QueryAsync<Category>(
-            "SELECT CategoryId AS Id,Name FROM Categories WHERE IsActive=1 ORDER BY DisplayOrder")).ToList();
-
-    public async Task<Category> GetByIdAsync(Guid id)
-        => await _db.QueryFirstOrDefaultAsync<Category>(
-            "SELECT * FROM Categories WHERE CategoryId=@id", new { id });
+    public async Task<Category> GetByIdAsync(int id)
+        => await _db.Categories
+            .Include(c => c.ParentCategory)
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.CategoryId == id);
 
     public async Task AddAsync(Category category)
     {
-        await _db.ExecuteAsync(@"
-        INSERT INTO Categories(CategoryId,Name,ParentCategoryId,DisplayOrder,IsActive)
-        VALUES(@CategoryId,@Name,@ParentCategoryId,@DisplayOrder,@IsActive)", category);
+        _db.Categories.Add(category);
+        await _db.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Category category)
     {
-        await _db.ExecuteAsync(@"
-        UPDATE Categories SET
-        Name=@Name,
-        ParentCategoryId=@ParentCategoryId,
-        DisplayOrder=@DisplayOrder
-        WHERE CategoryId=@CategoryId", category);
+        _db.Entry(category).Property(c => c.CreatedAt).IsModified = false;
+        _db.Categories.Update(category);
+        await _db.SaveChangesAsync();
     }
 
-    public async Task DisableAsync(Guid id)
-        => await _db.ExecuteAsync(
-            "UPDATE Categories SET IsActive=0 WHERE CategoryId=@id", new { id });
-
-    public async Task<bool> CheckNameExistsAsync(string name, Guid? parentCategoryId, Guid? excludeId)
+    public async Task DisableAsync(int id)
     {
-        var sql = @"
-        SELECT COUNT(1)
-        FROM Categories
-        WHERE Name = @name
-          AND IFNULL(ParentCategoryId, '00000000-0000-0000-0000-000000000000') =
-              IFNULL(@parentCategoryId, '00000000-0000-0000-0000-000000000000')
-          AND IsActive = 1
-          AND (@excludeId IS NULL OR CategoryId <> @excludeId)";
-
-        var count = await _db.ExecuteScalarAsync<int>(sql, new
-        {
-            name,
-            parentCategoryId,
-            excludeId
-        });
-
-        return count > 0;
+        var category = await _db.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
+        if (category == null) return;
+        category.IsActive = false;
+        await _db.SaveChangesAsync();
     }
 
-
+    public async Task<bool> CheckNameExistsAsync(string name, int? parentCategoryId, int? excludeId)
+    {
+        var query = _db.Categories.AsNoTracking().Where(c => c.Name == name && c.IsActive);
+        if (parentCategoryId == null)
+            query = query.Where(c => c.ParentCategoryId == null);
+        else
+            query = query.Where(c => c.ParentCategoryId == parentCategoryId);
+        if (excludeId != null)
+            query = query.Where(c => c.CategoryId != excludeId);
+        return await query.AnyAsync();
+    }
 }

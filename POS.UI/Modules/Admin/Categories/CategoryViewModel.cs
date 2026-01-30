@@ -1,4 +1,4 @@
-using POS.UI.Core.Models;
+using POS.Shared.Models;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Categories;
@@ -15,6 +15,7 @@ namespace POS.UI.Modules.Admin.Categories
     public class CategoryViewModel : ViewModelBase
     {
         private readonly CategoryApiService _service;
+        private readonly System.Windows.Threading.DispatcherTimer _searchTimer;
 
         // ================= COLLECTIONS =================
 
@@ -50,6 +51,21 @@ namespace POS.UI.Modules.Admin.Categories
             {
                 _searchText = value;
                 OnPropertyChanged();
+                // Live search with debounce (search while typing)
+                _searchTimer.Stop();
+                _searchTimer.Start();
+            }
+        }
+
+        private bool _showInactive;
+        public bool ShowInactive
+        {
+            get => _showInactive;
+            set
+            {
+                _showInactive = value;
+                OnPropertyChanged();
+                _ = LoadAsync(); // Reload from API with includeInactive so list has correct data
             }
         }
 
@@ -57,6 +73,8 @@ namespace POS.UI.Modules.Admin.Categories
 
         public ICommand LoadCommand { get; }
         public ICommand SearchCommand { get; }
+        public ICommand RefreshCommand { get; }
+        public ICommand ClearCommand { get; }
         public ICommand AddRootCommand { get; }
         public ICommand AddSubCommand { get; }
         public ICommand EditCommand { get; }
@@ -68,12 +86,24 @@ namespace POS.UI.Modules.Admin.Categories
         {
             _service = service;
 
+            _searchTimer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(400)
+            };
+            _searchTimer.Tick += (s, e) =>
+            {
+                _searchTimer.Stop();
+                ApplyDisplayFilter();
+            };
+
             LoadCommand = new RelayCommand(async () => await LoadAsync());
             SearchCommand = new RelayCommand(ApplySearch);
+            RefreshCommand = new RelayCommand(async () => await LoadAsync());
+            ClearCommand = new RelayCommand(ClearSearch);
 
-            AddRootCommand = new RelayCommand(AddRoot);
-            AddSubCommand = new RelayCommand(AddSub, () => SelectedCategory != null);
-            EditCommand = new RelayCommand(Edit, () => SelectedCategory != null);
+            AddRootCommand = new RelayCommand(async () => await AddRootAsync());
+            AddSubCommand = new RelayCommand(async () => await AddSubAsync(), () => SelectedCategory != null);
+            EditCommand = new RelayCommand(async () => await EditAsync(), () => SelectedCategory != null);
             DisableCommand = new RelayCommand(async () => await DisableAsync(), () => SelectedCategory != null);
 
             // 🔥 Auto load when screen opens
@@ -86,13 +116,20 @@ namespace POS.UI.Modules.Admin.Categories
         {
             try
             {
-                var list = await _service.GetAllAsync();
+                var list = await _service.GetAllAsync(ShowInactive);
 
-                _allCategories = list;
+                // Fill ParentCategoryName if API didn't supply it
+                var nameById = list.Where(c => c.CategoryId > 0)
+                                   .DistinctBy(c => c.CategoryId)
+                                   .ToDictionary(c => c.CategoryId, c => c.Name);
+                foreach (var c in list)
+                {
+                    if (string.IsNullOrWhiteSpace(c.ParentCategoryName) && c.ParentCategoryId.HasValue && nameById.TryGetValue(c.ParentCategoryId.Value, out var pname))
+                        c.ParentCategoryName = pname;
+                }
 
-                Categories.Clear();
-                foreach (var item in list)
-                    Categories.Add(item);
+                _allCategories = list ?? new List<CategoryDto>();
+                ApplyDisplayFilter();
             }
             catch (Exception ex)
             {
@@ -100,44 +137,46 @@ namespace POS.UI.Modules.Admin.Categories
             }
         }
 
-        // ================= SEARCH =================
+        // ================= SEARCH & DISPLAY FILTER =================
 
-        private void ApplySearch()
+        private void ApplySearch() => ApplyDisplayFilter();
+
+        private void ClearSearch()
         {
-            if (string.IsNullOrWhiteSpace(SearchText))
-            {
-                Categories.Clear();
-                foreach (var item in _allCategories)
-                    Categories.Add(item);
+            SearchText = string.Empty;
+            ApplyDisplayFilter();
+        }
 
-                return;
-            }
-
-            var filtered = _allCategories
-                .Where(x => x.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-                         || (x.ParentCategoryName != null && x.ParentCategoryName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+        private void ApplyDisplayFilter()
+        {
+            var filtered = _allCategories.AsEnumerable();
+            if (!ShowInactive)
+                filtered = filtered.Where(x => x.IsActive);
+            if (!string.IsNullOrWhiteSpace(SearchText))
+                filtered = filtered.Where(x => x.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                    || (x.ParentCategoryName != null && x.ParentCategoryName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)));
 
             Categories.Clear();
-            foreach (var item in filtered)
+            foreach (var item in filtered.ToList())
                 Categories.Add(item);
         }
 
         // ================= ADD ROOT =================
 
-        private void AddRoot()
+        private async Task AddRootAsync()
         {
             var form = new CategoryFormView(null);   // 🔥 Root category
-
+            form.Owner = Application.Current?.MainWindow;
             if (form.ShowDialog() == true)
             {
-                _ = LoadAsync();   // 🔥 Refresh list after save
+                await LoadAsync();   // 🔥 Refresh list after save
+                ApplySearch();       // 🔥 Respect current search filter
             }
         }
 
         // ================= ADD SUB =================
 
-        private void AddSub()
+        private async Task AddSubAsync()
         {
             if (SelectedCategory == null)
                 return;
@@ -150,26 +189,28 @@ namespace POS.UI.Modules.Admin.Categories
             };
 
             var form = new CategoryFormView(dto);
-
+            form.Owner = Application.Current?.MainWindow;
             if (form.ShowDialog() == true)
             {
-                _ = LoadAsync();
+                await LoadAsync();
+                ApplySearch();
             }
         }
 
         // ================= EDIT =================
 
-        private void Edit()
+        private async Task EditAsync()
         {
             if (SelectedCategory == null)
                 return;
 
             // 🔥 Pass full selected DTO
             var form = new CategoryFormView(SelectedCategory);
-
-             if (form.ShowDialog() == true)
+            form.Owner = Application.Current?.MainWindow;
+            if (form.ShowDialog() == true)
             {
-                _ = LoadAsync();
+                await LoadAsync();
+                ApplySearch();
             }
         }
 

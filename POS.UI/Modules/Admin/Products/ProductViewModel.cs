@@ -1,6 +1,6 @@
+using POS.Shared.Models;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
-using POS.UI.Modules.Admin.Products.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -92,7 +92,7 @@ namespace POS.UI.Modules.Admin.Products
         {
             try
             {
-                Guid? selectedId = SelectedProduct?.ProductId;
+                long? selectedId = SelectedProduct?.ProductId;
                 var list = await _service.GetAllAsync(ShowInactive);
 
                 Products.Clear();

@@ -1,15 +1,15 @@
-﻿using POS.Domain.Entities;
+using POS.Domain.Entities;
 
 namespace POS.Application.Interfaces.Repositories;
 
 public interface ICategoryRepository
 {
-    Task<List<Category>> GetAllAsync();
-    Task<Category> GetByIdAsync(Guid id);
+    Task<List<Category>> GetAllAsync(bool includeInactive = false);
+    Task<Category> GetByIdAsync(int id);
     Task AddAsync(Category category);
     Task UpdateAsync(Category category);
-    Task DisableAsync(Guid id);
-    Task<bool> CheckNameExistsAsync(string name, Guid? parentCategoryId, Guid? excludeId);
+    Task DisableAsync(int id);
+    Task<bool> CheckNameExistsAsync(string name, int? parentCategoryId, int? excludeId);
 
 
 }

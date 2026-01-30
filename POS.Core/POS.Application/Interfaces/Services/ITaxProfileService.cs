@@ -1,12 +1,12 @@
-﻿using POS.Domain.Entities;
+using POS.Shared.Models;
 
 namespace POS.Application.Interfaces.Services;
 
 public interface ITaxProfileService
 {
-    Task<List<TaxProfile>> GetAllAsync();
-    Task<TaxProfile> GetByIdAsync(Guid id);
-    Task AddAsync(TaxProfile taxProfile);
-    Task UpdateAsync(TaxProfile taxProfile);
-    Task DisableAsync(Guid id);
+    Task<List<TaxProfileDto>> GetAllAsync(bool includeInactive = false);
+    Task<TaxProfileDto> GetByIdAsync(int id);
+    Task AddAsync(TaxProfileDto dto);
+    Task UpdateAsync(TaxProfileDto dto);
+    Task DisableAsync(int id);
 }
