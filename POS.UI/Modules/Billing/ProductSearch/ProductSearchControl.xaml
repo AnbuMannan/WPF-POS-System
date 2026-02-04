@@ -1,0 +1,69 @@
+<UserControl x:Class="POS.UI.Modules.Billing.ProductSearch.ProductSearchControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="800">
+    <Grid>
+        <Border Background="White" BorderBrush="{StaticResource BrushBorderSoft}" BorderThickness="2" CornerRadius="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="🔍" FontSize="24" VerticalAlignment="Center" Margin="16,0,8,0" Opacity="0.5"/>
+
+                <TextBox x:Name="SearchBox" Grid.Column="1"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         FontSize="16" BorderThickness="0" Background="Transparent"
+                         VerticalContentAlignment="Center" Padding="8,6"
+                         TextChanged="SearchBox_TextChanged"
+                         PreviewKeyDown="SearchBox_PreviewKeyDown"/>
+
+                <TextBlock Grid.Column="1" Text="Search Product (Code, Name, Barcode) or Scan..." 
+                           FontSize="16" Foreground="#AAAAAA" IsHitTestVisible="False"
+                           VerticalAlignment="Center" Margin="12,0,12,0" Padding="0,6"
+                           Visibility="{Binding Text, ElementName=SearchBox, Converter={StaticResource StringEmptyToVisibility}}"/>
+
+                <Button Grid.Column="2" Content="Add (Enter)" Margin="8" Padding="16,8" FontSize="14" FontWeight="SemiBold"
+                        Style="{StaticResource PrimaryButton}" Click="AddButton_Click"
+                        IsEnabled="{Binding SelectedProduct, Converter={StaticResource NotNullToBool}}"/>
+
+                <Popup x:Name="SearchPopup" PlacementTarget="{Binding ElementName=SearchBox}" 
+                       Placement="Bottom" StaysOpen="False" MaxHeight="400"
+                       IsOpen="False" AllowsTransparency="True">
+                    <Border Background="White" BorderBrush="{StaticResource BrushBorderSoft}" 
+                            BorderThickness="1" CornerRadius="4" Margin="0,4,0,0"
+                            Effect="{StaticResource DropShadowMedium}">
+                        <ListBox x:Name="SearchResultsList"
+                                 ItemsSource="{Binding SearchResults}"
+                                 SelectedItem="{Binding SelectedProduct}"
+                                 SelectionChanged="SearchResultsList_SelectionChanged"
+                                 PreviewKeyDown="SearchResultsList_PreviewKeyDown"
+                                 MaxHeight="380" MinWidth="400">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="8,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding SKU}" FontWeight="SemiBold" 
+                                                   Margin="0,0,12,0" Foreground="{StaticResource BrushPrimary}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding ProductName}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding SellingPrice, StringFormat='₹ {0:N2}'}" 
+                                                   FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                </Popup>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

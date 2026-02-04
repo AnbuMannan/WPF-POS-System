@@ -213,6 +213,9 @@ public class PosDbContext : DbContext
         sale.HasIndex(s => s.Status).HasDatabaseName("idx_sales_status");
         sale.HasIndex(s => s.CreatedAt).HasDatabaseName("idx_sales_createdat");
         sale.Property(s => s.IsLocked);
+        // Omit LockedAt/LockedBy from INSERT/UPDATE until DB has these columns (run migration or SQL below).
+        sale.Ignore(s => s.LockedAt);
+        sale.Ignore(s => s.LockedBy);
         sale.HasIndex(s => new { s.IsDraft, s.IsHeld }).HasDatabaseName("idx_sales_draft_held");
 
         var saleItem = modelBuilder.Entity<SaleItem>();

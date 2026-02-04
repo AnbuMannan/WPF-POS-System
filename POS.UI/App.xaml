@@ -9,6 +9,9 @@
                 <!-- This single dictionary contains all colors, styles, and controls -->
                 <ResourceDictionary Source="/BrandTheme.xaml"/>
 
+                <!-- Value converters (app-wide so child controls can resolve StaticResource) -->
+                <ResourceDictionary Source="/Styles/Converters.xaml"/>
+
                 <!-- Core Component Styles -->
                 <ResourceDictionary Source="/Styles/TextBoxes.xaml"/>
                 <ResourceDictionary Source="/Styles/DataGrid.xaml"/>

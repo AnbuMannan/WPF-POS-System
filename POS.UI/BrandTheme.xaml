@@ -6,6 +6,10 @@
          UNIFIED BRAND THEME - ALL COLORS & STYLES CENTRALIZED
          ===================================================================== -->
 
+    <!-- ================= EFFECTS ================= -->
+    <DropShadowEffect x:Key="DropShadowMedium"
+                      BlurRadius="12" ShadowDepth="3" Opacity="0.2" Direction="270"/>
+
     <!-- ================= COLOR PALETTE ================= -->
     <!-- Primary Colors -->
     <Color x:Key="ColorPrimary">#3F51B5</Color>

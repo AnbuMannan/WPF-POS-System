@@ -40,6 +40,10 @@
         "View": "SalesReturnView"
       },
       {
+        "Header": "EOD Report",
+        "View": "EODReportView"
+      },
+      {
         "Header": "Purchase",
         "View": "PurchaseView"
       }

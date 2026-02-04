@@ -425,31 +425,7 @@ namespace POS.UI
         }
 
         // ================= MENU BAR HANDLERS (File, Sales, Reports, Settings, Help) =================
-        private void MenuFile_NewSale(object sender, RoutedEventArgs e) => NavigateToBillingView();
-        private void MenuFile_Exit(object sender, RoutedEventArgs e) => Logout_Click(sender, e);
 
-        private void MenuSales_Billing(object sender, RoutedEventArgs e) => NavigateToBillingView();
-        private void MenuSales_QuickSale(object sender, RoutedEventArgs e) => OpenQuickSaleDialog();
-        private void MenuSales_Returns(object sender, RoutedEventArgs e) => OpenReturnDialog();
-        private void MenuSales_DayEnd(object sender, RoutedEventArgs e)
-        {
-            MainContent.Content = new EODReportView();
-            HeaderTitle.Text = "Day End / EOD Report";
-        }
 
-        private void MenuReports_AuditLogs(object sender, RoutedEventArgs e)
-        {
-            MainContent.Content = new AuditLogView();
-            HeaderTitle.Text = "Audit Log";
-        }
-
-        private void MenuSettings_Print(object sender, RoutedEventArgs e)
-        {
-            var printSettings = App.ServiceProvider?.GetService(typeof(IPrintSettingsService)) as IPrintSettingsService;
-            if (printSettings == null) return;
-            var printService = App.ServiceProvider?.GetService(typeof(IPrintService)) as IPrintService;
-            var dialog = new POS.UI.Modules.Settings.PrintSettingsDialog(printSettings, printService) { Owner = this };
-            dialog.ShowDialog();
-        }
     }
 }

@@ -9,8 +9,11 @@ namespace POS.Shared.Models
     /// </summary>
     public class ReceiptDto
     {
+        public int SaleId { get; set; }
         public string ReceiptNumber { get; set; } = string.Empty;
+        public string BillNumber { get; set; } = string.Empty;
         public DateTime TransactionDate { get; set; }
+        public DateTime SaleDate { get; set; }
         
         // Store Information
         public string StoreName { get; set; } = string.Empty;
@@ -18,6 +21,7 @@ namespace POS.Shared.Models
         public string? StorePhone { get; set; }
         public string? StoreEmail { get; set; }
         public string? GSTIN { get; set; }
+        public string? StoreGSTIN { get; set; }
         
         // Customer Information
         public string? CustomerName { get; set; }
@@ -30,6 +34,7 @@ namespace POS.Shared.Models
         public decimal Discount { get; set; }
         public decimal TaxAmount { get; set; }
         public decimal TotalAmount { get; set; }
+        public decimal GrandTotal { get; set; }
         public decimal AmountPaid { get; set; }
         public decimal ChangeAmount { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
@@ -61,6 +66,7 @@ namespace POS.Shared.Models
         public string Unit { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
+        public decimal TotalAmount { get; set; }
         public decimal? Discount { get; set; }
         public string? HSNCode { get; set; }
     }

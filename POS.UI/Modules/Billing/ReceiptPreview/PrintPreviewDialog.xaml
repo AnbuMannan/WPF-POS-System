@@ -1,0 +1,115 @@
+<Window x:Class="POS.UI.Modules.Billing.ReceiptPreview.PrintPreviewDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Receipt Preview" Height="650" Width="500"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BrushWindowBg}">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <Border Background="White" Padding="30" BorderBrush="#E0E0E0" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="{Binding Receipt.StoreName, FallbackValue='Store Name'}" FontSize="18" FontWeight="Bold" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding Receipt.StoreAddress, FallbackValue='Store Address'}" FontSize="10" TextAlignment="Center" Margin="0,5,0,0"/>
+                    <TextBlock Text="{Binding Receipt.StoreGSTIN, StringFormat='GSTIN: {0}'}" FontSize="10" TextAlignment="Center" Margin="0,5,0,15"/>
+
+                    <Border Height="1" Background="#333" Margin="0,10"/>
+
+                    <TextBlock Text="{Binding Receipt.BillNumber, StringFormat='Bill #: {0}'}" FontSize="12" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Receipt.SaleDate, StringFormat='Date: {0:dd/MM/yyyy HH:mm}'}" FontSize="10" Margin="0,2,0,0"/>
+                    <TextBlock Text="{Binding Receipt.CustomerName, StringFormat='Customer: {0}'}" FontSize="10" Margin="0,2,0,0" Visibility="{Binding Receipt.CustomerName, Converter={StaticResource StringToVisibility}}"/>
+
+                    <Border Height="1" Background="#333" Margin="0,10"/>
+
+                    <!-- Items list: Name, Qty x Unit, Unit Price, Total -->
+                    <TextBlock Text="Item" FontWeight="SemiBold" FontSize="10" Margin="0,0,0,4"/>
+                    <ItemsControl ItemsSource="{Binding Receipt.Items}" Margin="0,0,0,8">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding ProductName}" TextWrapping="Wrap" FontSize="11"/>
+                                        <TextBlock FontSize="9" Foreground="#666">
+                                            <Run Text="{Binding Quantity, StringFormat=N2}"/><Run Text=" x "/><Run Text="{Binding Unit}"/><Run Text=" @ "/><Run Text="{Binding UnitPrice, StringFormat='₹ {0:N2}'}"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding HSNCode, StringFormat='HSN: {0}'}" FontSize="9" Foreground="#666" Visibility="{Binding HSNCode, Converter={StaticResource StringToVisibility}}"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Text="{Binding TotalAmount, StringFormat='₹ {0:N2}'}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Border Height="1" Background="#333" Margin="0,6"/>
+
+                    <!-- Totals -->
+                    <Grid Margin="0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock FontSize="11"><Run Text="Sub Total"/></TextBlock>
+                            <TextBlock FontSize="11" Visibility="{Binding Receipt.Discount, Converter={StaticResource GreaterThanZeroToVisibility}}"><Run Text="Discount"/></TextBlock>
+                            <TextBlock FontSize="11" Visibility="{Binding Receipt.TaxAmount, Converter={StaticResource GreaterThanZeroToVisibility}}"><Run Text="CGST"/></TextBlock>
+                            <TextBlock FontSize="11" Visibility="{Binding Receipt.TaxAmount, Converter={StaticResource GreaterThanZeroToVisibility}}"><Run Text="SGST"/></TextBlock>
+                            <TextBlock FontSize="11" Visibility="{Binding Receipt.IGST, Converter={StaticResource GreaterThanZeroToVisibility}}"><Run Text="IGST"/></TextBlock>
+                            <TextBlock FontSize="11"><Run Text="Round Off"/></TextBlock>
+                            <TextBlock FontSize="11" FontWeight="Bold" Margin="0,4,0,0"><Run Text="GRAND TOTAL"/></TextBlock>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                            <TextBlock FontSize="11" Text="{Binding Receipt.SubTotal, StringFormat='₹ {0:N2}'}"/>
+                            <TextBlock FontSize="11" Text="{Binding Receipt.Discount, StringFormat='- ₹ {0:N2}'}" Visibility="{Binding Receipt.Discount, Converter={StaticResource GreaterThanZeroToVisibility}}"/>
+                            <TextBlock FontSize="11" Text="{Binding Receipt.CGST, StringFormat='₹ {0:N2}'}" Visibility="{Binding Receipt.CGST, Converter={StaticResource GreaterThanZeroToVisibility}}"/>
+                            <TextBlock FontSize="11" Text="{Binding Receipt.SGST, StringFormat='₹ {0:N2}'}" Visibility="{Binding Receipt.SGST, Converter={StaticResource GreaterThanZeroToVisibility}}"/>
+                            <TextBlock FontSize="11" Text="{Binding Receipt.IGST, StringFormat='₹ {0:N2}'}" Visibility="{Binding Receipt.IGST, Converter={StaticResource GreaterThanZeroToVisibility}}"/>
+                            <TextBlock FontSize="11" Text="{Binding Receipt.RoundOff, StringFormat='₹ {0:N2}'}"/>
+                            <TextBlock FontSize="14" Text="{Binding Receipt.GrandTotal, StringFormat='₹ {0:N2}'}" FontWeight="Bold" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Payment breakdown -->
+                    <Border Height="1" Background="#333" Margin="0,10"/>
+                    <TextBlock Text="Payment" FontWeight="SemiBold" FontSize="10" Margin="0,4,0,4"/>
+                    <ItemsControl ItemsSource="{Binding Receipt.Payments}" Margin="0,0,0,6">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Method}" FontSize="11"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Amount, StringFormat='₹ {0:N2}'}" FontWeight="SemiBold"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock FontSize="10" Foreground="#666" Margin="0,2,0,0">
+                        <Run Text="Amount Paid: "/><Run Text="{Binding Receipt.AmountPaid, StringFormat='₹ {0:N2}'}" FontWeight="SemiBold"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Receipt.CashierName, StringFormat='Cashier: {0}'}" FontSize="9" Foreground="#666" Margin="0,6,0,0" Visibility="{Binding Receipt.CashierName, Converter={StaticResource StringToVisibility}}"/>
+
+                    <Border Height="1" Background="#333" Margin="0,10"/>
+                    <TextBlock Text="{Binding Receipt.ThankYouMessage, FallbackValue='Thank you for your purchase!'}" TextAlignment="Center" Margin="0,12,0,0" FontStyle="Italic"/>
+                    <TextBlock Text="{Binding Receipt.FooterMessage, FallbackValue='Visit again soon!'}" TextAlignment="Center" Margin="0,4,0,0" FontStyle="Italic"/>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Print" Width="100" Height="40" Margin="0,0,10,0"
+                    Style="{StaticResource PrimaryButton}" Click="Print_Click"/>
+            <Button Content="Close" Width="100" Height="40"
+                    Style="{StaticResource SecondaryButton}" Click="Close_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

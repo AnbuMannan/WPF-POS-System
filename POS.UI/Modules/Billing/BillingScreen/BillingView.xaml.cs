@@ -46,7 +46,7 @@ namespace POS.UI.Modules.Billing.BillingScreen
                         vm.OpenPaymentDialogAsync = async (total) =>
                         {
                             var dialog = new POS.UI.Modules.Billing.PaymentDialog.PaymentDialog(billingApi, total) { Owner = owner };
-                            return dialog.ShowDialog() == true ? dialog.ViewModel.CompletedPayments : null;
+                            return dialog.ShowDialog() == true ? dialog.ViewModel.CompletedPayments.ToList() : null;
                         };
 
                         vm.OpenHoldBillDialog = () =>
@@ -112,6 +112,12 @@ namespace POS.UI.Modules.Billing.BillingScreen
                         };
 
                         DataContext = vm;
+
+                        // When user selects a product from search and presses Add/Enter, add it to the cart
+                        ProductSearchControl.ProductSelected += (product) =>
+                        {
+                            vm.AddProductToCart(product, 1);
+                        };
 
                         // Only auto-show Customer Display when a secondary monitor exists.
                         // On single-monitor setups it would open fullscreen with no close button and block the app.

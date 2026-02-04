@@ -172,7 +172,7 @@ namespace POS.UI.Modules.Admin.TaxProfiles
                 if (_isEdit && _editDto != null)
                 {
                     dto.UpdatedAt = DateTime.Now;
-                    await _service.UpdateAsync(dto);
+                    await _service.UpdateAsync(_editDto.TaxProfileId, dto);
                 }
                 else
                 {

@@ -371,40 +371,14 @@
         <!-- ================= RIGHT PANEL WITH MENU, HEADER, CONTENT, STATUS BAR ================= -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="60" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="28" />
             </Grid.RowDefinitions>
 
-            <!-- TOP MENU BAR: File, Sales, Reports, Settings, Help -->
-            <Menu Grid.Row="0" Background="{StaticResource BrushSidebarBg}" Foreground="{StaticResource BrushTextWhite}" VerticalAlignment="Center">
-                <MenuItem Header="File">
-                    <MenuItem Header="New Sale" Click="MenuFile_NewSale"/>
-                    <Separator/>
-                    <MenuItem Header="Exit" Click="MenuFile_Exit"/>
-                </MenuItem>
-                <MenuItem Header="Sales">
-                    <MenuItem Header="Billing / New Sale" Click="MenuSales_Billing"/>
-                    <MenuItem Header="Quick Sale" Click="MenuSales_QuickSale"/>
-                    <MenuItem Header="Held Bills"/>
-                    <MenuItem Header="Returns &amp; Exchanges" Click="MenuSales_Returns"/>
-                    <MenuItem Header="Day End" Click="MenuSales_DayEnd"/>
-                </MenuItem>
-                <MenuItem Header="Reports">
-                    <MenuItem Header="Audit Logs" Click="MenuReports_AuditLogs"/>
-                </MenuItem>
-                <MenuItem Header="Settings">
-                    <MenuItem Header="Print &amp; Receipt Settings" Click="MenuSettings_Print"/>
-                </MenuItem>
-                <MenuItem Header="Help">
-                    <MenuItem Header="Help" ToolTip="Help"/>
-                    <MenuItem Header="About"/>
-                </MenuItem>
-            </Menu>
 
             <!-- TOP HEADER BAR WITH DARK BACKGROUND -->
-            <Border Grid.Row="1" Background="{StaticResource BrushSidebarBg}">
+            <Border Grid.Row="0" Background="{StaticResource BrushSidebarBg}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -440,13 +414,13 @@
             </Border>
 
             <!-- MAIN CONTENT AREA (hosts BillingView by default) -->
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="1">
                 <Border Background="{StaticResource BrushWindowBg}" />
                 <ContentControl x:Name="MainContent" />
             </Grid>
 
             <!-- STATUS BAR: User, Date/Time, Online status, Version -->
-            <StatusBar Grid.Row="3" Background="{StaticResource BrushSidebarBg}" Foreground="{StaticResource BrushTextWhite}" FontSize="12" Padding="8,0">
+            <StatusBar Grid.Row="2" Background="{StaticResource BrushSidebarBg}" Foreground="{StaticResource BrushTextWhite}" FontSize="12" Padding="8,0">
                 <StatusBarItem>
                     <TextBlock x:Name="StatusBarUser" Text="User: --" />
                 </StatusBarItem>
@@ -496,7 +470,7 @@
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C5;" Content="Quotations"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80D;" Content="Delivery Orders"/>
                     <Button x:Name="BtnReprintInvoice" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE749;" Content="Reprint Invoice"/>
-                    <Button x:Name="BtnDayEnd" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE89E;" Content="Day End / Shift Close"/>
+                    <Button x:Name="BtnDayEnd" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE89E;" Content="Day End / EOD Report"/>
                 </StackPanel>
             </Border>
         </Popup>

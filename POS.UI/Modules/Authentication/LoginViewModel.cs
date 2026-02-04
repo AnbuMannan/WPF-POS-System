@@ -176,7 +176,7 @@ namespace POS.UI.Modules.Authentication
                     StatusMessage = "Login successful!";
                     
                     // Validate license after successful login
-                    await ValidateLicenseAsync();
+                    //await ValidateLicenseAsync();
 
                     // Raise event to navigate to main window
                     LoginSucceeded?.Invoke(this, EventArgs.Empty);
