@@ -75,6 +75,27 @@ public class ProductApiService : BaseApiService
         }
     }
 
+    /// <summary>
+    /// Check if sufficient stock is available. Returns true when API does not expose stock check (assume in stock).
+    /// </summary>
+    public async Task<bool> CheckStockAsync(long productId, decimal quantity)
+    {
+        if (productId <= 0 || quantity <= 0)
+            return false;
+        try
+        {
+            var response = await _http.GetAsync($"api/inventory/stock/{productId}");
+            if (!response.IsSuccessStatusCode)
+                return true; // Assume in stock when endpoint not available
+            var stock = await response.Content.ReadFromJsonAsync<decimal?>();
+            return !stock.HasValue || stock.Value >= quantity;
+        }
+        catch
+        {
+            return true; // Assume in stock on error
+        }
+    }
+
     public async Task CreateAsync(ProductDto dto)
     {
         if (dto == null)

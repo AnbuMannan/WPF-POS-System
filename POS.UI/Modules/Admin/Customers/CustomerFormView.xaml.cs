@@ -4,6 +4,7 @@ using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -12,66 +13,23 @@ namespace POS.UI.Modules.Admin.Customers
 {
     public partial class CustomerFormView : Window, INotifyPropertyChanged, INotifyDataErrorInfo
     {
-        private readonly CustomerApiService _service;
+        private readonly CustomerApiService? _service;
         private bool _isEdit;
-        private CustomerDto _editDto;
+        private CustomerDto? _editDto;
         private bool _isSaving;
+        private bool _isLoading;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        // ---------------- VALIDATION ENGINE ----------------
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         private readonly System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> _errors = new();
-
         public bool HasErrors => _errors.Any();
-
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-
-        private void FocusFirstInvalidControl()
-        {
-            var firstInvalid = FindFirstInvalid(this);
-            if (firstInvalid != null)
-            {
-                firstInvalid.BringIntoView();
-                firstInvalid.Focus();
-            }
-        }
-
-        private System.Windows.Controls.Control FindFirstInvalid(System.Windows.DependencyObject parent)
-        {
-            for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
-
-                if (child is System.Windows.Controls.Control control &&
-                    System.Windows.Controls.Validation.GetHasError(control))
-                {
-                    return control;
-                }
-
-                var result = FindFirstInvalid(child);
-                if (result != null)
-                    return result;
-            }
-            return null;
-        }
-
-        public System.Collections.IEnumerable GetErrors(string propertyName)
-        {
-            if (string.IsNullOrEmpty(propertyName))
-                return null;
-            return _errors.ContainsKey(propertyName) ? _errors[propertyName] : null;
-        }
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         private void AddError(string propertyName, string error)
         {
             if (!_errors.ContainsKey(propertyName))
                 _errors[propertyName] = new System.Collections.Generic.List<string>();
-
             if (!_errors[propertyName].Contains(error))
             {
                 _errors[propertyName].Add(error);
@@ -90,115 +48,63 @@ namespace POS.UI.Modules.Admin.Customers
             }
         }
 
-        // ---------------- FIELDS ----------------
+        public System.Collections.IEnumerable? GetErrors(string propertyName)
+            => string.IsNullOrEmpty(propertyName) ? null : (_errors.ContainsKey(propertyName) ? _errors[propertyName] : null);
 
-        private string _firstName;
-        public string FirstName
+        private string _customerName = string.Empty;
+        public string CustomerName
         {
-            get => _firstName;
+            get => _customerName;
             set
             {
-                _firstName = value;
-                OnPropertyChanged(nameof(FirstName));
-                ClearErrors(nameof(FirstName));
-                if (string.IsNullOrWhiteSpace(FirstName))
-                    AddError(nameof(FirstName), "First name is required");
+                _customerName = value ?? string.Empty;
+                OnPropertyChanged(nameof(CustomerName));
+                ClearErrors(nameof(CustomerName));
+                if (string.IsNullOrWhiteSpace(CustomerName))
+                    AddError(nameof(CustomerName), "Customer name is required");
             }
         }
 
-        private string _lastName;
-        public string LastName
-        {
-            get => _lastName;
-            set
-            {
-                _lastName = value;
-                OnPropertyChanged(nameof(LastName));
-                ClearErrors(nameof(LastName));
-                if (string.IsNullOrWhiteSpace(LastName))
-                    AddError(nameof(LastName), "Last name is required");
-            }
-        }
-
-        private string _phone;
-        public string Phone
+        private string? _phone;
+        public string? Phone
         {
             get => _phone;
             set
             {
                 _phone = value;
                 OnPropertyChanged(nameof(Phone));
-                _ = ValidatePhoneAsync();
+                if (!_isLoading)
+                    _ = ValidatePhoneAsync();
             }
         }
 
-        private string _email;
-        public string Email
+        private string? _email;
+        public string? Email
         {
             get => _email;
-            set
-            {
-                _email = value;
-                OnPropertyChanged(nameof(Email));
-            }
+            set { _email = value; OnPropertyChanged(nameof(Email)); }
         }
 
-        private string _address;
-        public string Address
+        private string? _address;
+        public string? Address
         {
             get => _address;
-            set
-            {
-                _address = value;
-                OnPropertyChanged(nameof(Address));
-            }
+            set { _address = value; OnPropertyChanged(nameof(Address)); }
         }
 
-        private DateTime? _dateOfBirth;
-        public DateTime? DateOfBirth
+        private int _loyaltyPoints;
+        public int LoyaltyPoints
         {
-            get => _dateOfBirth;
-            set
-            {
-                _dateOfBirth = value;
-                OnPropertyChanged(nameof(DateOfBirth));
-            }
+            get => _loyaltyPoints;
+            set { _loyaltyPoints = value; OnPropertyChanged(nameof(LoyaltyPoints)); }
         }
 
-        private string _loyaltyNumber;
-        public string LoyaltyNumber
+        private bool _isActiveChecked = true;
+        public bool IsActiveChecked
         {
-            get => _loyaltyNumber;
-            set
-            {
-                _loyaltyNumber = value;
-                OnPropertyChanged(nameof(LoyaltyNumber));
-            }
+            get => _isActiveChecked;
+            set { _isActiveChecked = value; OnPropertyChanged(nameof(IsActiveChecked)); }
         }
-
-        private bool _isWholesale;
-        public bool IsWholesale
-        {
-            get => _isWholesale;
-            set
-            {
-                _isWholesale = value;
-                OnPropertyChanged(nameof(IsWholesale));
-            }
-        }
-
-        private bool _isActive = true;
-        public bool IsActive
-        {
-            get => _isActive;
-            set
-            {
-                _isActive = value;
-                OnPropertyChanged(nameof(IsActive));
-            }
-        }
-
-        // ---------------- COMMANDS ----------------
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
@@ -206,21 +112,15 @@ namespace POS.UI.Modules.Admin.Customers
 
         public CustomerFormView() : this(null) { }
 
-        public CustomerFormView(CustomerDto dto)
+        public CustomerFormView(CustomerDto? dto)
         {
             InitializeComponent();
             DataContext = this;
 
             try
             {
-                if (App.ServiceProvider != null)
-                {
-                    _service = (CustomerApiService)App.ServiceProvider.GetService(typeof(CustomerApiService));
-                }
-                else
-                {
-                    throw new InvalidOperationException("Application service provider not initialized.");
-                }
+                _service = App.ServiceProvider?.GetService(typeof(CustomerApiService)) as CustomerApiService
+                    ?? throw new InvalidOperationException("Application service provider not initialized.");
             }
             catch (Exception ex)
             {
@@ -230,35 +130,54 @@ namespace POS.UI.Modules.Admin.Customers
             _editDto = dto;
             _isEdit = dto != null;
 
-            SaveCommand = new RelayCommand(async () => await SaveAsync(), () => !_isSaving && !HasErrors);
+            SaveCommand = new RelayCommand(ExecuteSave, () => !_isSaving);
             CancelCommand = new RelayCommand(CloseWindow);
             ResetCommand = new RelayCommand(ResetForm);
 
-            ValidateAll();
-
+            _isLoading = true;
             if (_editDto != null)
             {
-                FirstName = _editDto.FirstName;
-                LastName = _editDto.LastName;
-                Phone = _editDto.Phone;
-                Email = _editDto.Email;
-                Address = _editDto.Address;
-                DateOfBirth = _editDto.DateOfBirth;
-                LoyaltyNumber = _editDto.LoyaltyNumber;
-                IsWholesale = _editDto.IsWholesale;
-                IsActive = _editDto.IsActive;
+                CustomerName = _editDto.Name;
+                Phone = _editDto.Phone ?? string.Empty;
+                Email = _editDto.Email ?? string.Empty;
+                Address = _editDto.Address ?? string.Empty;
+                LoyaltyPoints = _editDto.LoyaltyPoints;
+                IsActiveChecked = _editDto.IsActive;
+            }
+            _isLoading = false;
+            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+
+            Loaded += (s, e) => ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+        }
+
+        private async void ExecuteSave()
+        {
+            try
+            {
+                await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                POS.UI.Components.DialogService.Error("Save Failed", ex.Message);
             }
         }
 
-        // ---------------- SAVE ----------------
-
         private async Task SaveAsync()
         {
-            ValidateAll();
+            if (_service == null)
+            {
+                POS.UI.Components.DialogService.Error("Save Failed", "Customer service is not available.");
+                return;
+            }
+
+            ClearErrors(nameof(CustomerName));
+            ClearErrors(nameof(Phone));
+            if (string.IsNullOrWhiteSpace(CustomerName))
+                AddError(nameof(CustomerName), "Customer name is required");
             if (HasErrors)
             {
-                FocusFirstInvalidControl();
-                POS.UI.Components.DialogService.Info("Validation", "Please fix highlighted validation errors.");
+                var messages = _errors.SelectMany(kv => kv.Value).ToList();
+                POS.UI.Components.DialogService.Info("Validation", messages.Count > 0 ? string.Join("\n", messages) : "Please fix validation errors.");
                 return;
             }
 
@@ -267,35 +186,34 @@ namespace POS.UI.Modules.Admin.Customers
 
             var dto = new CustomerDto
             {
-                CustomerId = _isEdit && _editDto != null ? _editDto.CustomerId : Guid.NewGuid().ToString(),
-                FirstName = FirstName ?? string.Empty,
-                LastName = LastName ?? string.Empty,
-                Phone = Phone,
-                Email = Email,
-                Address = Address,
-                DateOfBirth = DateOfBirth,
-                LoyaltyNumber = LoyaltyNumber,
-                IsWholesale = IsWholesale,
-                IsActive = IsActive,
-                CreatedAt = _isEdit && _editDto != null ? _editDto.CreatedAt : DateTime.Now
+                Id = _isEdit && _editDto != null ? _editDto.Id : Guid.NewGuid(),
+                Name = CustomerName?.Trim() ?? string.Empty,
+                Phone = string.IsNullOrWhiteSpace(Phone) ? null : Phone.Trim(),
+                Email = string.IsNullOrWhiteSpace(Email) ? null : Email.Trim(),
+                Address = string.IsNullOrWhiteSpace(Address) ? null : Address.Trim(),
+                LoyaltyPoints = LoyaltyPoints,
+                IsActive = IsActiveChecked,
+                CreatedAt = _isEdit && _editDto != null ? _editDto.CreatedAt : DateTime.UtcNow,
+                UpdatedAt = _isEdit ? DateTime.UtcNow : null
             };
 
             try
             {
                 if (!string.IsNullOrWhiteSpace(Phone))
                 {
-                    var exists = await _service.CheckPhoneExistsAsync(Phone, _isEdit && _editDto != null ? _editDto.CustomerId : null);
+                    var exists = await _service.CheckPhoneExistsAsync(Phone.Trim(), _isEdit && _editDto != null ? _editDto.Id : null);
                     if (exists)
                     {
                         AddError(nameof(Phone), "Phone number already exists");
-                        FocusFirstInvalidControl();
+                        _isSaving = false;
+                        ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+                        POS.UI.Components.DialogService.Info("Validation", "This phone number is already in use by another customer.");
                         return;
                     }
                 }
 
                 if (_isEdit && _editDto != null)
                 {
-                    dto.UpdatedAt = DateTime.Now;
                     await _service.UpdateAsync(dto);
                 }
                 else
@@ -316,7 +234,6 @@ namespace POS.UI.Modules.Admin.Customers
                         foreach (var msg in kv.Value)
                             AddError(kv.Key, msg);
                     }
-                    return;
                 }
             }
             catch (Exception ex)
@@ -335,17 +252,16 @@ namespace POS.UI.Modules.Admin.Customers
             ClearErrors(nameof(Phone));
             if (string.IsNullOrWhiteSpace(Phone))
                 return;
-
             try
             {
                 await Task.Delay(400);
-                bool exists = await _service.CheckPhoneExistsAsync(Phone, _isEdit && _editDto != null ? _editDto.CustomerId : null);
+                var exists = await _service!.CheckPhoneExistsAsync(Phone.Trim(), _isEdit && _editDto != null ? _editDto.Id : null);
                 if (exists)
                     AddError(nameof(Phone), "Phone number already exists");
             }
             catch
             {
-                // Ignore API failures silently
+                // Ignore API failures for live validation
             }
         }
 
@@ -353,21 +269,12 @@ namespace POS.UI.Modules.Admin.Customers
 
         private void ResetForm()
         {
-            FirstName = string.Empty;
-            LastName = string.Empty;
+            CustomerName = string.Empty;
             Phone = string.Empty;
             Email = string.Empty;
             Address = string.Empty;
-            DateOfBirth = null;
-            LoyaltyNumber = string.Empty;
-            IsWholesale = false;
-            IsActive = true;
-        }
-
-        private void ValidateAll()
-        {
-            FirstName = FirstName ?? string.Empty;
-            LastName = LastName ?? string.Empty;
+            LoyaltyPoints = 0;
+            IsActiveChecked = true;
         }
     }
 }

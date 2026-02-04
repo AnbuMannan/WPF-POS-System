@@ -27,6 +27,18 @@ public class ProductService : IProductService
     public async Task<List<ProductDto>> SearchAsync(string keyword)
         => (await _repo.SearchAsync(keyword)).Select(MapToDto).ToList();
 
+    public async Task<List<Product>> SearchProductsAsync(string query)
+        => await _repo.SearchAsync(string.IsNullOrWhiteSpace(query) ? "" : query);
+
+    public async Task<Product?> GetProductByBarcodeAsync(string barcode)
+        => await _repo.GetByBarcodeAsync(barcode ?? "");
+
+    public async Task<bool> CheckStockAsync(long productId, decimal quantity)
+    {
+        // Inventory uses Guid productId; when mapped to long, implement stock check here.
+        return await Task.FromResult(true);
+    }
+
     public async Task AddAsync(ProductDto dto)
     {
         var product = MapToEntity(dto);

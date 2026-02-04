@@ -15,7 +15,6 @@
         <Border Grid.Row="0" Padding="8" CornerRadius="6" Background="#FFF5F5F5">
             <DockPanel LastChildFill="True">
 
-                <!-- Left : Search -->
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
 
                     <TextBox Width="260"
@@ -23,14 +22,24 @@
                              Margin="0,0,8,0"
                              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
+                    <Button Content="Clear"
+                            Width="60"
+                            Margin="0,0,6,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Command="{Binding ClearCommand}" />
+
                     <Button Content="Search"
                             Width="90"
                             Margin="0,0,12,0"
-                            Style="{StaticResource PrimaryButtonStyle}"
+                            Style="{StaticResource SuccessButtonStyle}"
                             Command="{Binding SearchCommand}" />
+
+                    <CheckBox Content="Show Inactive"
+                              Margin="10,0,0,0"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding ShowInactive, Mode=TwoWay}" />
                 </StackPanel>
 
-                <!-- Right : Actions -->
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
 
                     <Button Content="Refresh"
@@ -61,7 +70,6 @@
             </DockPanel>
         </Border>
 
-
         <!-- ================= CUSTOMER LIST GRID ================= -->
         <Border Grid.Row="1" Margin="0,10,0,0" CornerRadius="6" BorderBrush="#FFE0E0E0" BorderThickness="1">
 
@@ -73,9 +81,9 @@
 
                 <DataGrid.Columns>
 
-                    <DataGridTextColumn Header="Full Name"
+                    <DataGridTextColumn Header="Name"
                                         Width="2*"
-                                        Binding="{Binding FullName}" />
+                                        Binding="{Binding Name}" />
 
                     <DataGridTextColumn Header="Phone"
                                         Width="*"
@@ -89,13 +97,13 @@
                                         Width="2*"
                                         Binding="{Binding Address}" />
 
-                    <DataGridCheckBoxColumn Header="Wholesale"
-                                             Width="*"
-                                             Binding="{Binding IsWholesale}" />
+                    <DataGridTextColumn Header="Loyalty Points"
+                                        Width="*"
+                                        Binding="{Binding LoyaltyPoints}" />
 
                     <DataGridCheckBoxColumn Header="Active"
-                                             Width="*"
-                                             Binding="{Binding IsActive}" />
+                                           Width="*"
+                                           Binding="{Binding IsActive}" />
 
                     <DataGridTextColumn Header="Created"
                                         Width="*"

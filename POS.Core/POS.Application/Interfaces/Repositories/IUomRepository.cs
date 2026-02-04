@@ -4,7 +4,7 @@ namespace POS.Application.Interfaces.Repositories;
 
 public interface IUomRepository
 {
-    Task<List<Uom>> GetAllAsync();
+    Task<List<Uom>> GetAllAsync(bool includeInactive = false);
     Task<Uom> GetByIdAsync(Guid id);
     Task AddAsync(Uom uom);
     Task UpdateAsync(Uom uom);

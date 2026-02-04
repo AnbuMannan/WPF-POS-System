@@ -12,13 +12,14 @@ namespace POS.UI.Core.Services
     /// </summary>
     public class LicenseService
     {
-        private readonly HttpClient _http;
+        public const string HttpClientName = "License";
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;
         private LicenseValidationResponse? _currentLicense;
 
-        public LicenseService(HttpClient http)
+        public LicenseService(IHttpClientFactory httpClientFactory)
         {
-            _http = http ?? throw new ArgumentNullException(nameof(http));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = Log.ForContext<LicenseService>();
         }
 
@@ -77,7 +78,8 @@ namespace POS.UI.Core.Services
                     DeviceId = deviceId
                 };
 
-                var response = await _http.PostAsJsonAsync("api/license/validate", request);
+                var http = _httpClientFactory.CreateClient(HttpClientName);
+                var response = await http.PostAsJsonAsync("api/license/validate", request);
 
                 if (!response.IsSuccessStatusCode)
                 {

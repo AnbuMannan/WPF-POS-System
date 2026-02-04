@@ -1,13 +1,13 @@
-using POS.Domain.Entities;
+using POS.Shared.Models;
 
 namespace POS.Application.Interfaces.Services;
 
 public interface IUomService
 {
-    Task<List<Uom>> GetAllAsync();
-    Task<Uom> GetByIdAsync(Guid id);
-    Task AddAsync(Uom uom);
-    Task UpdateAsync(Uom uom);
+    Task<List<UomDto>> GetAllAsync(bool includeInactive = false);
+    Task<UomDto?> GetByIdAsync(Guid id);
+    Task AddAsync(UomDto dto);
+    Task UpdateAsync(UomDto dto);
     Task DisableAsync(Guid id);
     Task<bool> CodeExistsAsync(string code, Guid? excludeId);
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using POS.Application.Exceptions;
 using POS.Application.Interfaces.Services;
-using POS.Domain.Entities;
+using POS.Shared.Models;
 
 namespace POS.API.Controllers;
 
@@ -16,28 +17,53 @@ public class UomsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
-        => Ok(await _service.GetAllAsync());
+    public async Task<IActionResult> GetAll([FromQuery] bool includeInactive = false)
+        => Ok(await _service.GetAllAsync(includeInactive));
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
-        => Ok(await _service.GetByIdAsync(id));
+    {
+        var dto = await _service.GetByIdAsync(id);
+        return dto == null ? NotFound() : Ok(dto);
+    }
 
     [HttpPost]
-    public async Task<IActionResult> Create(Uom uom)
+    public async Task<IActionResult> Create(UomDto dto)
     {
-        await _service.AddAsync(uom);
-        return Ok();
+        try
+        {
+            await _service.AddAsync(dto);
+            return Ok();
+        }
+        catch (ValidationException vex)
+        {
+            return BadRequest(new { errors = new Dictionary<string, string[]> { { vex.Field, new[] { vex.Message } } } });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(Uom uom)
+    public async Task<IActionResult> Update(UomDto dto)
     {
-        await _service.UpdateAsync(uom);
-        return Ok();
+        try
+        {
+            await _service.UpdateAsync(dto);
+            return Ok();
+        }
+        catch (ValidationException vex)
+        {
+            return BadRequest(new { errors = new Dictionary<string, string[]> { { vex.Field, new[] { vex.Message } } } });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Disable(Guid id)
     {
         await _service.DisableAsync(id);
@@ -45,7 +71,7 @@ public class UomsController : ControllerBase
     }
 
     [HttpGet("exists/code")]
-    public async Task<IActionResult> CheckCode(string code, Guid? excludeId)
+    public async Task<IActionResult> CheckCode([FromQuery] string code, [FromQuery] Guid? excludeId)
     {
         var exists = await _service.CodeExistsAsync(code, excludeId);
         return Ok(exists);

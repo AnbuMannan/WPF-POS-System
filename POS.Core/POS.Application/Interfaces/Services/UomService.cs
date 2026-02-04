@@ -1,6 +1,8 @@
+using POS.Application.Exceptions;
 using POS.Application.Interfaces.Repositories;
 using POS.Application.Interfaces.Services;
 using POS.Domain.Entities;
+using POS.Shared.Models;
 
 namespace POS.Application.Services;
 
@@ -13,30 +15,38 @@ public class UomService : IUomService
         _repo = repo;
     }
 
-    public async Task<List<Uom>> GetAllAsync()
-        => await _repo.GetAllAsync();
-
-    public async Task<Uom> GetByIdAsync(Guid id)
-        => await _repo.GetByIdAsync(id);
-
-    public async Task AddAsync(Uom uom)
+    public async Task<List<UomDto>> GetAllAsync(bool includeInactive = false)
     {
-        Validate(uom);
-        if (await _repo.CodeExistsAsync(uom.Code))
-            throw new POS.Application.Exceptions.ValidationException("Code", "UOM code already exists");
-        uom.UomId = Guid.NewGuid();
-        uom.CreatedAt = DateTime.Now;
-        uom.IsActive = true;
-        await _repo.AddAsync(uom);
+        var list = await _repo.GetAllAsync(includeInactive);
+        return (list ?? new List<Uom>()).Select(MapToDto).ToList();
     }
 
-    public async Task UpdateAsync(Uom uom)
+    public async Task<UomDto?> GetByIdAsync(Guid id)
     {
-        Validate(uom);
-        if (await _repo.CodeExistsAsync(uom.Code, uom.UomId))
-            throw new POS.Application.Exceptions.ValidationException("Code", "UOM code already exists");
-        uom.UpdatedAt = DateTime.Now;
-        await _repo.UpdateAsync(uom);
+        var entity = await _repo.GetByIdAsync(id);
+        return entity == null ? null : MapToDto(entity);
+    }
+
+    public async Task AddAsync(UomDto dto)
+    {
+        var entity = MapToEntity(dto);
+        Validate(entity);
+        if (await _repo.CodeExistsAsync(entity.Code))
+            throw new ValidationException("Code", "UOM code already exists");
+        entity.Id = Guid.NewGuid();
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.IsActive = true;
+        await _repo.AddAsync(entity);
+    }
+
+    public async Task UpdateAsync(UomDto dto)
+    {
+        var entity = MapToEntity(dto);
+        Validate(entity);
+        if (await _repo.CodeExistsAsync(entity.Code, entity.Id))
+            throw new ValidationException("Code", "UOM code already exists");
+        entity.UpdatedAt = DateTime.UtcNow;
+        await _repo.UpdateAsync(entity);
     }
 
     public async Task DisableAsync(Guid id)
@@ -45,17 +55,48 @@ public class UomService : IUomService
     public async Task<bool> CodeExistsAsync(string code, Guid? excludeId)
         => await _repo.CodeExistsAsync(code, excludeId);
 
-    private void Validate(Uom uom)
+    private static void Validate(Uom uom)
     {
         if (string.IsNullOrWhiteSpace(uom.Name))
-            throw new Exception("UOM name is required");
+            throw new ValidationException("Name", "UOM name is required");
         if (string.IsNullOrWhiteSpace(uom.Code))
-            throw new Exception("UOM code is required");
+            throw new ValidationException("Code", "UOM code is required");
         if (uom.Code.Length > 32)
-            throw new Exception("UOM code too long");
+            throw new ValidationException("Code", "UOM code too long");
         if (uom.Symbol != null && uom.Symbol.Length > 16)
-            throw new Exception("UOM symbol too long");
+            throw new ValidationException("Symbol", "UOM symbol too long");
         if (uom.DecimalPlaces < 0 || uom.DecimalPlaces > 6)
-            throw new Exception("Decimal places must be between 0 and 6");
+            throw new ValidationException("DecimalPlaces", "Decimal places must be between 0 and 6");
+    }
+
+    private static UomDto MapToDto(Uom e) => new UomDto
+    {
+        Id = e.Id,
+        Name = e.Name,
+        Code = e.Code,
+        Symbol = e.Symbol,
+        DecimalPlaces = e.DecimalPlaces,
+        Description = e.Description,
+        IsActive = e.IsActive,
+        CreatedAt = e.CreatedAt,
+        UpdatedAt = e.UpdatedAt
+    };
+
+    private static Uom MapToEntity(UomDto d)
+    {
+        var e = new Uom
+        {
+            Name = d.Name ?? string.Empty,
+            Code = d.Code ?? string.Empty,
+            Symbol = d.Symbol,
+            DecimalPlaces = d.DecimalPlaces,
+            Description = d.Description,
+            IsActive = d.IsActive,
+            CreatedAt = d.CreatedAt,
+            UpdatedAt = d.UpdatedAt
+        };
+        if (d.Id != Guid.Empty)
+            e.Id = d.Id;
+        return e;
     }
 }

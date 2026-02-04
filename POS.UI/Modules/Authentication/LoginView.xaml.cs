@@ -1,6 +1,6 @@
 using System;
 using System.Windows;
-
+using Application = System.Windows.Application;
 
 namespace POS.UI.Modules.Authentication
 {

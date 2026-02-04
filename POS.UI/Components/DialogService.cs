@@ -1,4 +1,5 @@
 using System.Windows;
+using Application = System.Windows.Application;
 
 namespace POS.UI.Components
 {
@@ -25,6 +26,14 @@ namespace POS.UI.Components
             var dlg = new MessageDialog(title, message, DialogIcon.Error, DialogButtons.Ok);
             dlg.Owner = Application.Current?.MainWindow;
             var res = dlg.ShowDialog();
+            return dlg.Result;
+        }
+
+        public static MessageBoxResult Warning(string title, string message)
+        {
+            var dlg = new MessageDialog(title, message, DialogIcon.Warning, DialogButtons.Ok);
+            dlg.Owner = Application.Current?.MainWindow;
+            dlg.ShowDialog();
             return dlg.Result;
         }
     }

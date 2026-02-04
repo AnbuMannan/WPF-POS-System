@@ -11,18 +11,33 @@ public class CustomerRepository : ICustomerRepository
 
     public CustomerRepository(PosDbContext db) => _db = db;
 
-    public async Task<List<Customer>> GetAllAsync()
-        => await _db.Customers
-            .AsNoTracking()
-            .OrderBy(c => c.FirstName)
-            .ThenBy(c => c.LastName)
-            .ToListAsync();
+    public async Task<List<Customer>> GetAllAsync(bool includeInactive = false)
+    {
+        var query = _db.Customers.AsNoTracking().OrderBy(c => c.Name);
+        if (includeInactive)
+            query = _db.Customers.IgnoreQueryFilters().AsNoTracking().OrderBy(c => c.Name);
+        return await query.ToListAsync();
+    }
 
-    public async Task<Customer> GetByIdAsync(string id)
+    public async Task<List<Customer>> SearchAsync(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return await _db.Customers.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
+        var term = $"%{query.Trim()}%";
+        return await _db.Customers
+            .AsNoTracking()
+            .Where(c => EF.Functions.Like(c.Name, term)
+                || (c.Phone != null && EF.Functions.Like(c.Phone, term))
+                || (c.Email != null && EF.Functions.Like(c.Email, term)))
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
+
+    public async Task<Customer?> GetByIdAsync(Guid id)
         => await _db.Customers
             .IgnoreQueryFilters()
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.CustomerId == id);
+            .FirstOrDefaultAsync(c => c.Id == id);
 
     public async Task AddAsync(Customer customer)
     {
@@ -32,23 +47,38 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task UpdateAsync(Customer customer)
     {
-        _db.Entry(customer).Property(c => c.CreatedAt).IsModified = false;
-        _db.Customers.Update(customer);
+        var existing = await _db.Customers.IgnoreQueryFilters().FirstOrDefaultAsync(c => c.Id == customer.Id);
+        if (existing == null)
+            throw new InvalidOperationException($"Customer with Id '{customer.Id}' not found.");
+
+        existing.Name = customer.Name;
+        existing.Phone = customer.Phone;
+        existing.Email = customer.Email;
+        existing.Address = customer.Address;
+        existing.LoyaltyPoints = customer.LoyaltyPoints;
+        existing.IsActive = customer.IsActive;
+        existing.UpdatedAt = customer.UpdatedAt ?? DateTime.UtcNow;
+
         await _db.SaveChangesAsync();
     }
 
-    public async Task DisableAsync(string id)
+    public async Task DisableAsync(Guid id)
     {
-        var customer = await _db.Customers.FirstOrDefaultAsync(c => c.CustomerId == id);
-        if (customer == null) return;
-        customer.IsActive = false;
-        await _db.SaveChangesAsync();
+        var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Id == id);
+        if (customer != null)
+        {
+            customer.IsActive = false;
+            await _db.SaveChangesAsync();
+        }
     }
 
-    public async Task<bool> CheckPhoneExistsAsync(string phone, string? excludeId)
+    public async Task<bool> CheckPhoneExistsAsync(string? phone, Guid? excludeId)
     {
-        var query = _db.Customers.AsNoTracking().Where(c => c.Phone == phone && c.IsActive);
-        if (excludeId != null) query = query.Where(c => c.CustomerId != excludeId);
+        if (string.IsNullOrWhiteSpace(phone))
+            return false;
+        var query = _db.Customers.AsNoTracking().Where(c => c.Phone == phone);
+        if (excludeId.HasValue)
+            query = query.Where(c => c.Id != excludeId.Value);
         return await query.AnyAsync();
     }
 }

@@ -1,7 +1,8 @@
-﻿using POS.UI.Core.Services;
+using POS.UI.Core.Services;
 using POS.UI.Modules.Admin.Products.ViewModels;
 using System;
 using System.Windows.Controls;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace POS.UI.Modules.Admin.Products
 {

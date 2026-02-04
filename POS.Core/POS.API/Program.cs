@@ -1,9 +1,12 @@
+using System.Linq;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using MySqlConnector;
 using POS.Application.Interfaces.Repositories;
 using POS.Application.Interfaces.Services;
 using POS.Application.Services;
 using POS.Infrastructure.Repositories;
+using POS.Infrastructure.Services;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
 using POS.Infrastructure.Data;
@@ -14,7 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Avoid JsonException when returning EF entities with navigation cycles (e.g. Sale -> SaleItems -> Sale).
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
@@ -56,6 +64,16 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IUomRepository, UomRepository>();
 builder.Services.AddScoped<IUomService, UomService>();
 
+builder.Services.AddScoped<IBillingService, BillingService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IHeldBillService, HeldBillService>();
+builder.Services.AddScoped<IDraftBillService, DraftBillService>();
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
+builder.Services.AddScoped<IReturnService, ReturnService>();
+builder.Services.AddScoped<IEODReportService, POS.Infrastructure.Services.EODReportService>();
+builder.Services.AddScoped<IAuditLogService, POS.Infrastructure.Services.AuditLogService>();
+builder.Services.AddHostedService<POS.API.Services.HeldBillCleanupService>();
+
 WebApplication app;
 try
 {
@@ -82,5 +100,16 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Run pending EF Core migrations on startup (auto-upgrade database schema)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PosDbContext>();
+    var pending = db.Database.GetPendingMigrations();
+    if (pending.Any())
+    {
+        db.Database.Migrate();
+    }
+}
 
 app.Run();

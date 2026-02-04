@@ -17,6 +17,14 @@
       {
         "Header": "Tax Profiles",
         "View": "TaxProfileView"
+      },
+      {
+        "Header": "UoM",
+        "View": "UomView"
+      },
+      {
+        "Header": "Customers",
+        "View": "CustomerView"
       }
     ]
   },

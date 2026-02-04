@@ -65,15 +65,28 @@ namespace POS.UI.Core.Services
             switch (response.StatusCode)
             {
                 case HttpStatusCode.BadRequest:
-                    // Try to extract validation errors from response
+                    // Extract message from response (content already read above; do not read stream again)
                     try
                     {
-                        var error = await response.Content.ReadFromJsonAsync<ApiValidationError>();
-                        _logger.Error(
-                            "Validation error from API [{Operation}]: {ValidationErrors}",
-                            operationName ?? "Unknown",
-                            error?.Errors ?? new());
-                        throw new ApiValidationException(error ?? new ApiValidationError { Errors = new() });
+                        var error = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(responseContent);
+                        if (error.TryGetProperty("message", out var msgProp))
+                        {
+                            var msg = msgProp.GetString();
+                            if (!string.IsNullOrEmpty(msg))
+                            {
+                                _logger.Warning("API BadRequest [{Operation}]: {Message}", operationName ?? "Unknown", msg);
+                                throw new HttpRequestException(msg);
+                            }
+                        }
+                        if (error.TryGetProperty("errors", out var errors) && errors.ValueKind == System.Text.Json.JsonValueKind.Array)
+                        {
+                            var apiError = System.Text.Json.JsonSerializer.Deserialize<ApiValidationError>(responseContent);
+                            throw new ApiValidationException(apiError ?? new ApiValidationError { Errors = new() });
+                        }
+                    }
+                    catch (HttpRequestException)
+                    {
+                        throw;
                     }
                     catch (ApiValidationException)
                     {
@@ -81,11 +94,9 @@ namespace POS.UI.Core.Services
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warning(ex, "Could not parse validation error response for operation [{Operation}]", 
-                            operationName ?? "Unknown");
-                        // Fall through to throw generic error
+                        _logger.Warning(ex, "Could not parse BadRequest response for operation [{Operation}]", operationName ?? "Unknown");
                     }
-                    break;
+                    throw new HttpRequestException(string.IsNullOrEmpty(responseContent) ? "Request was rejected by the server." : responseContent);
 
                 case HttpStatusCode.Unauthorized:
                     _logger.Warning("Authentication required (401) for operation [{Operation}] at {RequestUri}", 
@@ -118,12 +129,10 @@ namespace POS.UI.Core.Services
                     throw new HttpRequestException("The service is temporarily unavailable. Please try again later.");
             }
 
-            // For any other non-success status, throw with detailed message
-            var content = await response.Content.ReadAsStringAsync();
+            // For any other non-success status, throw with detailed message (use already-read responseContent)
             var message = $"HTTP {(int)response.StatusCode} {response.StatusCode}";
-            
-            if (!string.IsNullOrEmpty(content))
-                message += $": {content}";
+            if (!string.IsNullOrEmpty(responseContent))
+                message += $": {responseContent}";
 
             _logger.Error("API error [{Operation}] ({StatusCode}): {Message}",
                 operationName ?? "Unknown",

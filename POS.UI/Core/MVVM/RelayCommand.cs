@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Input;
 
 namespace POS.UI.Core.MVVM
@@ -19,6 +19,29 @@ namespace POS.UI.Core.MVVM
 
         public void Execute(object parameter)
             => _execute();
+
+        public event EventHandler CanExecuteChanged;
+
+        public void RaiseCanExecuteChanged()
+            => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public class RelayCommand<T> : ICommand
+    {
+        private readonly Predicate<T?> _canExecute;
+        private readonly Action<T?> _execute;
+
+        public RelayCommand(Action<T?> execute, Predicate<T?> canExecute = null)
+        {
+            _execute = execute;
+            _canExecute = canExecute ?? (_ => true);
+        }
+
+        public bool CanExecute(object parameter)
+            => _canExecute((T?)parameter);
+
+        public void Execute(object parameter)
+            => _execute((T?)parameter);
 
         public event EventHandler CanExecuteChanged;
 

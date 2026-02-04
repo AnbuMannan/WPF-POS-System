@@ -28,12 +28,6 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Brand, opt => opt.Ignore())
             .ForMember(dest => dest.TaxProfile, opt => opt.Ignore());
 
-        // Customer (entity RowVersion is DateTime; DTO keeps byte[]? for API)
-        CreateMap<Customer, CustomerDto>()
-            .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion == default ? null : BitConverter.GetBytes(src.RowVersion.Ticks)));
-        CreateMap<CustomerDto, Customer>()
-            .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion == null || src.RowVersion.Length < 8 ? default(DateTime) : new DateTime(BitConverter.ToInt64(src.RowVersion, 0))));
-
         // Brand
         CreateMap<Brand, BrandDto>();
         CreateMap<BrandDto, Brand>()

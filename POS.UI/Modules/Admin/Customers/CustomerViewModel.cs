@@ -1,7 +1,6 @@
 using POS.Shared.Models;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
-using POS.UI.Modules.Admin.Customers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,23 +8,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Application = System.Windows.Application;
 
 namespace POS.UI.Modules.Admin.Customers
 {
     public class CustomerViewModel : ViewModelBase
     {
         private readonly CustomerApiService _service;
-
-        // ================= COLLECTIONS =================
+        private readonly System.Windows.Threading.DispatcherTimer _searchTimer;
 
         public ObservableCollection<CustomerDto> Customers { get; set; } = new();
-
         private List<CustomerDto> _allCustomers = new();
 
-        // ================= SELECTION =================
-
-        private CustomerDto _selectedCustomer;
-        public CustomerDto SelectedCustomer
+        private CustomerDto? _selectedCustomer;
+        public CustomerDto? SelectedCustomer
         {
             get => _selectedCustomer;
             set
@@ -37,37 +33,57 @@ namespace POS.UI.Modules.Admin.Customers
             }
         }
 
-        // ================= SEARCH =================
-
-        private string _searchText;
+        private string _searchText = string.Empty;
         public string SearchText
         {
             get => _searchText;
             set
             {
-                _searchText = value;
+                _searchText = value ?? string.Empty;
                 OnPropertyChanged();
+                _searchTimer.Stop();
+                _searchTimer.Start();
             }
         }
 
-        // ================= COMMANDS =================
+        private bool _showInactive;
+        public bool ShowInactive
+        {
+            get => _showInactive;
+            set
+            {
+                _showInactive = value;
+                OnPropertyChanged();
+                _ = LoadAsync();
+            }
+        }
 
         public ICommand LoadCommand { get; }
         public ICommand SearchCommand { get; }
         public ICommand RefreshCommand { get; }
+        public ICommand ClearCommand { get; }
         public ICommand AddCommand { get; }
         public ICommand EditCommand { get; }
         public ICommand DisableCommand { get; }
-
-        // ================= CONSTRUCTOR =================
 
         public CustomerViewModel(CustomerApiService service)
         {
             _service = service;
 
+            _searchTimer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(400)
+            };
+            _searchTimer.Tick += (s, e) =>
+            {
+                _searchTimer.Stop();
+                ApplyDisplayFilter();
+            };
+
             LoadCommand = new RelayCommand(async () => await LoadAsync());
             SearchCommand = new RelayCommand(ApplySearch);
             RefreshCommand = new RelayCommand(async () => await LoadAsync());
+            ClearCommand = new RelayCommand(ClearSearch);
 
             AddCommand = new RelayCommand(async () => await AddAsync());
             EditCommand = new RelayCommand(async () => await EditAsync(), () => SelectedCustomer != null);
@@ -76,18 +92,13 @@ namespace POS.UI.Modules.Admin.Customers
             _ = LoadAsync();
         }
 
-        // ================= LOAD LIST =================
-
         private async Task LoadAsync()
         {
             try
             {
-                var list = await _service.GetAllAsync();
-                _allCustomers = list;
-
-                Customers.Clear();
-                foreach (var item in list)
-                    Customers.Add(item);
+                var list = await _service.GetAllAsync(ShowInactive);
+                _allCustomers = list ?? new List<CustomerDto>();
+                ApplyDisplayFilter();
             }
             catch (Exception ex)
             {
@@ -95,30 +106,29 @@ namespace POS.UI.Modules.Admin.Customers
             }
         }
 
-        // ================= SEARCH =================
+        private void ApplySearch() => ApplyDisplayFilter();
 
-        private void ApplySearch()
+        private void ClearSearch()
         {
-            if (string.IsNullOrWhiteSpace(SearchText))
-            {
-                Customers.Clear();
-                foreach (var item in _allCustomers)
-                    Customers.Add(item);
-                return;
-            }
-
-            var filtered = _allCustomers
-                .Where(x => x.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-                         || (x.Phone != null && x.Phone.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-                         || (x.Email != null && x.Email.Contains(SearchText, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
-
-            Customers.Clear();
-            foreach (var item in filtered)
-                Customers.Add(item);
+            SearchText = string.Empty;
+            ApplyDisplayFilter();
         }
 
-        // ================= ADD =================
+        private void ApplyDisplayFilter()
+        {
+            var filtered = _allCustomers.AsEnumerable();
+            if (!ShowInactive)
+                filtered = filtered.Where(x => x.IsActive);
+            if (!string.IsNullOrWhiteSpace(SearchText))
+                filtered = filtered.Where(x =>
+                    (x.Name != null && x.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.Phone != null && x.Phone.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.Email != null && x.Email.Contains(SearchText, StringComparison.OrdinalIgnoreCase)));
+
+            Customers.Clear();
+            foreach (var item in filtered.ToList())
+                Customers.Add(item);
+        }
 
         private async Task AddAsync()
         {
@@ -130,8 +140,6 @@ namespace POS.UI.Modules.Admin.Customers
                 ApplySearch();
             }
         }
-
-        // ================= EDIT =================
 
         private async Task EditAsync()
         {
@@ -147,24 +155,20 @@ namespace POS.UI.Modules.Admin.Customers
             }
         }
 
-        // ================= DISABLE (SOFT DELETE) =================
-
         private async Task DisableAsync()
         {
             if (SelectedCustomer == null)
                 return;
 
-            var result = POS.UI.Components.DialogService.Confirm("Confirm Disable", $"Disable customer '{SelectedCustomer.FullName}' ?");
+            var result = POS.UI.Components.DialogService.Confirm("Confirm Disable", $"Disable customer '{SelectedCustomer.Name}'?");
 
             if (result != MessageBoxResult.Yes)
                 return;
 
             try
             {
-                await _service.DisableAsync(SelectedCustomer.CustomerId);
-
+                await _service.DisableAsync(SelectedCustomer.Id);
                 POS.UI.Components.DialogService.Info("Success", "Customer disabled successfully");
-
                 await LoadAsync();
             }
             catch (Exception ex)

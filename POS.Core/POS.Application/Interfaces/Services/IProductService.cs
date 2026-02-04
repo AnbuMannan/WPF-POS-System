@@ -8,6 +8,9 @@ public interface IProductService
     Task<ProductDto> GetByIdAsync(long id);
     Task<ProductDto> GetByBarcodeAsync(string barcode);
     Task<List<ProductDto>> SearchAsync(string keyword);
+    Task<List<Product>> SearchProductsAsync(string query);
+    Task<Product?> GetProductByBarcodeAsync(string barcode);
+    Task<bool> CheckStockAsync(long productId, decimal quantity);
     Task AddAsync(ProductDto product);
     Task UpdateAsync(ProductDto product);
     Task DisableAsync(long id);

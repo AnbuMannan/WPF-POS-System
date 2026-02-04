@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Control = System.Windows.Controls.Control;
 
 namespace POS.UI.Modules.Admin.Categories
 {

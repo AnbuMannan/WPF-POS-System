@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using POS.UI.Core.Services;
 using POS.UI.Infrastructure;
@@ -7,6 +7,7 @@ using Serilog;
 using System;
 using System.IO;
 using System.Windows;
+using Application = System.Windows.Application;
 
 namespace POS.UI
 {
@@ -14,8 +15,57 @@ namespace POS.UI
     {
         /// <summary>
         /// Global service provider for dependency injection.
+        /// Database (AppDbContext/EF migrations) runs in the API project, not in the WPF client.
         /// </summary>
-        public static IServiceProvider ServiceProvider { get; private set; }
+        public static IServiceProvider? ServiceProvider { get; private set; }
+
+        public App()
+        {
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        private static void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            Serilog.Log.Error(e.Exception, "Unhandled UI exception");
+            POS.UI.Components.DialogService.Error("Error", $"An error occurred: {e.Exception.Message}");
+            // Close any modal (e.g. Payment dialog) that may be stuck so the app stays responsive
+            CloseStuckModalWindows();
+            e.Handled = true;
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = e.ExceptionObject as Exception;
+            Serilog.Log.Fatal(ex, "Unhandled exception (non-UI thread)");
+            if (ex != null)
+            {
+                POS.UI.Components.DialogService.Error("Fatal Error", ex.Message);
+                Current.Dispatcher?.BeginInvoke(() => CloseStuckModalWindows());
+            }
+        }
+
+        /// <summary>
+        /// Closes modal windows (e.g. Payment dialog) that may be stuck after an exception,
+        /// so the main window does not remain blocked and the app stays responsive.
+        /// </summary>
+        private static void CloseStuckModalWindows()
+        {
+            try
+            {
+                var main = Current.MainWindow;
+                foreach (Window w in Current.Windows)
+                {
+                    if (w == main || !w.IsLoaded) continue;
+                    if (w.Title == "Payment" || w.Title == "Customer Display")
+                    {
+                        w.DialogResult = false;
+                        w.Close();
+                    }
+                }
+            }
+            catch { /* ignore */ }
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -81,6 +131,7 @@ namespace POS.UI
                 // Subscribe to login success
                 loginViewModel.LoginSucceeded += (s, args) =>
                 {
+                    POS.UI.Core.AppState.SetUser(loginViewModel.Username, "Cashier");
                     var mainWindow = new MainWindow();
                     Current.MainWindow = mainWindow;
                     mainWindow.Show();
@@ -93,10 +144,8 @@ namespace POS.UI
             catch (Exception ex)
             {
                 Log.Error(ex, "Fatal error during application startup");
-                
-                POS.UI.Components.DialogService.Error("Startup Error", $"Failed to initialize application: {ex.Message}\n\n{ex.StackTrace}");
-
-                this.Shutdown(1);
+                POS.UI.Components.DialogService.Error("Startup Error", $"Failed to initialize application: {ex.Message}");
+                Shutdown(1);
             }
         }
         //private void Application_Startup(object sender, StartupEventArgs e)

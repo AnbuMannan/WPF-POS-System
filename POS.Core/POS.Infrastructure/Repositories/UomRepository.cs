@@ -14,11 +14,13 @@ public class UomRepository : IUomRepository
         _db = db;
     }
 
-    public async Task<List<Uom>> GetAllAsync()
-        => await _db.Uoms
-            .AsNoTracking()
-            .OrderBy(u => u.Name)
-            .ToListAsync();
+    public async Task<List<Uom>> GetAllAsync(bool includeInactive = false)
+    {
+        var query = _db.Uoms.AsNoTracking().OrderBy(u => u.Name);
+        if (includeInactive)
+            query = _db.Uoms.IgnoreQueryFilters().AsNoTracking().OrderBy(u => u.Name);
+        return await query.ToListAsync();
+    }
 
     public async Task<Uom> GetByIdAsync(Guid id)
         => await _db.Uoms
@@ -34,8 +36,18 @@ public class UomRepository : IUomRepository
 
     public async Task UpdateAsync(Uom uom)
     {
-        _db.Entry(uom).Property(x => x.CreatedAt).IsModified = false;
-        _db.Uoms.Update(uom);
+        var existing = await _db.Uoms.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == uom.Id);
+        if (existing == null)
+            throw new InvalidOperationException($"UoM with Id '{uom.Id}' not found.");
+
+        existing.Name = uom.Name;
+        existing.Code = uom.Code;
+        existing.Symbol = uom.Symbol;
+        existing.DecimalPlaces = uom.DecimalPlaces;
+        existing.Description = uom.Description;
+        existing.IsActive = uom.IsActive;
+        existing.UpdatedAt = uom.UpdatedAt ?? DateTime.UtcNow;
+
         await _db.SaveChangesAsync();
     }
 

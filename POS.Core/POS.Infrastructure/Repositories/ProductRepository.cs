@@ -16,6 +16,7 @@ public class ProductRepository : IProductRepository
             .AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Brand)
+            .Include(p => p.TaxProfile)
             .FirstOrDefaultAsync(p => p.ProductId == id && p.IsActive);
 
     public async Task<Product> GetByBarcodeAsync(string barcode)
@@ -23,6 +24,7 @@ public class ProductRepository : IProductRepository
             .AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Brand)
+            .Include(p => p.TaxProfile)
             .FirstOrDefaultAsync(p => p.Barcode == barcode && p.IsActive);
 
     public async Task<List<Product>> SearchAsync(string keyword)
@@ -30,6 +32,7 @@ public class ProductRepository : IProductRepository
             .AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Brand)
+            .Include(p => p.TaxProfile)
             .Where(p => EF.Functions.Like(p.Name, "%" + keyword + "%")
                      || EF.Functions.Like(p.SKU, "%" + keyword + "%")
                      || (p.Barcode != null && EF.Functions.Like(p.Barcode, "%" + keyword + "%")))

@@ -1,44 +1,19 @@
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace POS.Domain.Entities;
 
-public class Customer
+public class Customer : BaseEntity
 {
-    [Key]
-    [MaxLength(36)]
-    public string CustomerId { get; set; } = string.Empty;
+    [NotMapped]
+    public Guid CustomerId
+    {
+        get => Id;
+        set => Id = value;
+    }
 
-    [MaxLength(100)]
-    public string? FirstName { get; set; }
-
-    [MaxLength(100)]
-    public string? LastName { get; set; }
-
-    [MaxLength(20)]
+    public string Name { get; set; } = string.Empty;
     public string? Phone { get; set; }
-
-    [MaxLength(256)]
     public string? Email { get; set; }
-
-    [MaxLength(500)]
     public string? Address { get; set; }
-
-    public DateTime? DateOfBirth { get; set; }
-
-    [MaxLength(50)]
-    public string? LoyaltyNumber { get; set; }
-
-    [Required]
-    public bool IsWholesale { get; set; }
-
-    [Required]
-    public bool IsActive { get; set; } = true;
-
-    [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-    public DateTime? UpdatedAt { get; set; }
-
-    /// <summary>Concurrency token (MySQL TIMESTAMP). Stored as DateTime to avoid EF Core/Pomelo byte[] mapping NRE.</summary>
-    public DateTime RowVersion { get; set; }
+    public int LoyaltyPoints { get; set; }
 }

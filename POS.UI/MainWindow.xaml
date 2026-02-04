@@ -368,15 +368,43 @@
             </Grid>
         </Border>
 
-        <!-- ================= RIGHT PANEL WITH HEADER AND CONTENT ================= -->
+        <!-- ================= RIGHT PANEL WITH MENU, HEADER, CONTENT, STATUS BAR ================= -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="60" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="28" />
             </Grid.RowDefinitions>
 
+            <!-- TOP MENU BAR: File, Sales, Reports, Settings, Help -->
+            <Menu Grid.Row="0" Background="{StaticResource BrushSidebarBg}" Foreground="{StaticResource BrushTextWhite}" VerticalAlignment="Center">
+                <MenuItem Header="File">
+                    <MenuItem Header="New Sale" Click="MenuFile_NewSale"/>
+                    <Separator/>
+                    <MenuItem Header="Exit" Click="MenuFile_Exit"/>
+                </MenuItem>
+                <MenuItem Header="Sales">
+                    <MenuItem Header="Billing / New Sale" Click="MenuSales_Billing"/>
+                    <MenuItem Header="Quick Sale" Click="MenuSales_QuickSale"/>
+                    <MenuItem Header="Held Bills"/>
+                    <MenuItem Header="Returns &amp; Exchanges" Click="MenuSales_Returns"/>
+                    <MenuItem Header="Day End" Click="MenuSales_DayEnd"/>
+                </MenuItem>
+                <MenuItem Header="Reports">
+                    <MenuItem Header="Audit Logs" Click="MenuReports_AuditLogs"/>
+                </MenuItem>
+                <MenuItem Header="Settings">
+                    <MenuItem Header="Print &amp; Receipt Settings" Click="MenuSettings_Print"/>
+                </MenuItem>
+                <MenuItem Header="Help">
+                    <MenuItem Header="Help" ToolTip="Help"/>
+                    <MenuItem Header="About"/>
+                </MenuItem>
+            </Menu>
+
             <!-- TOP HEADER BAR WITH DARK BACKGROUND -->
-            <Border Grid.Row="0" Background="{StaticResource BrushSidebarBg}">
+            <Border Grid.Row="1" Background="{StaticResource BrushSidebarBg}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -388,14 +416,12 @@
                     <!-- Left side - Page title -->
                     <TextBlock Grid.Column="0"
                                x:Name="HeaderTitle"
-                               Text="Dashboard"
+                               Text="Billing / New Sale"
                                Foreground="{StaticResource BrushTextWhite}"
                                FontSize="18"
                                FontWeight="SemiBold"
                                VerticalAlignment="Center"
                                Margin="20,0,0,0"/>
-
-                    <!-- Removed time section -->
 
                     <!-- Summary Button -->
                     <Button Grid.Column="1"
@@ -413,11 +439,30 @@
                 </Grid>
             </Border>
 
-            <!-- MAIN CONTENT AREA -->
-            <Grid Grid.Row="1">
+            <!-- MAIN CONTENT AREA (hosts BillingView by default) -->
+            <Grid Grid.Row="2">
                 <Border Background="{StaticResource BrushWindowBg}" />
                 <ContentControl x:Name="MainContent" />
             </Grid>
+
+            <!-- STATUS BAR: User, Date/Time, Online status, Version -->
+            <StatusBar Grid.Row="3" Background="{StaticResource BrushSidebarBg}" Foreground="{StaticResource BrushTextWhite}" FontSize="12" Padding="8,0">
+                <StatusBarItem>
+                    <TextBlock x:Name="StatusBarUser" Text="User: --" />
+                </StatusBarItem>
+                <Separator/>
+                <StatusBarItem>
+                    <TextBlock x:Name="StatusBarDateTime" Text="" />
+                </StatusBarItem>
+                <Separator/>
+                <StatusBarItem>
+                    <TextBlock x:Name="StatusBarOnline" Text="Online" />
+                </StatusBarItem>
+                <Separator/>
+                <StatusBarItem>
+                    <TextBlock x:Name="StatusBarVersion" Text="v1.0.0" />
+                </StatusBarItem>
+            </StatusBar>
         </Grid>
 
         <!-- ================= SALES SUBMENU POPUP ================= -->
@@ -443,14 +488,15 @@
                 </Border.Effect>
 
                 <StackPanel>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7BF;" Content="Billing / New Sale"/>
+                    <Button x:Name="BtnBilling" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7BF;" Content="Billing / New Sale"/>
+                    <Button x:Name="BtnQuickSale" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7BF;" Content="Quick Sale"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE716;" Content="Held Bills"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE81C;" Content="Sales History"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE898;" Content="Returns &amp; Exchanges"/>
+                    <Button x:Name="BtnReturnsExchanges" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE898;" Content="Returns &amp; Exchanges"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C5;" Content="Quotations"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80D;" Content="Delivery Orders"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE749;" Content="Reprint Invoice"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE89E;" Content="Day End / Shift Close"/>
+                    <Button x:Name="BtnReprintInvoice" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE749;" Content="Reprint Invoice"/>
+                    <Button x:Name="BtnDayEnd" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE89E;" Content="Day End / Shift Close"/>
                 </StackPanel>
             </Border>
         </Popup>
@@ -470,12 +516,12 @@
                     <Button x:Name="BtnCategories" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8EC;" Content="Categories"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE90C;" Content="Sub-Categories"/>
                     <Button x:Name="BtnBrands" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80B;" Content="Brands"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9A8;" Content="Units (UOM)"/>
+                    <Button x:Name="BtnUom" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9A8;" Content="Units (UOM)"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7F4;" Content="Variants"/>
                     <Button x:Name="BtnTaxProfiles" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE825;" Content="Tax Profiles"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE14D;" Content="Price Lists"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE737;" Content="Combo / Bundle Items"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80A;" Content="Barcode Management"/>
+                    <Button x:Name="BtnBarcodeManagement" Click="SubMenu_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80A;" Content="Barcode Management"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8B6;" Content="Import / Export"/>
                 </StackPanel>
             </Border>
@@ -492,7 +538,7 @@
             <Border Background="{StaticResource BrushSidebarBg}" Width="260" Padding="5" CornerRadius="0,8,8,0" BorderThickness="2,1,1,1" BorderBrush="{StaticResource BrushPrimary}">
                 <Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.35"/></Border.Effect>
                 <StackPanel>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE77B;" Content="Customers"/>
+                    <Button x:Name="BtnCustomerList" Click="SubMenuCustomers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE77B;" Content="Customers"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE716;" Content="Customer Groups"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8A1;" Content="Loyalty Programs"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C6;" Content="Credit Customers"/>
@@ -601,7 +647,7 @@
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE821;" Content="Supplier Reports"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE779;" Content="Staff Performance"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1C5;" Content="Profit &amp; Loss"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7C3;" Content="Audit Logs"/>
+                    <Button x:Name="BtnAuditLogs" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7C3;" Content="Audit Logs"/>
                 </StackPanel>
             </Border>
         </Popup>
@@ -695,7 +741,7 @@
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE749;" Content="Invoice &amp; Receipt Format"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE825;" Content="Tax Configuration"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE14D;" Content="Number Series"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE749;" Content="Printer Setup"/>
+                    <Button x:Name="BtnPrintSettings" Click="SubMenuSettings_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE749;" Content="Print &amp; Receipt Settings"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80A;" Content="Barcode Scanner Setup"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C7;" Content="Payment Gateway Setup"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE774;" Content="Regional Settings"/>

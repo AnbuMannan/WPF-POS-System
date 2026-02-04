@@ -222,6 +222,61 @@ namespace POS.UI.Infrastructure
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(circuitBreakerPolicy);
 
+            // Register HttpClient for UomApiService
+            services
+                .AddHttpClient<UomApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for BillingApiService
+            services
+                .AddHttpClient<BillingApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for ReturnApiService
+            services
+                .AddHttpClient<ReturnApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for EODReportApiService
+            services
+                .AddHttpClient<EODReportApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for AuditLogApiService
+            services
+                .AddHttpClient<AuditLogApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
             logger.Information("HttpClient configuration complete");
         }
 
@@ -230,15 +285,13 @@ namespace POS.UI.Infrastructure
         /// </summary>
         private static void RegisterApiServices(IServiceCollection services)
         {
-            //services.AddScoped<ProductApiService>();
-            //services.AddScoped<CategoryApiService>();
-
             var logger = Log.ForContext("Component", "ServiceRegistration");
-            logger.Debug("Registered API services: ProductApiService, CategoryApiService");
+            logger.Debug("Registered API services");
 
-            // Add more services here as they are created:
-            // services.AddScoped<StockApiService>();
-            // services.AddScoped<BillingApiService>();
+            // Print and receipt
+            services.AddSingleton<IPrintService, PrintService>();
+            services.AddSingleton<IPrintSettingsService, PrintSettingsService>();
+            services.AddSingleton<IEmailReceiptService, EmailReceiptService>();
         }
 
         /// <summary>

@@ -33,7 +33,19 @@ namespace POS.Shared.Models
         public decimal AmountPaid { get; set; }
         public decimal ChangeAmount { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
-        
+        /// <summary>Split payments: method name and amount.</summary>
+        public List<ReceiptPaymentDto>? Payments { get; set; }
+        public decimal? CGST { get; set; }
+        public decimal? SGST { get; set; }
+        public decimal? IGST { get; set; }
+        public decimal? RoundOff { get; set; }
+        public string? CashierName { get; set; }
+        public int TotalItemCount { get; set; }
+        public decimal TotalQuantity { get; set; }
+        public int? LoyaltyPointsEarned { get; set; }
+        public decimal? YouSaved { get; set; }
+        public string? BarcodeBillNumber { get; set; }
+
         // Footer
         public string? FooterMessage { get; set; }
         public string? ThankYouMessage { get; set; }
@@ -51,5 +63,12 @@ namespace POS.Shared.Models
         public decimal TotalPrice { get; set; }
         public decimal? Discount { get; set; }
         public string? HSNCode { get; set; }
+    }
+
+    public class ReceiptPaymentDto
+    {
+        public string Method { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public string? Reference { get; set; }
     }
 }
