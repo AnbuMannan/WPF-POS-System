@@ -1,0 +1,179 @@
+<Window x:Class="POS.UI.Modules.Suppliers.SupplierList.SupplierFormView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Supplier"
+        Height="600" Width="700"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ========== HEADER ========== -->
+        <TextBlock Text="Supplier"
+                   FontSize="20"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,12" />
+
+        <!-- ========== FORM BODY ========== -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Supplier Name -->
+            <TextBlock Text="Supplier Name *" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="0" Grid.Column="1"
+                     x:Name="SupplierNameBox"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding SupplierName,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    ValidatesOnNotifyDataErrors=True}" />
+            <TextBlock Grid.Row="1" Grid.Column="1"
+                       Foreground="Red"
+                       FontSize="11"
+                       Margin="4,2,0,8"
+                       Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=SupplierNameBox}"
+                       Visibility="{Binding (Validation.HasError), ElementName=SupplierNameBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <!-- Supplier Code -->
+            <TextBlock Text="Supplier Code *" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="2" Grid.Column="1"
+                     x:Name="SupplierCodeBox"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding SupplierCode,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    ValidatesOnNotifyDataErrors=True}" />
+            <TextBlock Grid.Row="3" Grid.Column="1"
+                       Foreground="Red"
+                       FontSize="11"
+                       Margin="4,2,0,8"
+                       Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=SupplierCodeBox}"
+                       Visibility="{Binding (Validation.HasError), ElementName=SupplierCodeBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <!-- Contact Person -->
+            <TextBlock Text="Contact Person" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="4" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding ContactPerson}" />
+
+            <!-- Mobile -->
+            <TextBlock Text="Mobile" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="5" Grid.Column="1"
+                     x:Name="MobileBox"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding Mobile,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    ValidatesOnNotifyDataErrors=True}" />
+            <TextBlock Grid.Row="6" Grid.Column="1"
+                       Foreground="Red"
+                       FontSize="11"
+                       Margin="4,2,0,8"
+                       Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=MobileBox}"
+                       Visibility="{Binding (Validation.HasError), ElementName=MobileBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <!-- Email -->
+            <TextBlock Text="Email" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="7" Grid.Column="1"
+                     x:Name="EmailBox"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding Email,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    ValidatesOnNotifyDataErrors=True}" />
+            <TextBlock Grid.Row="8" Grid.Column="1"
+                       Foreground="Red"
+                       FontSize="11"
+                       Margin="4,2,0,8"
+                       Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=EmailBox}"
+                       Visibility="{Binding (Validation.HasError), ElementName=EmailBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <!-- Address -->
+            <TextBlock Text="Address" Grid.Row="9" Grid.Column="0" VerticalAlignment="Top"/>
+            <TextBox Grid.Row="9" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Height="60"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     Text="{Binding Address}" />
+
+            <!-- GST/VAT Number -->
+            <TextBlock Text="GST/VAT Number" Grid.Row="10" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="10" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding GstVatNumber}" />
+
+            <!-- Credit Period Days -->
+            <TextBlock Text="Credit Period (Days)" Grid.Row="11" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="11" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding CreditPeriodDays}" />
+
+            <!-- Credit Limit -->
+            <TextBlock Text="Credit Limit" Grid.Row="12" Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="12" Grid.Column="1"
+                     Style="{StaticResource FormTextBox}"
+                     Text="{Binding CreditLimit}" />
+            
+            <!-- Is Active -->
+            <TextBlock Text="Is Active" Grid.Row="13" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Grid.Row="13" Grid.Column="1"
+                      VerticalAlignment="Center"
+                      Margin="4,8"
+                      IsChecked="{Binding IsActiveChecked, Mode=TwoWay}" />
+            
+        </Grid>
+        </ScrollViewer>
+
+        <!-- ========== FOOTER BUTTONS ========== -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+
+            <Button Content="Save"
+                    Width="90"
+                    Margin="0,0,8,0"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding SaveCommand}" />
+
+            <Button Content="Reset"
+                    Width="90"
+                    Margin="0,0,8,0"
+                    Style="{StaticResource SecondaryButtonStyle}"
+                    Command="{Binding ResetCommand}" />
+
+            <Button Content="Cancel"
+                    Width="90"
+                    Style="{StaticResource DangerButtonStyle}"
+                    Command="{Binding CancelCommand}" />
+        </StackPanel>
+
+    </Grid>
+</Window>

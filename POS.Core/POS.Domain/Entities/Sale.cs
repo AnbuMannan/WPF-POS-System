@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using POS.Domain.Enums;
 
 namespace POS.Domain.Entities
@@ -37,6 +38,7 @@ namespace POS.Domain.Entities
         public int? GiftCardId { get; set; }
         public int LoyaltyPointsEarned { get; set; }
         public int LoyaltyPointsRedeemed { get; set; }
+        public decimal RedemptionAmount { get; set; }
         public bool IsLocked { get; set; }
         public string? LockedBy { get; set; }
         public DateTime? LockedAt { get; set; }
@@ -44,6 +46,20 @@ namespace POS.Domain.Entities
         public DateTime CreatedAt { get; set; }
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        [NotMapped]
+        public int PointsEarned
+        {
+            get => LoyaltyPointsEarned;
+            set => LoyaltyPointsEarned = value;
+        }
+
+        [NotMapped]
+        public int PointsRedeemed
+        {
+            get => LoyaltyPointsRedeemed;
+            set => LoyaltyPointsRedeemed = value;
+        }
 
         public ICollection<SaleItem> SaleItems { get; set; } = new List<SaleItem>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();

@@ -11,6 +11,8 @@ namespace POS.Shared.Models
         public decimal DiscountAmount { get; set; }
         public decimal TaxAmount { get; set; }
         public decimal GrandTotal { get; set; }
+        public int LoyaltyPointsRedeemed { get; set; }
+        public decimal LoyaltyRedemptionAmount { get; set; }
     }
 
     public class SaleItemDto

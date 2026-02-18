@@ -4,7 +4,8 @@
         Title="POS System"
         WindowState="Maximized"
         Background="{StaticResource BrushWindowBg}"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        PreviewKeyDown="MainWindow_PreviewKeyDown">
 
     <!-- ================= WINDOW RESOURCES ================= -->
     <Window.Resources>
@@ -264,6 +265,13 @@
                 <!-- MENU LIST -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
+                        <!-- Dashboard -->
+                        <ToggleButton x:Name="BtnDashboard"
+                                      Content="Dashboard"
+                                      Tag="&#xE10F;"
+                                      Style="{StaticResource SidebarMenuHeaderStyle}"
+                                      Click="Menu_Click"/>
+
                         <!-- Sales Menu -->
                         <ToggleButton x:Name="BtnSales"
                                       Content="Sales"
@@ -467,7 +475,8 @@
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE716;" Content="Held Bills"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE81C;" Content="Sales History"/>
                     <Button x:Name="BtnReturnsExchanges" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE898;" Content="Returns &amp; Exchanges"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C5;" Content="Quotations"/>
+                    <Button x:Name="BtnSalesReturn" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE845;" Content="Sales Return"/>
+                    <Button x:Name="BtnQuotations" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C5;" Content="Quotations"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80D;" Content="Delivery Orders"/>
                     <Button x:Name="BtnReprintInvoice" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE749;" Content="Reprint Invoice"/>
                     <Button x:Name="BtnDayEnd" Click="SubMenuSales_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE89E;" Content="Day End / EOD Report"/>
@@ -514,9 +523,9 @@
                 <StackPanel>
                     <Button x:Name="BtnCustomerList" Click="SubMenuCustomers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE77B;" Content="Customers"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE716;" Content="Customer Groups"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8A1;" Content="Loyalty Programs"/>
+                    <Button x:Name="BtnLoyaltySettings" Click="SubMenuCustomers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8A1;" Content="Loyalty Program"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C6;" Content="Credit Customers"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1E4;" Content="Outstanding / Dues"/>
+                    <Button x:Name="BtnCustomerOutstanding" Click="SubMenuCustomers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1E4;" Content="Outstanding / Dues"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9F9;" Content="Customer Statements"/>
                 </StackPanel>
             </Border>
@@ -533,13 +542,13 @@
             <Border Background="{StaticResource BrushSidebarBg}" Width="260" Padding="5" CornerRadius="0,8,8,0" BorderThickness="2,1,1,1" BorderBrush="{StaticResource BrushPrimary}">
                 <Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.35"/></Border.Effect>
                 <StackPanel>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE821;" Content="Suppliers"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8A1;" Content="Purchase Orders"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE896;" Content="Goods Receipt (GRN)"/>
+                    <Button x:Name="BtnSupplierList" Click="SubMenuSuppliers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE821;" Content="Suppliers"/>
+                    <Button x:Name="BtnPurchaseOrderList" Click="SubMenuSuppliers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8A1;" Content="Purchase Orders"/>
+                    <Button x:Name="BtnPurchaseEntryList" Click="SubMenuSuppliers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE896;" Content="Purchase Entry (GRN)"/>
+                    <Button x:Name="BtnPurchaseReturnList" Click="SubMenuSuppliers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE898;" Content="Purchase Returns"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE14D;" Content="Purchase Invoices"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE898;" Content="Purchase Returns"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C7;" Content="Supplier Payments"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1E4;" Content="Supplier Outstanding"/>
+                    <Button x:Name="BtnSupplierPayments" Click="SubMenuSuppliers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C7;" Content="Supplier Payments"/>
+                    <Button x:Name="BtnSupplierLedger" Click="SubMenuSuppliers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9D9;" Content="Supplier Ledger"/>
                 </StackPanel>
             </Border>
         </Popup>
@@ -559,7 +568,9 @@
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE118;" Content="Stock Inward"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE110;" Content="Stock Outward"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE13C;" Content="Stock Transfers"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE73F;" Content="Stock Adjustments"/>
+                    <Button x:Name="BtnStockAdjustments" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE73F;" Content="Stock Adjustments" Click="SubMenuInventory_Click"/>
+                    <Button x:Name="BtnItemLedger" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9D9;" Content="Item Ledger" Click="SubMenuInventory_Click"/>
+                    <Button x:Name="BtnLabelPrinting" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE892;" Content="Label Printing" Click="SubMenuInventory_Click"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE781;" Content="Physical Stock Count"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1E4;" Content="Batch / Expiry Tracking"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE896;" Content="Serial Number Tracking"/>
@@ -581,7 +592,7 @@
                 <Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.35"/></Border.Effect>
                 <StackPanel>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE753;" Content="Cash Register"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C7;" Content="Cash In / Cash Out"/>
+                    <Button x:Name="BtnCashManagement" Click="SubMenuPayments_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C7;" Content="Cash In / Cash Out"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1C5;" Content="Payment Settlements"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1E4;" Content="Pending Payments"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C6;" Content="Advance Receipts"/>
@@ -602,25 +613,23 @@
             <Border Background="{StaticResource BrushSidebarBg}" Width="260" Padding="5" CornerRadius="0,8,8,0" BorderThickness="2,1,1,1" BorderBrush="{StaticResource BrushPrimary}">
                 <Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.35"/></Border.Effect>
                 <StackPanel>
-                    <!-- Sales Reports Header -->
                     <TextBlock Text="Sales Reports" Foreground="{StaticResource BrushPrimary}" Margin="12,8,0,4" FontSize="12" FontWeight="Bold"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE787;" Content="Day / Month / Period"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE71D;" Content="Item Wise"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8EC;" Content="Category Wise"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE825;" Content="Tax / GST"/>
-                    
-                    <!-- Inventory Reports Header -->
+                    <Button x:Name="BtnSalesReportDayPeriod" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE787;" Content="Day / Month / Period"/>
+                    <Button x:Name="BtnSalesReportItemWise" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE71D;" Content="Item Wise"/>
+                    <Button x:Name="BtnSalesReportCategoryWise" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8EC;" Content="Category Wise"/>
+                    <Button x:Name="BtnSalesReportGst" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE825;" Content="Tax / GST"/>
+
                     <TextBlock Text="Inventory Reports" Foreground="{StaticResource BrushPrimary}" Margin="12,8,0,4" FontSize="12" FontWeight="Bold"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8F1;" Content="Stock Summary"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE118;" Content="Fast / Slow Moving"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1E4;" Content="Expiry"/>
-                    
+                    <Button x:Name="BtnInventoryStockSummary" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8F1;" Content="Stock Summary"/>
+                    <Button x:Name="BtnInventoryFastSlowMoving" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE118;" Content="Fast / Slow Moving"/>
+                    <Button x:Name="BtnInventoryExpiry" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1E4;" Content="Expiry"/>
+
                     <TextBlock Text="Other Reports" Foreground="{StaticResource BrushPrimary}" Margin="12,8,0,4" FontSize="12" FontWeight="Bold"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE821;" Content="Purchase Reports"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE77B;" Content="Customer Reports"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE821;" Content="Supplier Reports"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE779;" Content="Staff Performance"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1C5;" Content="Profit &amp; Loss"/>
+                    <Button x:Name="BtnPurchaseReports" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE821;" Content="Purchase Reports"/>
+                    <Button x:Name="BtnCustomerReports" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE77B;" Content="Customer Reports"/>
+                    <Button x:Name="BtnSupplierReports" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE821;" Content="Supplier Reports"/>
+                    <Button x:Name="BtnStaffPerformanceReports" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE779;" Content="Staff Performance"/>
+                    <Button x:Name="BtnProfitLossReport" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1C5;" Content="Profit &amp; Loss"/>
                     <Button x:Name="BtnAuditLogs" Click="SubMenuReports_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7C3;" Content="Audit Logs"/>
                 </StackPanel>
             </Border>
@@ -637,8 +646,8 @@
             <Border Background="{StaticResource BrushSidebarBg}" Width="260" Padding="5" CornerRadius="0,8,8,0" BorderThickness="2,1,1,1" BorderBrush="{StaticResource BrushPrimary}">
                 <Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.35"/></Border.Effect>
                 <StackPanel>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE779;" Content="Users"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE72E;" Content="Roles &amp; Permissions"/>
+                    <Button x:Name="BtnUserList" Click="SubMenuUsers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE779;" Content="Users"/>
+                    <Button x:Name="BtnRolesPermissions" Click="SubMenuUsers_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE72E;" Content="Roles &amp; Permissions"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE823;" Content="Shift Management"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE76E;" Content="Attendance"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE81C;" Content="Login History"/>
@@ -657,7 +666,7 @@
             <Border Background="{StaticResource BrushSidebarBg}" Width="260" Padding="5" CornerRadius="0,8,8,0" BorderThickness="2,1,1,1" BorderBrush="{StaticResource BrushPrimary}">
                 <Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.35"/></Border.Effect>
                 <StackPanel>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80F;" Content="Company Master"/>
+                    <Button x:Name="BtnCompanyProfile" Click="SubMenuOrganization_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80F;" Content="Company Master"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE719;" Content="Branch / Store Master"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8F1;" Content="Warehouse Master"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE95F;" Content="Counter / Terminal Master"/>

@@ -352,12 +352,39 @@
                         <TextBlock Foreground="White" FontSize="11" Margin="4,0"><Run Text="DEL" FontWeight="Bold"/> Remove</TextBlock>
                     </StackPanel>
                 </Border>
-                <GroupBox Header="Customer" Padding="8" Margin="0,0,0,6" FontWeight="SemiBold">
+                <GroupBox Header="Customer &amp; Loyalty" Padding="8" Margin="0,0,0,6" FontWeight="SemiBold">
                     <StackPanel>
                         <ComboBox x:Name="CustomerCombo" ItemsSource="{Binding Customers}" TabIndex="10"
                                   SelectedItem="{Binding SelectedCustomer}" DisplayMemberPath="Name"
                                   IsEditable="True" Height="34" Margin="0,0,0,6" ToolTip="Customer (Alt+C)"/>
                         <Button x:Name="BtnAddCustomer" Content="+ Add Customer" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left" Padding="10,6" TabIndex="11" Click="BtnAddCustomer_Click"/>
+
+                        <StackPanel Margin="0,8,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                <TextBlock Text="Available Points: " FontSize="12" Foreground="{StaticResource BrushTextSecondary}"/>
+                                <TextBlock Text="{Binding AvailableLoyaltyPoints}" FontSize="12" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding PointsToRedeem, UpdateSourceTrigger=PropertyChanged}"
+                                         Height="26" Margin="0,0,6,0" Padding="4,0"
+                                         ToolTip="Points to redeem"/>
+                                <Button Grid.Column="1"
+                                        Content="Redeem"
+                                        Command="{Binding RedeemPointsCommand}"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Padding="8,2"
+                                        FontSize="12"/>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                <TextBlock Text="Loyalty Value: " FontSize="12" Foreground="{StaticResource BrushTextSecondary}"/>
+                                <TextBlock Text="{Binding LoyaltyRedemptionAmount, StringFormat='₹ {0:N2}'}" FontSize="12" FontWeight="Bold"/>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Header="Discount" Padding="8" Margin="0,0,0,6" FontWeight="SemiBold">

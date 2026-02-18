@@ -17,13 +17,34 @@ using POS.UI.Modules.Admin.Brands;
 using POS.UI.Modules.Admin.TaxProfiles;
 using POS.UI.Modules.Admin.Uom;
 using POS.UI.Modules.Admin.Customers;
+using POS.UI.Modules.Suppliers.SupplierList;
+using POS.UI.Modules.Suppliers.PurchaseOrder;
+using POS.UI.Modules.Suppliers.PurchaseEntry;
+using POS.UI.Modules.Suppliers.PurchaseReturn;
+using POS.UI.Modules.Suppliers.SupplierPayments;
+using POS.UI.Modules.Suppliers.SupplierLedger;
+using POS.UI.Modules.Inventory.StockAdjustment;
+using POS.UI.Modules.Inventory.ItemLedger;
+using POS.UI.Modules.Inventory.LabelPrinting;
 using POS.UI.Modules.Billing.BillingScreen;
 using POS.UI.Modules.Billing.ReturnDialog;
 using POS.UI.Modules.Admin.Products.BarcodeLabel;
 using POS.UI.Modules.Reports.EODReport;
 using POS.UI.Modules.Reports.AuditLog;
+using POS.UI.Modules.Reports.Sales;
+using POS.UI.Modules.Reports.Inventory;
+using POS.UI.Modules.Reports.GSTReports;
+using POS.UI.Modules.Reports.Finance;
+using POS.UI.Modules.Users.UserList;
+using POS.UI.Modules.Users.Roles;
+using POS.UI.Modules.Payments.CashManagement;
+using POS.UI.Modules.Organization.Company;
 using POS.UI.Core.Navigation;
 using POS.UI.Core.Services;
+using POS.UI.Modules.Sales.Returns;
+using POS.UI.Modules.Sales.Quotations;
+using POS.UI.Modules.Customers.Outstanding;
+using POS.Shared.Models;
 
 namespace POS.UI
 {
@@ -56,9 +77,9 @@ namespace POS.UI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Initialize all menu buttons list
             _allMenuButtons = new List<ToggleButton>
             {
+                BtnDashboard,
                 BtnSales,
                 BtnProducts,
                 BtnCustomers,
@@ -76,7 +97,7 @@ namespace POS.UI
 
             StartClock();
             UpdateStatusBar();
-            NavigateToBillingView();
+            NavigateToDashboardView();
         }
 
         private void StartClock()
@@ -185,6 +206,12 @@ namespace POS.UI
             // Update header title based on selected menu
             UpdateHeaderTitle(clickedButton.Content?.ToString() ?? string.Empty);
 
+            if (clickedButton == BtnDashboard)
+            {
+                NavigateToDashboardView();
+                return;
+            }
+
             // Handle special menus (like Sales with submenu)
             if (clickedButton.Name.StartsWith("Btn"))
             {
@@ -245,6 +272,14 @@ namespace POS.UI
                 else if (btn.Name == "BtnReturnsExchanges")
                 {
                     OpenReturnDialog();
+                }
+                else if (btn.Name == "BtnSalesReturn")
+                {
+                    ShowSalesReturnList();
+                }
+                else if (btn.Name == "BtnQuotations")
+                {
+                    ShowQuotationList();
                 }
                 else if (btn.Name == "BtnDayEnd")
                 {
@@ -375,8 +410,225 @@ namespace POS.UI
                         MainContent.Content = new CustomerView();
                         HeaderTitle.Text = "Customers";
                         break;
+                    case "BtnCustomerOutstanding":
+                        ShowCustomerOutstanding();
+                        break;
+                    case "BtnLoyaltySettings":
+                        MainContent.Content = new POS.UI.Modules.Customers.Loyalty.LoyaltySettingsView();
+                        HeaderTitle.Text = "Loyalty Program";
+                        break;
                 }
             }
+        }
+
+        private void SubMenuSuppliers_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn)
+            {
+                PopupSuppliers.IsOpen = false;
+                switch (btn.Name)
+                {
+                    case "BtnSupplierList":
+                        var supplierApiService = App.ServiceProvider?.GetService(typeof(SupplierApiService)) as SupplierApiService;
+                        if (supplierApiService == null)
+                        {
+                            POS.UI.Components.DialogService.Warning("Suppliers", "Supplier service not available.");
+                            return;
+                        }
+                        var supplierViewModel = new SupplierViewModel(supplierApiService);
+                        var supplierView = new SupplierListView { DataContext = supplierViewModel };
+                        MainContent.Content = supplierView;
+                        HeaderTitle.Text = "Suppliers";
+                        break;
+                    
+                    case "BtnPurchaseOrderList":
+                        var purchaseOrderApiService = App.ServiceProvider?.GetService(typeof(PurchaseOrderApiService)) as PurchaseOrderApiService;
+                        if (purchaseOrderApiService == null)
+                        {
+                            POS.UI.Components.DialogService.Warning("Purchase Orders", "Purchase Order service not available.");
+                            return;
+                        }
+                        var purchaseOrderViewModel = new PurchaseOrderListViewModel(purchaseOrderApiService);
+                        var purchaseOrderView = new PurchaseOrderListView { DataContext = purchaseOrderViewModel };
+                        MainContent.Content = purchaseOrderView;
+                        HeaderTitle.Text = "Purchase Orders";
+                        break;
+                    
+                    case "BtnPurchaseEntryList":
+                        var purchaseEntryApiService = App.ServiceProvider?.GetService(typeof(PurchaseEntryApiService)) as PurchaseEntryApiService;
+                        if (purchaseEntryApiService == null)
+                        {
+                            POS.UI.Components.DialogService.Warning("Purchase Entry", "Purchase Entry service not available.");
+                            return;
+                        }
+                        var purchaseEntryViewModel = new PurchaseEntryListViewModel(purchaseEntryApiService);
+                        var purchaseEntryView = new PurchaseEntryListView { DataContext = purchaseEntryViewModel };
+                        MainContent.Content = purchaseEntryView;
+                        HeaderTitle.Text = "Purchase Entry (GRN)";
+                        break;
+                    
+                    case "BtnPurchaseReturnList":
+                        var purchaseReturnApiService = App.ServiceProvider?.GetService(typeof(PurchaseReturnApiService)) as PurchaseReturnApiService;
+                        if (purchaseReturnApiService == null)
+                        {
+                            POS.UI.Components.DialogService.Warning("Purchase Return", "Purchase Return service not available.");
+                            return;
+                        }
+                        var purchaseReturnViewModel = new PurchaseReturnListViewModel(purchaseReturnApiService);
+                        var purchaseReturnView = new PurchaseReturnListView { DataContext = purchaseReturnViewModel };
+                        MainContent.Content = purchaseReturnView;
+                        HeaderTitle.Text = "Purchase Return";
+                        break;
+                    
+                    case "BtnSupplierPayments":
+                        var supplierPaymentApiService = App.ServiceProvider?.GetService(typeof(SupplierPaymentApiService)) as SupplierPaymentApiService;
+                        var supplierApiForPayments = App.ServiceProvider?.GetService(typeof(SupplierApiService)) as SupplierApiService;
+                        if (supplierPaymentApiService == null || supplierApiForPayments == null)
+                        {
+                            POS.UI.Components.DialogService.Warning("Supplier Payments", "Supplier Payment service not available.");
+                            return;
+                        }
+                        var supplierPaymentViewModel = new SupplierPaymentViewModel(supplierPaymentApiService, supplierApiForPayments);
+                        var supplierPaymentView = new SupplierPaymentView { DataContext = supplierPaymentViewModel };
+                        MainContent.Content = supplierPaymentView;
+                        HeaderTitle.Text = "Supplier Payments";
+                        break;
+                    
+                    case "BtnSupplierLedger":
+                        var supplierApiForLedger = App.ServiceProvider?.GetService(typeof(SupplierApiService)) as SupplierApiService;
+                        if (supplierApiForLedger == null)
+                        {
+                            POS.UI.Components.DialogService.Warning("Supplier Ledger", "Supplier service not available.");
+                            return;
+                        }
+                        var supplierLedgerViewModel = new SupplierLedgerViewModel(supplierApiForLedger);
+                        var supplierLedgerView = new SupplierLedgerView { DataContext = supplierLedgerViewModel };
+                        MainContent.Content = supplierLedgerView;
+                        HeaderTitle.Text = "Supplier Ledger";
+                        break;
+                }
+            }
+        }
+
+        // ================= INVENTORY SUBMENU =================
+        private void SubMenuInventory_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn) return;
+            PopupInventory.IsOpen = false;
+            
+            switch (btn.Name)
+            {
+                case "BtnStockAdjustments":
+                    ShowStockAdjustmentList();
+                    break;
+                case "BtnItemLedger":
+                    ShowItemLedger();
+                    break;
+                case "BtnLabelPrinting":
+                    ShowLabelPrinting();
+                    break;
+            }
+        }
+
+        private void ShowItemLedger()
+        {
+            var ledgerApi = App.ServiceProvider?.GetService(typeof(ItemLedgerApiService)) as ItemLedgerApiService;
+            var productApi = App.ServiceProvider?.GetService(typeof(ProductApiService)) as ProductApiService;
+            
+            if (ledgerApi == null || productApi == null)
+            {
+                POS.UI.Components.DialogService.Warning("Item Ledger", "Required services not available.");
+                return;
+            }
+
+            var viewModel = new Modules.Inventory.ItemLedger.ItemLedgerViewModel(ledgerApi, productApi);
+            var view = new Modules.Inventory.ItemLedger.ItemLedgerView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Item Ledger";
+        }
+
+        private void ShowLabelPrinting()
+        {
+            var productApi = App.ServiceProvider?.GetService(typeof(ProductApiService)) as ProductApiService;
+            var purchaseEntryApi = App.ServiceProvider?.GetService(typeof(PurchaseEntryApiService)) as PurchaseEntryApiService;
+            var printService = App.ServiceProvider?.GetService(typeof(IPrintService)) as IPrintService;
+            
+            if (productApi == null || purchaseEntryApi == null || printService == null)
+            {
+                POS.UI.Components.DialogService.Warning("Label Printing", "Required services not available.");
+                return;
+            }
+
+            var viewModel = new Modules.Inventory.LabelPrinting.LabelPrintingViewModel(productApi, purchaseEntryApi, printService);
+            var view = new Modules.Inventory.LabelPrinting.LabelPrintingView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Label Printing";
+        }
+
+        private void ShowStockAdjustmentList()
+        {
+            var adjustmentService = App.ServiceProvider?.GetService(typeof(StockAdjustmentApiService)) as StockAdjustmentApiService;
+            var productService = App.ServiceProvider?.GetService(typeof(ProductApiService)) as ProductApiService;
+            var stockService = App.ServiceProvider?.GetService(typeof(StockApiService)) as StockApiService;
+
+            if (adjustmentService == null)
+            {
+                POS.UI.Components.DialogService.Warning("Stock Adjustment", "Stock Adjustment service not available.");
+                return;
+            }
+
+            var listViewModel = new StockAdjustmentListViewModel(adjustmentService);
+            listViewModel.RequestAddNew += () => ShowCreateStockAdjustment(adjustmentService, productService, stockService);
+            listViewModel.RequestView += (adjustment) => ShowStockAdjustmentDetails(adjustment);
+
+            var listView = new StockAdjustmentListView { DataContext = listViewModel };
+            MainContent.Content = listView;
+            HeaderTitle.Text = "Stock Adjustments";
+        }
+
+        private void ShowCreateStockAdjustment(
+            StockAdjustmentApiService adjustmentService,
+            ProductApiService? productService,
+            StockApiService? stockService)
+        {
+            if (productService == null || stockService == null)
+            {
+                POS.UI.Components.DialogService.Warning("Stock Adjustment", "Required services not available.");
+                return;
+            }
+
+            var createViewModel = new CreateStockAdjustmentViewModel(adjustmentService, productService, stockService);
+            
+            // Return to list view after successful save
+            createViewModel.AdjustmentSaved += (adjustment) =>
+            {
+                ShowStockAdjustmentList();
+            };
+            
+            // Return to list view when cancelled
+            createViewModel.RequestClose += () =>
+            {
+                ShowStockAdjustmentList();
+            };
+
+            var createView = new CreateStockAdjustmentView { DataContext = createViewModel };
+            MainContent.Content = createView;
+            HeaderTitle.Text = "Create Stock Adjustment";
+        }
+
+        private void ShowStockAdjustmentDetails(POS.Shared.Models.StockAdjustmentDto adjustment)
+        {
+            // For now, just show a message with details
+            // Could be expanded to a full detail view later
+            POS.UI.Components.DialogService.Info(
+                $"Adjustment: {adjustment.ReferenceNo}",
+                $"Date: {adjustment.AdjustmentDate:dd MMM yyyy}\n" +
+                $"Reason: {adjustment.Reason}\n" +
+                $"Status: {adjustment.Status}\n" +
+                $"Items: {adjustment.Items.Count}\n" +
+                $"Total Value: ₹{adjustment.TotalValue:N2}\n" +
+                $"Adjusted By: {adjustment.AdjustedBy}\n" +
+                $"Remarks: {adjustment.Remarks ?? "-"}");
         }
 
         // ================= REPORTS SUBMENU =================
@@ -384,10 +636,45 @@ namespace POS.UI
         {
             if (sender is not Button btn) return;
             PopupReports.IsOpen = false;
-            if (btn.Name == "BtnAuditLogs")
+
+            switch (btn.Name)
             {
-                MainContent.Content = new AuditLogView();
-                HeaderTitle.Text = "Audit Log";
+                case "BtnSalesReportDayPeriod":
+                    MainContent.Content = new SalesReportView();
+                    HeaderTitle.Text = "Sales Report - Day / Month / Period";
+                    break;
+                case "BtnSalesReportItemWise":
+                    MainContent.Content = new ItemSalesView();
+                    HeaderTitle.Text = "Sales Report - Item Wise";
+                    break;
+                case "BtnSalesReportCategoryWise":
+                    MainContent.Content = new SalesReportView();
+                    HeaderTitle.Text = "Sales Report - Category Wise";
+                    break;
+                case "BtnSalesReportGst":
+                    MainContent.Content = new GstReportView();
+                    HeaderTitle.Text = "GST Reports";
+                    break;
+                case "BtnInventoryStockSummary":
+                    MainContent.Content = new LowStockReportView();
+                    HeaderTitle.Text = "Inventory Report - Stock Summary";
+                    break;
+                case "BtnInventoryFastSlowMoving":
+                case "BtnInventoryExpiry":
+                case "BtnPurchaseReports":
+                case "BtnCustomerReports":
+                case "BtnSupplierReports":
+                case "BtnStaffPerformanceReports":
+                    POS.UI.Components.DialogService.Info("Reports", "This report is not yet implemented.");
+                    break;
+                case "BtnProfitLossReport":
+                    MainContent.Content = new ProfitLossReportView();
+                    HeaderTitle.Text = "Profit && Loss";
+                    break;
+                case "BtnAuditLogs":
+                    MainContent.Content = new AuditLogView();
+                    HeaderTitle.Text = "Audit Log";
+                    break;
             }
         }
 
@@ -406,6 +693,111 @@ namespace POS.UI
             }
         }
 
+        // ================= USERS SUBMENU =================
+        private void SubMenuUsers_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn) return;
+            PopupUsers.IsOpen = false;
+
+            switch (btn.Name)
+            {
+                case "BtnUserList":
+                    ShowUserList();
+                    break;
+                case "BtnRolesPermissions":
+                    ShowRolesPermissions();
+                    break;
+            }
+        }
+
+        private void ShowUserList()
+        {
+            var userApiService = App.ServiceProvider?.GetService(typeof(UserApiService)) as UserApiService;
+            if (userApiService == null)
+            {
+                Components.DialogService.Warning("User Management", "User service not available.");
+                return;
+            }
+
+            var viewModel = new UserListViewModel(userApiService);
+            var view = new UserListView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "User Management";
+        }
+
+        private void ShowRolesPermissions()
+        {
+            var userApiService = App.ServiceProvider?.GetService(typeof(UserApiService)) as UserApiService;
+            if (userApiService == null)
+            {
+                Components.DialogService.Warning("Roles & Permissions", "User service not available.");
+                return;
+            }
+
+            var viewModel = new RoleManagerViewModel(userApiService);
+            var view = new RoleManagerView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Roles & Permissions";
+        }
+
+        // ================= PAYMENTS SUBMENU =================
+        private void SubMenuPayments_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn) return;
+            PopupPayments.IsOpen = false;
+
+            switch (btn.Name)
+            {
+                case "BtnCashManagement":
+                    ShowCashManagement();
+                    break;
+            }
+        }
+
+        private void ShowCashManagement()
+        {
+            var cashService = App.ServiceProvider?.GetService(typeof(CashTransactionApiService)) as CashTransactionApiService;
+            if (cashService == null)
+            {
+                Components.DialogService.Warning("Cash Management", "Cash service not available.");
+                return;
+            }
+
+            var viewModel = new CashTransactionViewModel(cashService);
+            var view = new CashTransactionView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Cash Management";
+        }
+
+        // ================= ORGANIZATION SUBMENU =================
+        private void SubMenuOrganization_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn) return;
+            PopupOrganization.IsOpen = false;
+
+            switch (btn.Name)
+            {
+                case "BtnCompanyProfile":
+                    ShowCompanyProfile();
+                    break;
+            }
+        }
+
+        private void ShowCompanyProfile()
+        {
+            var companyService = App.ServiceProvider?.GetService(typeof(CompanyProfileApiService)) as CompanyProfileApiService;
+            if (companyService == null)
+            {
+                Components.DialogService.Warning("Company Profile", "Company service not available.");
+                return;
+            }
+
+            var viewModel = new CompanyProfileViewModel(companyService);
+            var view = new CompanyProfileView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Company Profile";
+        }
+
         // ================= LOGOUT =================
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
@@ -422,6 +814,121 @@ namespace POS.UI
         {
             MainContent.Content = ViewResolver.Resolve("BillingView");
             HeaderTitle.Text = "Billing / New Sale";
+        }
+
+        private void NavigateToDashboardView()
+        {
+            MainContent.Content = ViewResolver.Resolve("DashboardView");
+            HeaderTitle.Text = "Dashboard";
+        }
+
+        private void MainWindow_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if ((System.Windows.Input.Keyboard.Modifiers & System.Windows.Input.ModifierKeys.Control) == System.Windows.Input.ModifierKeys.Control
+                && e.Key == System.Windows.Input.Key.Home)
+            {
+                NavigateToDashboardView();
+                e.Handled = true;
+            }
+        }
+
+        // ================= SALES RETURN MODULE =================
+        private void ShowSalesReturnList()
+        {
+            var saleReturnService = App.ServiceProvider?.GetService(typeof(SaleReturnApiService)) as SaleReturnApiService;
+            if (saleReturnService == null)
+            {
+                Components.DialogService.Warning("Sales Returns", "Sale Return service not available.");
+                return;
+            }
+
+            var viewModel = new SaleReturnListViewModel(saleReturnService);
+            viewModel.RequestAddNew += () => ShowCreateSaleReturn(saleReturnService);
+            viewModel.RequestView += (sr) =>
+            {
+                Components.DialogService.Info($"Return: {sr.ReturnNumber}",
+                    $"Date: {sr.ReturnDate:dd MMM yyyy}\nInvoice: {sr.OriginalBillNumber}\nCustomer: {sr.CustomerName}\n" +
+                    $"Amount: {sr.RefundAmount:N2}\nRefund Mode: {sr.RefundMode}\nStatus: {sr.Status}\nItems: {sr.Items.Count}");
+            };
+
+            var view = new SaleReturnListView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Sales Returns";
+        }
+
+        private void ShowCreateSaleReturn(SaleReturnApiService service)
+        {
+            var viewModel = new CreateSaleReturnViewModel(service);
+            viewModel.ReturnSaved += () => ShowSalesReturnList();
+            viewModel.RequestClose += () => ShowSalesReturnList();
+
+            var view = new CreateSaleReturnView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Create Sales Return";
+        }
+
+        // ================= CUSTOMER OUTSTANDING MODULE =================
+        private void ShowCustomerOutstanding()
+        {
+            var customerPaymentService = App.ServiceProvider?.GetService(typeof(CustomerPaymentApiService)) as CustomerPaymentApiService;
+            if (customerPaymentService == null)
+            {
+                Components.DialogService.Warning("Customer Outstanding", "Customer Payment service not available.");
+                return;
+            }
+
+            var viewModel = new CustomerOutstandingViewModel(customerPaymentService);
+            var view = new CustomerOutstandingView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Customer Outstanding / Dues";
+        }
+
+        // ================= QUOTATION MODULE =================
+        private void ShowQuotationList()
+        {
+            var quotationService = App.ServiceProvider?.GetService(typeof(QuotationApiService)) as QuotationApiService;
+            if (quotationService == null)
+            {
+                Components.DialogService.Warning("Quotations", "Quotation service not available.");
+                return;
+            }
+
+            var productService = App.ServiceProvider?.GetService(typeof(ProductApiService)) as ProductApiService;
+            var customerService = App.ServiceProvider?.GetService(typeof(CustomerApiService)) as CustomerApiService;
+
+            var viewModel = new QuotationListViewModel(quotationService);
+            viewModel.RequestAddNew += () => ShowQuotationEntry(quotationService, productService, customerService, null);
+            viewModel.RequestEdit += (q) => ShowQuotationEntry(quotationService, productService, customerService, q);
+            viewModel.RequestView += (q) =>
+            {
+                Components.DialogService.Info($"Quotation: {q.QuotationNumber}",
+                    $"Date: {q.QuotationDate:dd MMM yyyy}\nValid Until: {q.ValidUntil:dd MMM yyyy}\n" +
+                    $"Customer: {q.CustomerName}\nAmount: {q.TotalAmount:N2}\nStatus: {q.Status}\nItems: {q.Items.Count}");
+            };
+
+            var view = new QuotationListView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Quotations";
+        }
+
+        private async void ShowQuotationEntry(QuotationApiService quotationService, ProductApiService? productService, CustomerApiService? customerService, QuotationDto? editQuotation)
+        {
+            if (productService == null || customerService == null)
+            {
+                Components.DialogService.Warning("Quotation", "Required services not available.");
+                return;
+            }
+
+            var viewModel = new QuotationEntryViewModel(quotationService, productService, customerService);
+            viewModel.QuotationSaved += () => ShowQuotationList();
+            viewModel.RequestClose += () => ShowQuotationList();
+
+            if (editQuotation != null)
+                await viewModel.LoadForEdit(editQuotation.Id);
+
+            var view = new QuotationEntryView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = editQuotation != null ? $"Edit Quotation: {editQuotation.QuotationNumber}" : "New Quotation";
         }
 
         // ================= MENU BAR HANDLERS (File, Sales, Reports, Settings, Help) =================

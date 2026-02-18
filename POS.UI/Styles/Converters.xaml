@@ -2,10 +2,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:conv="clr-namespace:POS.UI.Core.Converters">
     <conv:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+    <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+    <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
     <conv:StringToVisibilityConverter x:Key="StringToVisibility"/>
     <conv:DecimalToCurrencyConverter x:Key="DecimalToCurrency"/>
     <conv:InverseBoolConverter x:Key="InverseBool"/>
+    <conv:InverseBoolConverter x:Key="InverseBoolConverter"/>
     <conv:RowIndexToSNoConverter x:Key="SNoConverter"/>
     <conv:TaxRateToBandConverter x:Key="TaxRateToBand"/>
     <conv:GreaterThanZeroToVisibilityConverter x:Key="GreaterThanZeroToVisibility"/>
@@ -13,4 +16,9 @@
     <conv:NullToVisibilityConverter x:Key="NullToVisibility"/>
     <conv:NotNullToVisibilityConverter x:Key="NotNullToVisibility"/>
     <conv:StringEmptyToVisibilityConverter x:Key="StringEmptyToVisibility"/>
+    <conv:BoolToYesNoConverter x:Key="BoolToYesNoConverter"/>
+    <conv:BoolToColorConverter x:Key="BoolToColorConverter"/>
+    <conv:BoolToActiveStatusConverter x:Key="BoolToActiveStatusConverter"/>
+    <conv:BoolToTextConverter x:Key="BoolToTextConverter"/>
+    <conv:SegmentWidthConverter x:Key="SegmentWidthConverter"/>
 </ResourceDictionary>

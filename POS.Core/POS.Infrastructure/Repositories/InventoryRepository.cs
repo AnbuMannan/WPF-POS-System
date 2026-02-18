@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using POS.Application.Interfaces.Repositories;
 using POS.Domain.Entities;
 using System.Data;
@@ -17,13 +17,13 @@ public class InventoryRepository : IInventoryRepository
     public async Task AddLedgerEntryAsync(StockLedgerEntry entry)
     {
         await _db.ExecuteAsync(@"
-        INSERT INTO StockLedger
+        INSERT INTO StockLedgerEntries
         (StockEntryId,ProductId,Quantity,EntryType,ReferenceType,ReferenceId,EntryDate,Remarks)
         VALUES
         (@StockEntryId,@ProductId,@Quantity,@EntryType,@ReferenceType,@ReferenceId,@EntryDate,@Remarks)", entry);
     }
 
-    public async Task UpdateStockAsync(Guid productId, decimal delta)
+    public async Task UpdateStockAsync(long productId, decimal delta)
     {
         await _db.ExecuteAsync(@"
         INSERT INTO StockSummary(ProductId,AvailableStock,LastUpdated)
@@ -33,7 +33,7 @@ public class InventoryRepository : IInventoryRepository
         LastUpdated = NOW()", new { ProductId = productId, Delta = delta });
     }
 
-    public async Task<StockSummary> GetStockAsync(Guid productId)
+    public async Task<StockSummary> GetStockAsync(long productId)
     {
         return await _db.QueryFirstOrDefaultAsync<StockSummary>(
             "SELECT * FROM StockSummary WHERE ProductId=@productId",

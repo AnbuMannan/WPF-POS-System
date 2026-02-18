@@ -36,5 +36,13 @@ namespace POS.UI.Components
             dlg.ShowDialog();
             return dlg.Result;
         }
+
+        public static MessageBoxResult Success(string title, string message)
+        {
+            var dlg = new MessageDialog(title, message, DialogIcon.Info, DialogButtons.Ok);
+            dlg.Owner = Application.Current?.MainWindow;
+            dlg.ShowDialog();
+            return dlg.Result;
+        }
     }
 }

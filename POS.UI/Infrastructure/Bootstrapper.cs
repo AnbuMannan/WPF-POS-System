@@ -244,6 +244,17 @@ namespace POS.UI.Infrastructure
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(circuitBreakerPolicy);
 
+            // Register HttpClient for LoyaltyApiService
+            services
+                .AddHttpClient<LoyaltyApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
             // Register HttpClient for ReturnApiService
             services
                 .AddHttpClient<ReturnApiService>(client =>
@@ -266,9 +277,182 @@ namespace POS.UI.Infrastructure
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(circuitBreakerPolicy);
 
+            services
+                .AddHttpClient<ReportApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
             // Register HttpClient for AuditLogApiService
             services
                 .AddHttpClient<AuditLogApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for SupplierApiService
+            services
+                .AddHttpClient<SupplierApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for PurchaseOrderApiService
+            services
+                .AddHttpClient<PurchaseOrderApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for PurchaseEntryApiService
+            services
+                .AddHttpClient<PurchaseEntryApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for PurchaseReturnApiService
+            services
+                .AddHttpClient<PurchaseReturnApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for SupplierPaymentApiService
+            services
+                .AddHttpClient<SupplierPaymentApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for StockAdjustmentApiService
+            services
+                .AddHttpClient<StockAdjustmentApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for StockApiService
+            services
+                .AddHttpClient<StockApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for ItemLedgerApiService
+            services
+                .AddHttpClient<ItemLedgerApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for CashTransactionApiService
+            services
+                .AddHttpClient<CashTransactionApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for CompanyProfileApiService
+            services
+                .AddHttpClient<CompanyProfileApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for SaleReturnApiService
+            services
+                .AddHttpClient<SaleReturnApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for CustomerPaymentApiService
+            services
+                .AddHttpClient<CustomerPaymentApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            // Register HttpClient for QuotationApiService
+            services
+                .AddHttpClient<QuotationApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            services
+                .AddHttpClient<ImportApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
+            services
+                .AddHttpClient<DashboardApiService>(client =>
                 {
                     client.BaseAddress = new Uri(baseUrl);
                     client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
@@ -309,6 +493,15 @@ namespace POS.UI.Infrastructure
             // Register HttpClient for AuthenticationService (separate from main API)
             services
                 .AddHttpClient<AuthenticationService>(client =>
+                {
+                    client.BaseAddress = new Uri(authBaseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                });
+
+            // Register HttpClient for UserApiService (to AuthService for user management)
+            services
+                .AddHttpClient<UserApiService>(client =>
                 {
                     client.BaseAddress = new Uri(authBaseUrl);
                     client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");

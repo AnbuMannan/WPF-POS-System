@@ -1,0 +1,152 @@
+<UserControl x:Class="POS.UI.Modules.Payments.CashManagement.CashTransactionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================= SUMMARY CARDS ================= -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Cash In Card -->
+            <Border Grid.Column="0" Background="#2E7D32" CornerRadius="6" Padding="16" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Total Cash In" FontSize="13" Foreground="#C8E6C9" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding TotalCashIn, StringFormat='&#x20B9; {0:N2}'}" 
+                               FontSize="24" FontWeight="Bold" Foreground="White"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Cash Out Card -->
+            <Border Grid.Column="1" Background="#C62828" CornerRadius="6" Padding="16" Margin="4,0">
+                <StackPanel>
+                    <TextBlock Text="Total Cash Out" FontSize="13" Foreground="#FFCDD2" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding TotalCashOut, StringFormat='&#x20B9; {0:N2}'}" 
+                               FontSize="24" FontWeight="Bold" Foreground="White"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Balance Card -->
+            <Border Grid.Column="2" Background="#0078D7" CornerRadius="6" Padding="16" Margin="8,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Current Balance" FontSize="13" Foreground="#BBDEFB" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding CurrentBalance, StringFormat='&#x20B9; {0:N2}'}" 
+                               FontSize="24" FontWeight="Bold" Foreground="White"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ================= ACTION BUTTONS & FILTER ================= -->
+        <Border Grid.Row="1" Padding="8" CornerRadius="6" Background="#FFF5F5F5" Margin="0,0,0,10">
+            <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="Add Cash"
+                        Width="100"
+                        Margin="0,0,6,4"
+                        Style="{StaticResource SuccessButtonStyle}"
+                        Command="{Binding CashInCommand}" />
+
+                <Button Content="Add Expense"
+                        Width="110"
+                        Margin="0,0,6,4"
+                        Style="{StaticResource DangerButtonStyle}"
+                        Command="{Binding CashOutCommand}" />
+
+                <Button Content="Refresh"
+                        Width="90"
+                        Margin="0,0,16,4"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding RefreshCommand}" />
+
+                <!-- Date filter group -->
+                <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" 
+                        Padding="8,4" Margin="0,0,6,4" Background="White">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,6,0" 
+                                   Foreground="#555" FontSize="13"/>
+                        <DatePicker SelectedDate="{Binding FromDate}" Width="130"
+                                    VerticalAlignment="Center" FontSize="13"
+                                    BorderThickness="1" BorderBrush="#CCCCCC"/>
+
+                        <TextBlock Text="To:" VerticalAlignment="Center" Margin="12,0,6,0" 
+                                   Foreground="#555" FontSize="13"/>
+                        <DatePicker SelectedDate="{Binding ToDate}" Width="130"
+                                    VerticalAlignment="Center" FontSize="13"
+                                    BorderThickness="1" BorderBrush="#CCCCCC"/>
+                    </StackPanel>
+                </Border>
+
+                <Button Content="Search"
+                        Width="90"
+                        Margin="0,0,6,4"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Command="{Binding SearchCommand}" />
+
+                <Button Content="Today"
+                        Width="80"
+                        Margin="0,0,0,4"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding LoadTodayCommand}" />
+            </WrapPanel>
+        </Border>
+
+        <!-- ================= TRANSACTIONS GRID ================= -->
+        <Border Grid.Row="3" Margin="0,0,0,0" CornerRadius="6" BorderBrush="#FFE0E0E0" BorderThickness="1">
+            <DataGrid ItemsSource="{Binding Transactions}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Date/Time"
+                                        Width="1.5*"
+                                        Binding="{Binding TransactionDate, StringFormat='{}{0:dd MMM yyyy HH:mm}'}" />
+
+                    <DataGridTextColumn Header="Reference"
+                                        Width="1.5*"
+                                        Binding="{Binding ReferenceNo}" />
+
+                    <DataGridTextColumn Header="Type"
+                                        Width="*"
+                                        Binding="{Binding Type}" />
+
+                    <DataGridTextColumn Header="Category"
+                                        Width="*"
+                                        Binding="{Binding Category}" />
+
+                    <DataGridTextColumn Header="Description"
+                                        Width="2*"
+                                        Binding="{Binding Description}" />
+
+                    <DataGridTextColumn Header="Amount"
+                                        Width="1.2*"
+                                        Binding="{Binding Amount, StringFormat='&#x20B9; {0:N2}'}" />
+
+                    <DataGridTextColumn Header="User"
+                                        Width="*"
+                                        Binding="{Binding UserName}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Loading Overlay -->
+        <Border Grid.RowSpan="4" Background="#80FFFFFF"
+                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Text="Loading..." Foreground="#333" FontSize="18" FontWeight="SemiBold"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+    </Grid>
+</UserControl>

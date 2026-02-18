@@ -29,7 +29,53 @@
     ]
   },
   {
-    "Header": "Transaction",
+    "Header": "Suppliers",
+    "Children": [
+      {
+        "Header": "Supplier Master",
+        "View": "SupplierListView"
+      },
+      {
+        "Header": "Purchase Orders",
+        "View": "PurchaseOrderListView"
+      },
+      {
+        "Header": "Purchase Entry (GRN)",
+        "View": "PurchaseEntryListView"
+      },
+      {
+        "Header": "Purchase Return",
+        "View": "PurchaseReturnListView"
+      },
+      {
+        "Header": "Supplier Payments",
+        "View": "SupplierPaymentView"
+      },
+      {
+        "Header": "Supplier Ledger",
+        "View": "SupplierLedgerView"
+      }
+    ]
+  },
+  {
+    "Header": "Inventory",
+    "Children": [
+      {
+        "Header": "Stock Adjustment",
+        "View": "StockAdjustmentListView"
+      },
+      {
+        "Header": "Item Ledger",
+        "View": "ItemLedgerView"
+      },
+      {
+        "Header": "Label Printing",
+        "View": "LabelPrintingView"
+      }
+    ]
+  },
+  {
+    "Header": "Sales",
     "Children": [
       {
         "Header": "Billing",
@@ -37,15 +83,28 @@
       },
       {
         "Header": "Sales Return",
-        "View": "SalesReturnView"
+        "View": "SaleReturnListView"
+      },
+      {
+        "Header": "Quotations",
+        "View": "QuotationListView"
       },
       {
         "Header": "EOD Report",
         "View": "EODReportView"
+      }
+    ]
+  },
+  {
+    "Header": "Customers",
+    "Children": [
+      {
+        "Header": "Customer Master",
+        "View": "CustomerView"
       },
       {
-        "Header": "Purchase",
-        "View": "PurchaseView"
+        "Header": "Outstanding / Dues",
+        "View": "CustomerOutstandingView"
       }
     ]
   },
@@ -59,6 +118,22 @@
       {
         "Header": "Stock Reports",
         "View": "StockReportView"
+      },
+      {
+        "Header": "Sales Report",
+        "View": "SalesReportView"
+      },
+      {
+        "Header": "Item-wise Sales",
+        "View": "ItemSalesView"
+      },
+      {
+        "Header": "Profit & Loss",
+        "View": "ProfitLossReportView"
+      },
+      {
+        "Header": "Low Stock Report",
+        "View": "LowStockReportView"
       }
     ]
   },
@@ -72,6 +147,10 @@
       {
         "Header": "Backup",
         "View": "BackupView"
+      },
+      {
+        "Header": "Data Import / Export",
+        "View": "ImportProductsView"
       }
     ]
   }

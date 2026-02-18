@@ -10,10 +10,12 @@ namespace POS.Infrastructure.Services;
 public class BillingService : IBillingService
 {
     private readonly PosDbContext _db;
+    private readonly ILoyaltyService _loyaltyService;
 
-    public BillingService(PosDbContext db)
+    public BillingService(PosDbContext db, ILoyaltyService loyaltyService)
     {
         _db = db;
+        _loyaltyService = loyaltyService;
     }
 
     public async Task<ReceiptDto> CreateSaleAsync(CreateSaleDto dto, string userId, CancellationToken cancellationToken = default)
@@ -30,6 +32,8 @@ public class BillingService : IBillingService
         if (defaultUomId == Guid.Empty)
             throw new InvalidOperationException("At least one UOM must exist. Please add a unit of measure in Admin before creating sales.");
 
+        var loyaltyPointsEarned = await _loyaltyService.CalculatePointsAsync(dto.GrandTotal);
+
         var sale = new Sale
         {
             BillNumber = dto.BillNumber ?? $"INV{DateTime.Now:yyyyMMddHHmmss}",
@@ -44,8 +48,9 @@ public class BillingService : IBillingService
             PaymentStatus = PaymentStatus.Completed,
             IsDraft = false,
             IsHeld = false,
-            LoyaltyPointsEarned = 0,
-            LoyaltyPointsRedeemed = 0,
+            LoyaltyPointsEarned = loyaltyPointsEarned,
+            LoyaltyPointsRedeemed = dto.LoyaltyPointsRedeemed,
+            RedemptionAmount = dto.LoyaltyRedemptionAmount,
             CreatedBy = userId,
             CreatedAt = DateTime.UtcNow,
             CompletedAt = DateTime.UtcNow
@@ -95,6 +100,17 @@ public class BillingService : IBillingService
         }
 
         _db.Sales.Add(sale);
+
+        if (dto.CustomerId.HasValue && loyaltyPointsEarned > 0)
+        {
+            var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Id == dto.CustomerId.Value, cancellationToken);
+            if (customer != null)
+            {
+                customer.LoyaltyPoints += loyaltyPointsEarned;
+                customer.UpdatedAt = DateTime.UtcNow;
+            }
+        }
+
         await _db.SaveChangesAsync(cancellationToken);
 
         return BuildReceiptDto(sale, dto, userId);

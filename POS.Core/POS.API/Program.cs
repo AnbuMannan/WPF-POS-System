@@ -54,15 +54,44 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 builder.Services.AddScoped<IGstReportRepository, GstReportRepository>();
 builder.Services.AddScoped<IGstReportService, GstReportService>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IStockLedgerRepository, StockLedgerRepository>();
+builder.Services.AddScoped<IItemLedgerService, ItemLedgerService>();
 
 builder.Services.AddScoped<IUomRepository, UomRepository>();
 builder.Services.AddScoped<IUomService, UomService>();
+
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
+
+builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+
+builder.Services.AddScoped<IPurchaseEntryRepository, PurchaseEntryRepository>();
+builder.Services.AddScoped<IPurchaseEntryService, PurchaseEntryService>();
+
+builder.Services.AddScoped<IPurchaseReturnRepository, PurchaseReturnRepository>();
+builder.Services.AddScoped<IPurchaseReturnService, PurchaseReturnService>();
+
+builder.Services.AddScoped<ISupplierPaymentRepository, SupplierPaymentRepository>();
+builder.Services.AddScoped<ISupplierTransactionRepository, SupplierTransactionRepository>();
+builder.Services.AddScoped<ISupplierPaymentService, SupplierPaymentService>();
+builder.Services.AddScoped<ISupplierTransactionService, SupplierTransactionService>();
+builder.Services.AddScoped<ISupplierLedgerService, SupplierLedgerService>();
+
+builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+builder.Services.AddScoped<IBatchService, BatchService>();
+
+builder.Services.AddScoped<IStockAdjustmentRepository, StockAdjustmentRepository>();
+builder.Services.AddScoped<IStockAdjustmentService, StockAdjustmentService>();
+builder.Services.AddScoped<IStockRepository, StockRepository>();
 
 builder.Services.AddScoped<IBillingService, BillingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
@@ -73,6 +102,31 @@ builder.Services.AddScoped<IReturnService, ReturnService>();
 builder.Services.AddScoped<IEODReportService, POS.Infrastructure.Services.EODReportService>();
 builder.Services.AddScoped<IAuditLogService, POS.Infrastructure.Services.AuditLogService>();
 builder.Services.AddHostedService<POS.API.Services.HeldBillCleanupService>();
+
+// Cash Management & Company Profile
+builder.Services.AddScoped<ICashTransactionRepository, CashTransactionRepository>();
+builder.Services.AddScoped<ICashTransactionService, CashTransactionService>();
+builder.Services.AddScoped<ICompanyProfileRepository, CompanyProfileRepository>();
+builder.Services.AddScoped<ICompanyProfileService, CompanyProfileService>();
+
+// Loyalty
+builder.Services.AddScoped<ILoyaltySettingsRepository, LoyaltySettingsRepository>();
+builder.Services.AddScoped<ILoyaltyService, LoyaltyService>();
+
+// Sales Return Module
+builder.Services.AddScoped<ISaleReturnRepository, SaleReturnRepository>();
+builder.Services.AddScoped<ISaleReturnService, SaleReturnService>();
+
+// Customer Credit Management
+builder.Services.AddScoped<ICustomerTransactionRepository, CustomerTransactionRepository>();
+builder.Services.AddScoped<ICustomerPaymentService, CustomerPaymentService>();
+
+// Quotations
+builder.Services.AddScoped<IQuotationRepository, QuotationRepository>();
+builder.Services.AddScoped<IQuotationService, QuotationService>();
+
+builder.Services.AddScoped<IImportService, ImportService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 WebApplication app;
 try

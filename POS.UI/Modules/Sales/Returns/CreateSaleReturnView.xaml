@@ -1,0 +1,524 @@
+<UserControl x:Class="POS.UI.Modules.Sales.Returns.CreateSaleReturnView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="750" d:DesignWidth="1200"
+             Focusable="True">
+
+    <UserControl.InputBindings>
+        <KeyBinding Key="F2" Command="{Binding ProcessReturnCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding CancelCommand}"/>
+    </UserControl.InputBindings>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================= SHORTCUTS BAR ================= -->
+        <Border Grid.Row="0" 
+                Background="#263238" 
+                CornerRadius="4" 
+                Padding="10,6"
+                Margin="0,0,0,10"
+                HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Foreground="White" FontSize="10" Margin="5,0">
+                    <Run Text="ENTER" FontWeight="Bold"/> Search Invoice
+                </TextBlock>
+                <TextBlock Foreground="White" FontSize="10" Margin="5,0">
+                    <Run Text="F2" FontWeight="Bold"/> Process Return
+                </TextBlock>
+                <TextBlock Foreground="White" FontSize="10" Margin="5,0">
+                    <Run Text="ESC" FontWeight="Bold"/> Cancel
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- ================= STEP 1: FIND INVOICE ================= -->
+        <Border Grid.Row="1" 
+                Background="White" 
+                BorderBrush="#E0E0E0"
+                BorderThickness="1"
+                CornerRadius="6" 
+                Padding="12" 
+                Margin="0,0,0,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Invoice Search -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Invoice Number *" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,3"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding InvoiceSearch, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="28"
+                                 FontSize="12"
+                                 Padding="6,0"
+                                 TabIndex="1"
+                                 x:Name="TxtInvoiceSearch">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="Text" Value="">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <VisualBrush AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                                        <VisualBrush.Visual>
+                                                            <TextBlock Text="Enter bill number..." 
+                                                                       Foreground="Gray" 
+                                                                       FontSize="11"
+                                                                       Margin="5,0,0,0"/>
+                                                        </VisualBrush.Visual>
+                                                    </VisualBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return" Command="{Binding SearchInvoiceCommand}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button Grid.Column="1"
+                                Content="🔍 Search"
+                                Width="90"
+                                Height="28"
+                                Margin="6,0,0,0"
+                                Background="#2196F3"
+                                Foreground="White"
+                                FontWeight="SemiBold"
+                                FontSize="11"
+                                Cursor="Hand"
+                                Command="{Binding SearchInvoiceCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="4"
+                                                        BorderThickness="0">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#1976D2"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="#1565C0"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Refund Mode -->
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Refund Mode" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,3"/>
+                    <ComboBox ItemsSource="{Binding RefundModes}" 
+                              SelectedItem="{Binding SelectedRefundMode}"
+                              Height="28"
+                              FontSize="12"
+                              TabIndex="2"/>
+                </StackPanel>
+
+                <!-- Reason -->
+                <StackPanel Grid.Column="4">
+                    <TextBlock Text="Return Reason" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,3"/>
+                    <TextBox Text="{Binding Reason, UpdateSourceTrigger=PropertyChanged}"
+                             Height="28"
+                             FontSize="12"
+                             Padding="6,0"
+                             TabIndex="3"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ================= INVOICE INFO BANNER ================= -->
+        <Border Grid.Row="2" 
+                Background="#E8F5E9" 
+                BorderBrush="#C8E6C9"
+                BorderThickness="1"
+                CornerRadius="4" 
+                Padding="10,6" 
+                Margin="0,0,0,8"
+                Visibility="{Binding IsInvoiceLoaded, Converter={StaticResource BoolToVisibility}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding InvoiceInfo}" 
+                           FontSize="12" FontWeight="SemiBold" Foreground="#2E7D32" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="Select All"
+                        Width="80" Height="26" FontSize="11"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding SelectAllCommand}"
+                        ToolTip="Select all items for return"/>
+            </Grid>
+        </Border>
+
+        <!-- ================= ITEMS SECTION ================= -->
+        <Border Grid.Row="3" 
+                Background="White" 
+                BorderBrush="#E0E0E0" 
+                BorderThickness="1" 
+                CornerRadius="8" 
+                Margin="0,0,0,10"
+                Visibility="{Binding IsInvoiceLoaded, Converter={StaticResource BoolToVisibility}}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.08"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Items Header -->
+                <Border Grid.Row="0" 
+                        Background="#F8F9FA" 
+                        Padding="8" 
+                        BorderBrush="#DEE2E6" 
+                        BorderThickness="0,0,0,1">
+                    <TextBlock Text="📦 Return Items (check items to return, enter return qty)" 
+                               FontSize="13" 
+                               FontWeight="SemiBold" 
+                               VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- Items DataGrid -->
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding ReturnItems}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          GridLinesVisibility="All"
+                          HeadersVisibility="Column"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          RowBackground="White"
+                          AlternatingRowBackground="#FAFAFA"
+                          RowHeight="36"
+                          FontSize="12"
+                          SelectionMode="Single"
+                          Margin="0">
+
+                    <DataGrid.Columns>
+
+                        <!-- Select -->
+                        <DataGridCheckBoxColumn Header="✓" 
+                                                Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" 
+                                                Width="40"/>
+
+                        <!-- Product Name -->
+                        <DataGridTextColumn Header="Product" 
+                                            Binding="{Binding ProductName}" 
+                                            Width="*"
+                                            IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding" Value="8,0,0,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- SKU -->
+                        <DataGridTextColumn Header="SKU" 
+                                            Binding="{Binding SKU}" 
+                                            Width="100"
+                                            IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="Gray"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Sold Qty -->
+                        <DataGridTextColumn Header="Sold Qty" 
+                                            Binding="{Binding OriginalQuantity}" 
+                                            Width="80"
+                                            IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,8,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Already Returned -->
+                        <DataGridTextColumn Header="Already Ret." 
+                                            Binding="{Binding AlreadyReturned}" 
+                                            Width="90"
+                                            IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="#FF9800"/>
+                                    <Setter Property="Padding" Value="0,0,8,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Max Return -->
+                        <DataGridTextColumn Header="Max Ret." 
+                                            Binding="{Binding MaxReturnQuantity}" 
+                                            Width="80"
+                                            IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,8,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Return Qty (Editable) -->
+                        <DataGridTextColumn Header="Return Qty *" 
+                                            Binding="{Binding ReturnQuantity, UpdateSourceTrigger=PropertyChanged}" 
+                                            Width="90">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Foreground" Value="#D32F2F"/>
+                                    <Setter Property="Padding" Value="0,0,8,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Refund Price (Editable) -->
+                        <DataGridTextColumn Header="Refund Price" 
+                                            Binding="{Binding RefundPrice, UpdateSourceTrigger=PropertyChanged, StringFormat='N2'}" 
+                                            Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,8,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Return Amount (Calculated) -->
+                        <DataGridTextColumn Header="Amount" 
+                                            Binding="{Binding ReturnAmount, StringFormat='₹{0:N2}', Mode=OneWay}" 
+                                            Width="120"
+                                            IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Foreground" Value="#D32F2F"/>
+                                    <Setter Property="Padding" Value="0,0,8,0"/>
+                                    <Setter Property="Background" Value="#FFF0F0F0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Restockable -->
+                        <DataGridCheckBoxColumn Header="Restock" 
+                                                Binding="{Binding IsRestockable, UpdateSourceTrigger=PropertyChanged}" 
+                                                Width="65"/>
+
+                        <!-- Reason -->
+                        <DataGridTextColumn Header="Reason" 
+                                            Binding="{Binding Reason, UpdateSourceTrigger=PropertyChanged}" 
+                                            Width="120"/>
+
+                    </DataGrid.Columns>
+
+                    <!-- Empty State -->
+                    <DataGrid.Style>
+                        <Style TargetType="DataGrid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ReturnItems.Count}" Value="0">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Border Background="White">
+                                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,50,0,0">
+                                                        <TextBlock Text="No items loaded"
+                                                                   FontSize="16"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#FF999999"
+                                                                   HorizontalAlignment="Center"
+                                                                   Margin="0,0,0,10"/>
+                                                        <TextBlock FontSize="13" Foreground="#FFAAAAAA" HorizontalAlignment="Center">
+                                                            <Run Text="Search for an invoice above to load items"/>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Style>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- ================= TOTALS BAR (RED for Returns) ================= -->
+        <Border Grid.Row="4" 
+                Background="#B71C1C" 
+                CornerRadius="4" 
+                Padding="12,8" 
+                Margin="0,0,0,8"
+                Visibility="{Binding IsInvoiceLoaded, Converter={StaticResource BoolToVisibility}}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.2" Direction="270"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="⚠ " FontSize="12" VerticalAlignment="Center"/>
+                    <TextBlock Text="Items selected will be returned and refunded" 
+                               FontSize="11" 
+                               Foreground="White"
+                               Opacity="0.9"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="TOTAL REFUND: " 
+                               Foreground="#FFCDD2" 
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding TotalRefundAmount, StringFormat='₹{0:N2}'}" 
+                               Foreground="#FFFFFF" 
+                               FontSize="24" 
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ================= ACTION BUTTONS ================= -->
+        <Border Grid.Row="5" 
+                Background="White" 
+                Padding="10" 
+                CornerRadius="4" 
+                BorderBrush="#E0E0E0" 
+                BorderThickness="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="⚡ Process Return (F2)"
+                        Width="180"
+                        Height="36"
+                        Margin="0,0,10,0"
+                        FontSize="13"
+                        FontWeight="Bold"
+                        Cursor="Hand"
+                        Command="{Binding ProcessReturnCommand}"
+                        Visibility="{Binding IsInvoiceLoaded, Converter={StaticResource BoolToVisibility}}">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#4CAF50"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="6"
+                                                BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#388E3C"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Background" Value="#2E7D32"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" Value="#BDBDBD"/>
+                                                <Setter Property="Foreground" Value="#757575"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="✖ Cancel (Esc)"
+                        Width="140"
+                        Height="36"
+                        FontSize="13"
+                        FontWeight="Bold"
+                        Cursor="Hand"
+                        Command="{Binding CancelCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#F5F5F5"/>
+                            <Setter Property="Foreground" Value="#424242"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="6"
+                                                BorderThickness="1"
+                                                BorderBrush="#BDBDBD">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#EEEEEE"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Background" Value="#E0E0E0"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

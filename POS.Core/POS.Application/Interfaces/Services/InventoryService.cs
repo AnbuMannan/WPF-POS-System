@@ -15,19 +15,19 @@ public class InventoryService : IInventoryService
         _auditLogService = auditLogService ?? throw new ArgumentNullException(nameof(auditLogService));
     }
 
-    public async Task StockInAsync(Guid productId, decimal quantity, string refType, Guid? refId, string remarks)
+    public async Task StockInAsync(long productId, decimal quantity, string refType, Guid? refId, string remarks)
     {
         await AddEntry(productId, quantity, "IN", refType, refId, remarks);
         await _auditLogService.LogAsync("API", "InventoryAdjustment", "StockLedger", productId.ToString(), null, $"IN qty={quantity} refType={refType} remarks={remarks}");
     }
 
-    public async Task StockOutAsync(Guid productId, decimal quantity, string refType, Guid? refId, string remarks)
+    public async Task StockOutAsync(long productId, decimal quantity, string refType, Guid? refId, string remarks)
     {
         await AddEntry(productId, -quantity, "OUT", refType, refId, remarks);
         await _auditLogService.LogAsync("API", "InventoryAdjustment", "StockLedger", productId.ToString(), null, $"OUT qty={quantity} refType={refType} remarks={remarks}");
     }
 
-    private async Task AddEntry(Guid productId, decimal qty, string entryType, string refType, Guid? refId, string remarks)
+    private async Task AddEntry(long productId, decimal qty, string entryType, string refType, Guid? refId, string remarks)
     {
         var entry = new StockLedgerEntry
         {
@@ -45,6 +45,6 @@ public class InventoryService : IInventoryService
         await _repo.UpdateStockAsync(productId, qty);
     }
 
-    public async Task<StockSummary> GetStockAsync(Guid productId)
+    public async Task<StockSummary> GetStockAsync(long productId)
         => await _repo.GetStockAsync(productId);
 }

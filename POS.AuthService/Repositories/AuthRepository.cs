@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.AspNetCore.DataProtection;
 using POS.AuthService.Entities;
 using POS.AuthService.Infrastructure;
@@ -40,10 +40,10 @@ namespace POS.AuthService.Repositories
                   WHERE rp.RoleId = @r", new { r = roleId }).ToList();
         }
 
-        public AuthController GetRole(int roleId)
+        public Role GetRole(int roleId)
         {
             using var db = _factory.Create();
-            return db.QueryFirstOrDefault<AuthController>(
+            return db.QueryFirstOrDefault<Role>(
                 "SELECT * FROM Roles WHERE Id = @id", new { id = roleId });
         }
         public bool IsLicenseValid(string machineId)

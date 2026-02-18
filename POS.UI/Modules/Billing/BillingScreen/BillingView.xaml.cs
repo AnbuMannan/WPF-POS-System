@@ -38,9 +38,10 @@ namespace POS.UI.Modules.Billing.BillingScreen
                     var printSettings = App.ServiceProvider.GetService(typeof(IPrintSettingsService)) as IPrintSettingsService;
                     var emailReceipt = App.ServiceProvider.GetService(typeof(IEmailReceiptService)) as IEmailReceiptService;
                     var auditLogApi = App.ServiceProvider.GetService(typeof(AuditLogApiService)) as AuditLogApiService;
-                    if (billingApi != null && productApi != null && customerApi != null && taxProfileApi != null && uomApi != null)
+                    var loyaltyApi = App.ServiceProvider.GetService(typeof(LoyaltyApiService)) as LoyaltyApiService;
+                    if (billingApi != null && productApi != null && customerApi != null && taxProfileApi != null && uomApi != null && loyaltyApi != null)
                     {
-                        var vm = new BillingViewModel(billingApi, productApi, customerApi, taxProfileApi, uomApi, printService, printSettings, auditLogApi);
+                        var vm = new BillingViewModel(billingApi, productApi, customerApi, taxProfileApi, uomApi, printService, printSettings, auditLogApi, loyaltyApi);
                         var owner = Window.GetWindow(this) as Window;
 
                         vm.OpenPaymentDialogAsync = async (total) =>

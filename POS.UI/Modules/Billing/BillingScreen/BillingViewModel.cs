@@ -20,6 +20,7 @@ namespace POS.UI.Modules.Billing.BillingScreen
         private readonly IPrintService? _printService;
         private readonly IPrintSettingsService? _printSettings;
         private readonly AuditLogApiService? _auditLogApi;
+        private readonly LoyaltyApiService _loyaltyApi;
 
         private ObservableCollection<CartItem> _cartItems = new();
         private CartItem? _selectedCartItem;
@@ -32,6 +33,9 @@ namespace POS.UI.Modules.Billing.BillingScreen
         private DateTime _billDate = DateTime.Now;
         private ObservableCollection<CustomerDto> _customers = new();
         private CustomerDto? _selectedCustomer;
+        private int _availableLoyaltyPoints;
+        private int _pointsToRedeem;
+        private decimal _loyaltyRedemptionAmount;
         private bool _isDiscountByPercent = true;
         private string _discountInputValue = string.Empty;
         private BillSummary _billSummary = new();
@@ -103,7 +107,36 @@ namespace POS.UI.Modules.Billing.BillingScreen
         public CustomerDto? SelectedCustomer
         {
             get => _selectedCustomer;
-            set { _selectedCustomer = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedCustomer = value;
+                OnPropertyChanged();
+                AvailableLoyaltyPoints = _selectedCustomer?.LoyaltyPoints ?? 0;
+                (RedeemPointsCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+        public int AvailableLoyaltyPoints
+        {
+            get => _availableLoyaltyPoints;
+            set { _availableLoyaltyPoints = value; OnPropertyChanged(); }
+        }
+
+        public int PointsToRedeem
+        {
+            get => _pointsToRedeem;
+            set
+            {
+                _pointsToRedeem = value;
+                OnPropertyChanged();
+                (RedeemPointsCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+        public decimal LoyaltyRedemptionAmount
+        {
+            get => _loyaltyRedemptionAmount;
+            set { _loyaltyRedemptionAmount = value; OnPropertyChanged(); }
         }
 
         public bool IsDiscountByPercent
@@ -168,6 +201,7 @@ namespace POS.UI.Modules.Billing.BillingScreen
         public ICommand NewBillCommand { get; }
         public ICommand ShowShortcutsCommand { get; }
         public ICommand ToggleFullScreenCommand { get; }
+        public ICommand RedeemPointsCommand { get; }
 
         // Actions (set by View)
         public Func<decimal, Task<List<PaymentDto>?>>? OpenPaymentDialogAsync { get; set; }
@@ -193,7 +227,8 @@ namespace POS.UI.Modules.Billing.BillingScreen
             UomApiService? uomApi,
             IPrintService? printService,
             IPrintSettingsService? printSettings,
-            AuditLogApiService? auditLogApi)
+            AuditLogApiService? auditLogApi,
+            LoyaltyApiService loyaltyApi)
         {
             _billingApi = billingApi;
             _productApi = productApi;
@@ -203,6 +238,7 @@ namespace POS.UI.Modules.Billing.BillingScreen
             _printService = printService;
             _printSettings = printSettings;
             _auditLogApi = auditLogApi;
+            _loyaltyApi = loyaltyApi;
 
             ProductSearch = new ProductSearchViewModel();
             ProductSearch.PropertyChanged += async (s, e) =>
@@ -231,6 +267,7 @@ namespace POS.UI.Modules.Billing.BillingScreen
             NewBillCommand = new RelayCommand(() => RequestNewBill?.Invoke());
             ShowShortcutsCommand = new RelayCommand(() => ShowShortcutsRequested?.Invoke());
             ToggleFullScreenCommand = new RelayCommand(() => ToggleFullScreenRequested?.Invoke());
+            RedeemPointsCommand = new RelayCommand(async () => await RedeemPointsAsync(), () => SelectedCustomer != null && PointsToRedeem > 0);
 
             // Subscribe to cart changes
             CartItems.CollectionChanged += (s, e) =>
@@ -316,6 +353,9 @@ namespace POS.UI.Modules.Billing.BillingScreen
             SelectedCustomer = null;
             DiscountInputValue = string.Empty;
             StatusMessage = string.Empty;
+            PointsToRedeem = 0;
+            LoyaltyRedemptionAmount = 0;
+            AvailableLoyaltyPoints = 0;
         }
 
         private void RenumberCartItems()
@@ -376,7 +416,10 @@ namespace POS.UI.Modules.Billing.BillingScreen
             Subtotal = CartItems.Sum(x => x.Quantity * x.ActualPrice);
             DiscountAmount = CartItems.Sum(x => x.DiscountAmount);
             TotalTax = CartItems.Sum(x => x.TaxAmount);
-            GrandTotal = CartItems.Sum(x => x.TotalAmount);
+            var baseGrandTotal = CartItems.Sum(x => x.TotalAmount);
+            var adjustedGrandTotal = baseGrandTotal - LoyaltyRedemptionAmount;
+            if (adjustedGrandTotal < 0) adjustedGrandTotal = 0;
+            GrandTotal = adjustedGrandTotal;
 
             // Update BillSummary
             var taxableAmount = Subtotal - DiscountAmount;
@@ -452,7 +495,9 @@ namespace POS.UI.Modules.Billing.BillingScreen
                     Subtotal = Subtotal,
                     DiscountAmount = DiscountAmount,
                     TaxAmount = TotalTax,
-                    GrandTotal = Math.Round(GrandTotal)
+                    GrandTotal = Math.Round(GrandTotal),
+                    LoyaltyPointsRedeemed = PointsToRedeem,
+                    LoyaltyRedemptionAmount = LoyaltyRedemptionAmount
                 };
 
                 var receipt = await _billingApi.CreateSaleAsync(saleDto);
@@ -494,6 +539,47 @@ namespace POS.UI.Modules.Billing.BillingScreen
             catch (Exception ex)
             {
                 SetError($"Failed to generate bill number: {ex.Message}");
+            }
+        }
+
+        private async Task RedeemPointsAsync()
+        {
+            if (SelectedCustomer == null)
+            {
+                SetError("Select a customer before redeeming points.");
+                return;
+            }
+
+            if (PointsToRedeem <= 0)
+            {
+                SetError("Enter points to redeem.");
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+                var result = await _loyaltyApi.RedeemPointsAsync(SelectedCustomer.Id, PointsToRedeem);
+                if (result == null)
+                {
+                    SetError("Failed to redeem points.");
+                    return;
+                }
+
+                PointsToRedeem = result.PointsRedeemed;
+                LoyaltyRedemptionAmount = result.RedemptionAmount;
+                AvailableLoyaltyPoints = result.RemainingPoints;
+
+                RecalculateTotals();
+                SetSuccess($"Redeemed {PointsToRedeem} points for ₹{LoyaltyRedemptionAmount:N2}.");
+            }
+            catch (Exception ex)
+            {
+                SetError($"Failed to redeem points: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 

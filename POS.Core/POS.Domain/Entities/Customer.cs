@@ -16,4 +16,11 @@ public class Customer : BaseEntity
     public string? Email { get; set; }
     public string? Address { get; set; }
     public int LoyaltyPoints { get; set; }
+
+    [NotMapped]
+    public int CurrentPoints
+    {
+        get => LoyaltyPoints;
+        set => LoyaltyPoints = value;
+    }
 }
