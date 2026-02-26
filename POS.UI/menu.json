@@ -1,30 +1,81 @@
 [
   {
+    "Header": "Dashboard",
+    "View": "DashboardView",
+    "Icon": "Home"
+  },
+  {
+    "Header": "Sales",
+    "Children": [
+      {
+        "Header": "Billing / New Sale",
+        "View": "BillingView"
+      },
+      {
+        "Header": "Quick Sale",
+        "View": "QuickSaleView"
+      },
+      {
+        "Header": "Held Bills",
+        "View": "HeldBillsListView"
+      },
+      {
+        "Header": "Draft Bills",
+        "View": "DraftBillsListView"
+      },
+      {
+        "Header": "Sales Return",
+        "View": "SaleReturnListView"
+      },
+      {
+        "Header": "Quotations",
+        "View": "QuotationListView"
+      }
+    ]
+  },
+  {
     "Header": "Master",
     "Children": [
       {
-        "Header": "Product Master",
+        "Header": "Products",
         "View": "ProductView"
       },
       {
-        "Header": "Brand Master",
+        "Header": "Categories",
+        "View": "CategoryView"
+      },
+      {
+        "Header": "Brands",
         "View": "BrandView"
       },
       {
-        "Header": "Category Master",
-        "View": "CategoryView"
+        "Header": "Units (UOM)",
+        "View": "UomView"
       },
       {
         "Header": "Tax Profiles",
         "View": "TaxProfileView"
       },
       {
-        "Header": "UoM",
-        "View": "UomView"
+        "Header": "Barcode Labels",
+        "View": "BarcodeLabelView"
+      }
+    ]
+  },
+  {
+    "Header": "Customers",
+    "Children": [
+      {
+        "Header": "Customer List",
+        "View": "CustomerView"
       },
       {
-        "Header": "Customers",
-        "View": "CustomerView"
+        "Header": "Outstanding / Dues",
+        "View": "CustomerOutstandingView"
+      },
+      {
+        "Header": "Loyalty Settings",
+        "View": "LoyaltySettingsView"
       }
     ]
   },
@@ -32,7 +83,7 @@
     "Header": "Suppliers",
     "Children": [
       {
-        "Header": "Supplier Master",
+        "Header": "Supplier List",
         "View": "SupplierListView"
       },
       {
@@ -44,7 +95,7 @@
         "View": "PurchaseEntryListView"
       },
       {
-        "Header": "Purchase Return",
+        "Header": "Purchase Returns",
         "View": "PurchaseReturnListView"
       },
       {
@@ -61,7 +112,11 @@
     "Header": "Inventory",
     "Children": [
       {
-        "Header": "Stock Adjustment",
+        "Header": "Stock Summary",
+        "View": "StockView"
+      },
+      {
+        "Header": "Stock Adjustments",
         "View": "StockAdjustmentListView"
       },
       {
@@ -75,50 +130,17 @@
     ]
   },
   {
-    "Header": "Sales",
+    "Header": "Payments",
     "Children": [
       {
-        "Header": "Billing",
-        "View": "BillingView"
-      },
-      {
-        "Header": "Sales Return",
-        "View": "SaleReturnListView"
-      },
-      {
-        "Header": "Quotations",
-        "View": "QuotationListView"
-      },
-      {
-        "Header": "EOD Report",
-        "View": "EODReportView"
-      }
-    ]
-  },
-  {
-    "Header": "Customers",
-    "Children": [
-      {
-        "Header": "Customer Master",
-        "View": "CustomerView"
-      },
-      {
-        "Header": "Outstanding / Dues",
-        "View": "CustomerOutstandingView"
+        "Header": "Cash In / Cash Out",
+        "View": "CashTransactionView"
       }
     ]
   },
   {
     "Header": "Reports",
     "Children": [
-      {
-        "Header": "GST Reports",
-        "View": "GstReportView"
-      },
-      {
-        "Header": "Stock Reports",
-        "View": "StockReportView"
-      },
       {
         "Header": "Sales Report",
         "View": "SalesReportView"
@@ -128,12 +150,46 @@
         "View": "ItemSalesView"
       },
       {
+        "Header": "GST Reports",
+        "View": "GstReportView"
+      },
+      {
+        "Header": "EOD Report",
+        "View": "EODReportView"
+      },
+      {
         "Header": "Profit & Loss",
         "View": "ProfitLossReportView"
       },
       {
-        "Header": "Low Stock Report",
+        "Header": "Low Stock",
         "View": "LowStockReportView"
+      },
+      {
+        "Header": "Audit Logs",
+        "View": "AuditLogView"
+      }
+    ]
+  },
+  {
+    "Header": "Users",
+    "Children": [
+      {
+        "Header": "User Management",
+        "View": "UserListView"
+      },
+      {
+        "Header": "Roles & Permissions",
+        "View": "RoleManagerView"
+      }
+    ]
+  },
+  {
+    "Header": "Organization",
+    "Children": [
+      {
+        "Header": "Company Profile",
+        "View": "CompanyProfileView"
       }
     ]
   },
@@ -141,16 +197,17 @@
     "Header": "Utilities",
     "Children": [
       {
-        "Header": "User Management",
-        "View": "UserView"
-      },
-      {
-        "Header": "Backup",
-        "View": "BackupView"
-      },
-      {
-        "Header": "Data Import / Export",
+        "Header": "Data Import",
         "View": "ImportProductsView"
+      }
+    ]
+  },
+  {
+    "Header": "Settings",
+    "Children": [
+      {
+        "Header": "Store Settings",
+        "View": "SettingsView"
       }
     ]
   }

@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿namespace POS.Domain.Entities;
+﻿﻿﻿﻿﻿﻿﻿﻿namespace POS.Domain.Entities;
 
 public class StockSummary
 {

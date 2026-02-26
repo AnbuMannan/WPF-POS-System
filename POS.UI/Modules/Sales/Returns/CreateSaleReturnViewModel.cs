@@ -70,6 +70,8 @@ public class CreateSaleReturnViewModel : INotifyPropertyChanged
     public ICommand ProcessReturnCommand { get; }
     public ICommand CancelCommand { get; }
     public ICommand SelectAllCommand { get; }
+    public ICommand IncreaseQtyCommand { get; }
+    public ICommand DecreaseQtyCommand { get; }
 
     public event Action? ReturnSaved;
     public event Action? RequestClose;
@@ -78,9 +80,11 @@ public class CreateSaleReturnViewModel : INotifyPropertyChanged
     {
         _service = service;
         SearchInvoiceCommand = new RelayCommand(async _ => await SearchInvoice());
-        ProcessReturnCommand = new RelayCommand(async _ => await ProcessReturn(), _ => IsInvoiceLoaded && ReturnItems.Any(i => i.IsSelected && i.ReturnQuantity > 0));
+        ProcessReturnCommand = new RelayCommand(async mode => await ProcessReturn(mode as string), _ => IsInvoiceLoaded && ReturnItems.Any(i => i.IsSelected && i.ReturnQuantity > 0));
         CancelCommand = new RelayCommand(_ => RequestClose?.Invoke());
         SelectAllCommand = new RelayCommand(_ => ToggleSelectAll());
+        IncreaseQtyCommand = new RelayCommand(row => AdjustQuantity(row as ReturnItemRow, 1));
+        DecreaseQtyCommand = new RelayCommand(row => AdjustQuantity(row as ReturnItemRow, -1));
     }
 
     private async Task SearchInvoice()
@@ -149,7 +153,22 @@ public class CreateSaleReturnViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(TotalRefundAmount));
     }
 
-    private async Task ProcessReturn()
+    private void AdjustQuantity(ReturnItemRow? row, int delta)
+    {
+        if (row == null || !row.IsSelected)
+            return;
+
+        var newValue = row.ReturnQuantity + delta;
+        if (newValue < 0)
+            newValue = 0;
+        if (newValue > row.MaxReturnQuantity)
+            newValue = row.MaxReturnQuantity;
+
+        row.ReturnQuantity = newValue;
+        OnPropertyChanged(nameof(TotalRefundAmount));
+    }
+
+    private async Task ProcessReturn(string? mode)
     {
         var selectedItems = ReturnItems.Where(i => i.IsSelected && i.ReturnQuantity > 0).ToList();
         if (!selectedItems.Any())
@@ -167,6 +186,9 @@ public class CreateSaleReturnViewModel : INotifyPropertyChanged
                 return;
             }
         }
+
+        if (!string.IsNullOrWhiteSpace(mode))
+            SelectedRefundMode = mode;
 
         var confirm = DialogService.Confirm("Process Return",
             $"Create and process return for {selectedItems.Count} item(s)?\n\n" +
