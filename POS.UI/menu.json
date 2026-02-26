@@ -120,6 +120,10 @@
         "View": "StockAdjustmentListView"
       },
       {
+        "Header": "Physical Stock Take",
+        "View": "PhysicalStockTakeView"
+      },
+      {
         "Header": "Item Ledger",
         "View": "ItemLedgerView"
       },

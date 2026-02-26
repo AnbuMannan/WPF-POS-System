@@ -21,4 +21,5 @@
     <conv:BoolToActiveStatusConverter x:Key="BoolToActiveStatusConverter"/>
     <conv:BoolToTextConverter x:Key="BoolToTextConverter"/>
     <conv:SegmentWidthConverter x:Key="SegmentWidthConverter"/>
+    <conv:VarianceColorConverter x:Key="VarianceColorConverter"/>
 </ResourceDictionary>

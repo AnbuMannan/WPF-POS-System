@@ -571,7 +571,7 @@
                     <Button x:Name="BtnStockAdjustments" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE73F;" Content="Stock Adjustments" Click="SubMenuInventory_Click"/>
                     <Button x:Name="BtnItemLedger" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9D9;" Content="Item Ledger" Click="SubMenuInventory_Click"/>
                     <Button x:Name="BtnLabelPrinting" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE892;" Content="Label Printing" Click="SubMenuInventory_Click"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE781;" Content="Physical Stock Count"/>
+                    <Button x:Name="BtnPhysicalStockTake" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE781;" Content="Physical Stock Take" Click="SubMenuInventory_Click"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1E4;" Content="Batch / Expiry Tracking"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE896;" Content="Serial Number Tracking"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7BA;" Content="Low Stock Alerts"/>

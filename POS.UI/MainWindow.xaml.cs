@@ -527,7 +527,28 @@ namespace POS.UI
                 case "BtnLabelPrinting":
                     ShowLabelPrinting();
                     break;
+                case "BtnPhysicalStockTake":
+                    ShowPhysicalStockTake();
+                    break;
             }
+        }
+
+        private void ShowPhysicalStockTake()
+        {
+            var productService = App.ServiceProvider?.GetService(typeof(ProductApiService)) as ProductApiService;
+            var adjustmentService = App.ServiceProvider?.GetService(typeof(StockAdjustmentApiService)) as StockAdjustmentApiService;
+            var stockService = App.ServiceProvider?.GetService(typeof(StockApiService)) as StockApiService;
+
+            if (productService == null || adjustmentService == null || stockService == null)
+            {
+                POS.UI.Components.DialogService.Warning("Stock Take", "Required services not available.");
+                return;
+            }
+
+            var viewModel = new Modules.Inventory.StockTake.PhysicalStockTakeViewModel(productService, adjustmentService, stockService);
+            var view = new Modules.Inventory.StockTake.PhysicalStockTakeView { DataContext = viewModel };
+            MainContent.Content = view;
+            HeaderTitle.Text = "Physical Stock Take";
         }
 
         private void ShowItemLedger()
