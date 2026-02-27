@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using POS.Application.Interfaces.Repositories;
 using POS.Domain.Entities;
 using POS.Infrastructure.Data;
@@ -9,10 +10,12 @@ namespace POS.Infrastructure.Repositories;
 public class StockAdjustmentRepository : IStockAdjustmentRepository
 {
     private readonly PosDbContext _context;
+    private readonly ILogger<StockAdjustmentRepository> _logger;
 
-    public StockAdjustmentRepository(PosDbContext context)
+    public StockAdjustmentRepository(PosDbContext context, ILogger<StockAdjustmentRepository> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<StockAdjustment>> GetAllAsync(bool includeInactive = false)
@@ -204,6 +207,23 @@ public class StockAdjustmentRepository : IStockAdjustmentRepository
                         // Create new batch for positive adjustments
                         if (item.Quantity > 0)
                         {
+                            var defaultSupplier = await _context.Suppliers
+                                .FirstOrDefaultAsync(s => s.Code == "SYS-SUPPLIER" || s.Name == "System Default");
+
+                            if (defaultSupplier == null)
+                            {
+                                defaultSupplier = new Supplier
+                                {
+                                    Id = Guid.NewGuid(),
+                                    Name = "System Default",
+                                    Code = "SYS-SUPPLIER",
+                                    ContactPerson = "System",
+                                    IsActive = true,
+                                    CreatedAt = DateTime.Now
+                                };
+                                _context.Suppliers.Add(defaultSupplier);
+                            }
+
                             var newBatch = new Batch
                             {
                                 Id = Guid.NewGuid(),
@@ -214,6 +234,7 @@ public class StockAdjustmentRepository : IStockAdjustmentRepository
                                 CostPrice = item.CostPrice,
                                 SellingPrice = item.CostPrice * 1.2m, // 20% markup default
                                 ReceivedDate = DateTime.Now,
+                                SupplierId = defaultSupplier.Id,
                                 IsActive = true,
                                 CreatedAt = DateTime.Now
                             };
@@ -236,6 +257,26 @@ public class StockAdjustmentRepository : IStockAdjustmentRepository
                     }
                     else if (item.Quantity > 0)
                     {
+                        // Handle default supplier for Grade A market standard
+                        var defaultSupplier = await _context.Suppliers
+                            .FirstOrDefaultAsync(s => s.Code == "SYS-SUPPLIER" || s.Name == "System Default");
+
+                        if (defaultSupplier == null)
+                        {
+                            _logger.LogInformation("Creating System Default Supplier for stock adjustments");
+                            defaultSupplier = new Supplier
+                            {
+                                Id = Guid.NewGuid(),
+                                Name = "System Default",
+                                Code = "SYS-SUPPLIER",
+                                ContactPerson = "System",
+                                IsActive = true,
+                                CreatedAt = DateTime.Now
+                            };
+                            _context.Suppliers.Add(defaultSupplier);
+                            // We don't save yet, it will save with the adjustment
+                        }
+
                         // Create an adjustment batch for positive adjustments
                         var adjBatch = new Batch
                         {
@@ -247,6 +288,7 @@ public class StockAdjustmentRepository : IStockAdjustmentRepository
                             CostPrice = item.CostPrice,
                             SellingPrice = item.CostPrice * 1.2m,
                             ReceivedDate = DateTime.Now,
+                            SupplierId = defaultSupplier.Id,
                             IsActive = true,
                             CreatedAt = DateTime.Now
                         };
@@ -276,10 +318,16 @@ public class StockAdjustmentRepository : IStockAdjustmentRepository
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+            _logger.LogInformation("Stock adjustment {ReferenceNo} processed successfully", adjustment.ReferenceNo);
         }
-        catch
+        catch (Exception ex)
         {
             await transaction.RollbackAsync();
+            
+            // Re-fetch adjustment without using the potentially corrupted context state if necessary, 
+            // but here we just need the ID if the variable is lost (which it isn't, but let's be safe)
+            _logger.LogError(ex, "Error processing stock adjustment with ID {AdjustmentId}. Details: {Message}", 
+                id, ex.InnerException?.Message ?? ex.Message);
             throw;
         }
     }

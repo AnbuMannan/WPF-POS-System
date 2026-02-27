@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using POS.Domain.Interfaces;
 
 namespace POS.Domain.Entities;
 
 /// <summary>
 /// Stock adjustment header - tracks inventory adjustments due to damage, theft, expiry, or corrections
 /// </summary>
-public class StockAdjustment : BaseEntity
+public class StockAdjustment : BaseEntity, IStoreEntity
 {
+    public int StoreCode { get; set; }
     [NotMapped]
     public Guid StockAdjustmentId
     {

@@ -77,7 +77,8 @@ public class StockAdjustmentsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            var message = ex.InnerException?.Message ?? ex.Message;
+            return BadRequest(new { message = message });
         }
     }
 
@@ -104,7 +105,8 @@ public class StockAdjustmentsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            var message = ex.InnerException?.Message ?? ex.Message;
+            return BadRequest(new { message = message });
         }
     }
 
@@ -135,7 +137,8 @@ public class StockAdjustmentsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            var message = ex.InnerException?.Message ?? ex.Message;
+            return BadRequest(new { message = message });
         }
     }
 

@@ -127,8 +127,7 @@ namespace POS.UI.Modules.Billing.PaymentDialog
             CompletedPayments.Add(new PaymentDto
             {
                 PaymentMethod = method,
-                Amount = amount,
-                PaymentDate = DateTime.Now
+                Amount = amount
             });
             TotalPaid = CompletedPayments.Sum(x => x.Amount);
         }

@@ -30,7 +30,7 @@ public class BatchDto
     
     // Source
     public Guid? PurchaseEntryId { get; set; }
-    public Guid SupplierId { get; set; }
+    public Guid? SupplierId { get; set; }
     public string? SupplierName { get; set; }
     
     // Location

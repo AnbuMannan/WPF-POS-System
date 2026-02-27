@@ -1,4 +1,4 @@
-﻿namespace POS.LicenseServer.Services
+namespace POS.LicenseServer.Services
 {
     public class LicenseService
     {
@@ -9,28 +9,55 @@
             _repo = repo;
         }
 
-        public (bool success, byte[] signature, DateTime expiryDate, string message) ActivateSigned(string key, string machineId, int storeId)
+        public (bool success, string payload, byte[] signature, DateTime expiryDate, string message) ActivateSigned(string key, string machineId)
         {
             var lic = _repo.GetByKey(key);
 
             if (lic == null)
-                return (false, null, default, "Invalid license key");
+                return (false, null, null, default, "Invalid license key");
 
             if (lic.IsRevoked)
-                return (false, null, default, "License revoked");
+                return (false, null, null, default, "License revoked");
 
             if (lic.ExpiryDate < DateTime.UtcNow)
-                return (false, null, default, "License expired");
+                return (false, null, null, default, "License expired");
 
+            // Idempotency: allow safe retry from the same machine
             if (lic.IsActivated)
-                return (false, null, default, "License already activated");
+            {
+                if (!string.IsNullOrEmpty(lic.MachineId) && string.Equals(lic.MachineId, machineId, StringComparison.Ordinal))
+                {
+                    var existingPayload = System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        LicenseKey = key,
+                        MachineId = machineId,
+                        StoreId = lic.StoreId,
+                        StoreName = lic.StoreName,
+                        Address = lic.Address,
+                        TaxId = lic.TaxId,
+                        ExpiryDate = lic.ExpiryDate
+                    });
+                    var existingSignature = LicenseCrypto.Sign(existingPayload);
+                    return (true, existingPayload, existingSignature, lic.ExpiryDate, "License already activated for this machine");
+                }
+                return (false, null, null, default, "License is already activated on a different machine.");
+            }
 
-            var payload = $"{key}|{machineId}|{storeId}|{lic.ExpiryDate:yyyy-MM-dd}";
-            var signature = LicenseCrypto.Sign(payload);
+            var payloadJson = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                LicenseKey = key,
+                MachineId = machineId,
+                StoreId = lic.StoreId,
+                StoreName = lic.StoreName,
+                Address = lic.Address,
+                TaxId = lic.TaxId,
+                ExpiryDate = lic.ExpiryDate
+            });
+            var signature = LicenseCrypto.Sign(payloadJson);
 
-            _repo.Activate(key, machineId, storeId);
+            _repo.Activate(key, machineId, lic.StoreId);
 
-            return (true, signature, lic.ExpiryDate, "License activated successfully");
+            return (true, payloadJson, signature, lic.ExpiryDate, "License activated successfully");
         }
 
 

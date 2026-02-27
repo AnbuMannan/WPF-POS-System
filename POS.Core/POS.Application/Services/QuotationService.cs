@@ -158,7 +158,6 @@ public class QuotationService : IQuotationService
         // Create sale via billing service
         var createSaleDto = new CreateSaleDto
         {
-            SaleDate = DateTime.Now,
             CustomerId = quotation.CustomerId,
             Subtotal = quotation.Subtotal,
             DiscountAmount = quotation.DiscountAmount,

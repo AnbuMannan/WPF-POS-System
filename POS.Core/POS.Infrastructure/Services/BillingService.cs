@@ -34,12 +34,13 @@ public class BillingService : IBillingService
 
         var loyaltyPointsEarned = await _loyaltyService.CalculatePointsAsync(dto.GrandTotal);
 
+        var now = DateTime.Now;
         var sale = new Sale
         {
             BillNumber = dto.BillNumber ?? $"INV{DateTime.Now:yyyyMMddHHmmss}",
+            CustomerId = dto.CustomerId,
             SaleType = SaleType.Regular,
             Status = SaleStatus.Completed,
-            CustomerId = dto.CustomerId,
             Subtotal = dto.Subtotal,
             DiscountAmount = dto.DiscountAmount,
             TotalTax = dto.TaxAmount,
@@ -52,8 +53,8 @@ public class BillingService : IBillingService
             LoyaltyPointsRedeemed = dto.LoyaltyPointsRedeemed,
             RedemptionAmount = dto.LoyaltyRedemptionAmount,
             CreatedBy = userId,
-            CreatedAt = DateTime.UtcNow,
-            CompletedAt = DateTime.UtcNow
+            CreatedAt = now,
+            CompletedAt = now
         };
 
         int lineNum = 1;
@@ -83,7 +84,7 @@ public class BillingService : IBillingService
                 IGST = 0,
                 Cess = 0,
                 TaxProfileId = taxProfileId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = now
             });
         }
 
@@ -95,7 +96,7 @@ public class BillingService : IBillingService
                 PaymentMethod = method,
                 Amount = pay.Amount,
                 Status = PaymentStatus.Completed,
-                CreatedAt = pay.PaymentDate != default ? pay.PaymentDate : DateTime.UtcNow
+                CreatedAt = now
             });
         }
 
@@ -107,7 +108,7 @@ public class BillingService : IBillingService
             if (customer != null)
             {
                 customer.LoyaltyPoints += loyaltyPointsEarned;
-                customer.UpdatedAt = DateTime.UtcNow;
+                customer.UpdatedAt = now;
             }
         }
 

@@ -1,4 +1,5 @@
 using POS.UI.Core.Exceptions;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.Net.Http;
@@ -59,6 +60,7 @@ namespace POS.UI.Core.Services
         public string? Message { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public string? LicenseType { get; set; }
+        public POS.Shared.Models.StoreDto? Store { get; set; }
     }
 
     /// <summary>
@@ -69,14 +71,57 @@ namespace POS.UI.Core.Services
     {
         private readonly HttpClient _http;
         private readonly ILogger _logger;
+        private readonly IConfiguration? _configuration;
         private string? _currentToken;
         private string? _currentRefreshToken;
         private UserInfo? _currentUser;
 
-        public AuthenticationService(HttpClient http)
+        public AuthenticationService(HttpClient http, IConfiguration configuration)
         {
             _http = http ?? throw new ArgumentNullException(nameof(http));
             _logger = Log.ForContext<AuthenticationService>();
+            _configuration = configuration;
+
+            var baseUrl = _configuration?["AuthApiBaseUrl"] ?? "https://localhost:7014/";
+            if (_http.BaseAddress == null)
+            {
+                _http.BaseAddress = new Uri(baseUrl);
+            }
+        }
+
+        public async Task<LicenseValidationResponse> ActivateLicenseAsync(string licenseKey)
+        {
+            try
+            {
+                var response = await _http.PostAsJsonAsync("api/local-license/activate", new { LicenseKey = licenseKey });
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    return new LicenseValidationResponse { IsValid = false, Message = error };
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<ActivationResultDto>(
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var store = result?.Store;
+
+                return new LicenseValidationResponse
+                {
+                    IsValid = true,
+                    Message = result?.Message,
+                    Store = store
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Activation failed");
+                return new LicenseValidationResponse { IsValid = false, Message = "Activation failed: " + ex.Message };
+            }
+        }
+
+        private class ActivationResultDto
+        {
+            public string? Message { get; set; }
+            public POS.Shared.Models.StoreDto? Store { get; set; }
         }
 
         /// <summary>

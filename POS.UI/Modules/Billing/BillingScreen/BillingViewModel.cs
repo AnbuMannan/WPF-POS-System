@@ -283,6 +283,18 @@ namespace POS.UI.Modules.Billing.BillingScreen
             try
             {
                 var results = await _productApi.SearchAsync(searchText);
+                if (results != null && results.Count > 0)
+                {
+                    // Fetch stock for each result using the global ServiceProvider
+                    var stockApiService = App.ServiceProvider?.GetService(typeof(StockApiService)) as StockApiService;
+                    if (stockApiService != null)
+                    {
+                        foreach (var product in results)
+                        {
+                            product.AvailableStock = await stockApiService.GetProductStockAsync(product.ProductId);
+                        }
+                    }
+                }
                 ProductSearch.SearchResults = new ObservableCollection<ProductDto>(results ?? new List<ProductDto>());
             }
             catch (Exception ex)
@@ -473,7 +485,6 @@ namespace POS.UI.Modules.Billing.BillingScreen
                 var saleDto = new CreateSaleDto
                 {
                     BillNumber = BillNumber,
-                    SaleDate = DateTime.Now,
                     CustomerId = SelectedCustomer?.Id,
                     Items = CartItems.Select(x => new SaleItemDto
                     {

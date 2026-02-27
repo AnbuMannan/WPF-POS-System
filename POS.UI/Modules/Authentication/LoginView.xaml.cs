@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using Application = System.Windows.Application;
+using POS.UI.Modules.Utilities.SystemHealth;
 
 namespace POS.UI.Modules.Authentication
 {
@@ -39,6 +40,12 @@ namespace POS.UI.Modules.Authentication
         {
             Close();
             Application.Current.Shutdown();
+        }
+
+        private void OpenSystemHealth_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new SystemHealthDialog { Owner = this };
+            dlg.ShowDialog();
         }
     }
 }

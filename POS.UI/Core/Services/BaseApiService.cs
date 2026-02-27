@@ -16,6 +16,7 @@ namespace POS.UI.Core.Services
     {
         protected readonly HttpClient _http;
         protected readonly ILogger _logger;
+        private readonly LocalSettingsService? _localSettings;
 
         protected BaseApiService(HttpClient http)
         {
@@ -23,6 +24,14 @@ namespace POS.UI.Core.Services
             
             // Get logger for this service type
             _logger = Log.ForContext(this.GetType());
+
+            // Add StoreCode header from local settings if available
+            _localSettings = App.ServiceProvider?.GetService(typeof(LocalSettingsService)) as LocalSettingsService;
+            var storeCode = _localSettings?.GetStoreCode() ?? 0;
+            if (storeCode > 0 && !_http.DefaultRequestHeaders.Contains("X-Store-Code"))
+            {
+                _http.DefaultRequestHeaders.Add("X-Store-Code", storeCode.ToString());
+            }
         }
 
         /// <summary>

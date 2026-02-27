@@ -1,8 +1,11 @@
+using POS.Domain.Interfaces;
+
 namespace POS.Domain.Entities
 {
-    public class SaleReturn
+    public class SaleReturn : IStoreEntity
     {
         public int ReturnId { get; set; }
+        public int StoreCode { get; set; }
         public string ReturnNumber { get; set; } = string.Empty;
         public string ReturnType { get; set; } = string.Empty;
         public decimal TotalReturnAmount { get; set; }

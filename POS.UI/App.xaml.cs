@@ -111,35 +111,50 @@ namespace POS.UI
                 ApplyTheme();
 
                 // ===============================
-                // 🔥 START LOGIN FLOW HERE
+                // 🔥 START ACTIVATION OR LOGIN FLOW HERE
                 // ===============================
 
-                var loginView = new LoginView();
+                var localSettings = ServiceProvider.GetService<LocalSettingsService>();
+                var config = localSettings?.GetConfig();
 
-                // Resolve LoginViewModel from DI
-                var loginViewModel = ServiceProvider.GetService<LoginViewModel>();
-
-                if (loginViewModel == null)
+                if (config == null || config.StoreCode <= 0)
                 {
-                    POS.UI.Components.DialogService.Error("DI Error", "LoginViewModel not resolved from DI");
-                    Shutdown();
-                    return;
+                    // Not activated yet - show Activation View
+                    var activationWindow = new Window
+                    {
+                        Title = "Terminal Activation",
+                        Width = 1000,
+                        Height = 600,
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                        ResizeMode = ResizeMode.NoResize,
+                        WindowStyle = WindowStyle.None
+                    };
+
+                    var activationView = new ActivationView();
+                    var activationViewModel = ServiceProvider.GetService<ActivationViewModel>();
+                    
+                    if (activationViewModel == null)
+                    {
+                        POS.UI.Components.DialogService.Error("DI Error", "ActivationViewModel not resolved");
+                        Shutdown();
+                        return;
+                    }
+
+                    activationView.DataContext = activationViewModel;
+                    activationWindow.Content = activationView;
+
+                    activationViewModel.ActivationSuccess += () => 
+                    {
+                        ShowLogin();
+                        activationWindow.Close();
+                    };
+
+                    activationWindow.Show();
                 }
-
-                loginView.DataContext = loginViewModel;
-
-                // Subscribe to login success
-                loginViewModel.LoginSucceeded += (s, args) =>
+                else
                 {
-                    POS.UI.Core.AppState.SetUser(loginViewModel.Username, "Cashier");
-                    var mainWindow = new MainWindow();
-                    Current.MainWindow = mainWindow;
-                    mainWindow.Show();
-                    loginView.Close();
-                };
-
-                // Show Login first
-                loginView.Show();
+                    ShowLogin();
+                }
             }
             catch (Exception ex)
             {
@@ -147,6 +162,32 @@ namespace POS.UI
                 POS.UI.Components.DialogService.Error("Startup Error", $"Failed to initialize application: {ex.Message}");
                 Shutdown(1);
             }
+        }
+
+        private void ShowLogin()
+        {
+            var loginView = new LoginView();
+            var loginViewModel = ServiceProvider?.GetService<LoginViewModel>();
+
+            if (loginViewModel == null)
+            {
+                POS.UI.Components.DialogService.Error("DI Error", "LoginViewModel not resolved from DI");
+                Shutdown();
+                return;
+            }
+
+            loginView.DataContext = loginViewModel;
+
+            loginViewModel.LoginSucceeded += (s, args) =>
+            {
+                POS.UI.Core.AppState.SetUser(loginViewModel.Username, "Cashier");
+                var mainWindow = new MainWindow();
+                Current.MainWindow = mainWindow;
+                mainWindow.Show();
+                loginView.Close();
+            };
+
+            loginView.Show();
         }
         //private void Application_Startup(object sender, StartupEventArgs e)
         //{

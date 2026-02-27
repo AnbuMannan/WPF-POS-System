@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using POS.LicenseServer.Services;
 
 namespace POS.LicenseServer.Controllers
@@ -17,7 +17,7 @@ namespace POS.LicenseServer.Controllers
         [HttpPost("activate")]
         public IActionResult Activate(ActivateRequest req)
         {
-            var result = _service.ActivateSigned(req.LicenseKey, req.MachineId, req.StoreId);
+            var result = _service.ActivateSigned(req.LicenseKey, req.MachineId);
 
             if (!result.success)
                 return BadRequest(result.message);
@@ -26,6 +26,7 @@ namespace POS.LicenseServer.Controllers
             {
                 LicenseKey = req.LicenseKey,
                 ExpiryDate = result.expiryDate,
+                Payload = result.payload,
                 Signature = Convert.ToBase64String(result.signature)
             });
         }
@@ -35,7 +36,6 @@ namespace POS.LicenseServer.Controllers
         {
             public string LicenseKey { get; set; }
             public string MachineId { get; set; }
-            public int StoreId { get; set; }
         }
     }
 

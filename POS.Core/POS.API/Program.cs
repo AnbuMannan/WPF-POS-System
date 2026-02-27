@@ -166,4 +166,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.MapGet("/api/health/ping", () =>
+    Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow })
+).AllowAnonymous();
+
 app.Run();

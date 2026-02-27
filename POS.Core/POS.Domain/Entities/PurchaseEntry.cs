@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using POS.Domain.Interfaces;
 
 namespace POS.Domain.Entities;
 
-public class PurchaseEntry : BaseEntity
+public class PurchaseEntry : BaseEntity, IStoreEntity
 {
+    public int StoreCode { get; set; }
     [NotMapped]
     public Guid PurchaseEntryId
     {

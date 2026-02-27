@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using POS.Shared.Models;
+using POS.UI.Core;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using POS.UI.Components;
@@ -128,12 +129,13 @@ namespace POS.UI.Modules.Inventory.StockTake
                 var dto = new CreateStockAdjustmentDto
                 {
                     AdjustmentDate = DateTime.Now,
-                    Reason = "Physical Stock Audit",
+                    AdjustedBy = AppState.CurrentUserName ?? "System",
+                    Reason = AdjustmentReasons.Audit,
                     Remarks = $"Physical Stock Audit completed on {DateTime.Now:dd MMM yyyy HH:mm}",
                     Items = variances.Select(v => new CreateStockAdjustmentItemDto
                     {
                         ProductId = v.ProductId,
-                        Quantity = Math.Abs(v.VarianceQty),
+                        Quantity = v.VarianceQty,
                         CostPrice = v.CostPrice,
                         Remarks = v.VarianceQty > 0 ? "Stock In (Audit)" : "Stock Out (Audit)"
                     }).ToList()

@@ -1,8 +1,11 @@
+using POS.Domain.Interfaces;
+
 namespace POS.Domain.Entities
 {
-    public class DraftBill
+    public class DraftBill : IStoreEntity
     {
         public long DraftBillId { get; set; }
+        public int StoreCode { get; set; }
         public string DraftName { get; set; } = string.Empty;
         public string CartData { get; set; } = string.Empty;
         public Guid? CustomerId { get; set; }

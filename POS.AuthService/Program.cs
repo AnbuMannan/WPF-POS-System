@@ -4,6 +4,7 @@ using POS.AuthService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +21,20 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAuthorization();
-builder.Services.AddHttpClient<LicenseActivationService>();
+builder.Services.AddHttpClient<LicenseActivationService>((sp, client) =>
+{
+    var cfg = sp.GetRequiredService<IConfiguration>();
+    var baseUrl = cfg["LicenseServerBaseUrl"] ?? "https://localhost:7143/";
+    client.BaseAddress = new Uri(baseUrl);
+});
 builder.Services.AddScoped<LicenseActivationService>();
+
+// EF Core DbContext for Stores (pos_auth database)
+builder.Services.AddDbContext<AuthDbContext>(options =>
+{
+    var cs = builder.Configuration.GetConnectionString("MySql");
+    options.UseMySql(cs, ServerVersion.AutoDetect(cs));
+});
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -62,5 +75,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/api/health/ping", () =>
+    Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow })
+).AllowAnonymous();
 
 app.Run();

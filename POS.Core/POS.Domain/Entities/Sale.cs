@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using POS.Domain.Enums;
+using POS.Domain.Interfaces;
 
 namespace POS.Domain.Entities
 {
-    public class Sale
+    public class Sale : IStoreEntity
     {
         public long SaleId { get; set; }
+        public int StoreCode { get; set; }
         public string BillNumber { get; set; } = string.Empty;
         public string? InvoiceNumber { get; set; }
         public SaleType SaleType { get; set; }

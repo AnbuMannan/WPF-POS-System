@@ -1,8 +1,11 @@
+using POS.Domain.Interfaces;
+
 namespace POS.Domain.Entities
 {
-    public class HeldBill
+    public class HeldBill : IStoreEntity
     {
         public long HeldBillId { get; set; }
+        public int StoreCode { get; set; }
         public string HoldReference { get; set; } = string.Empty;
         public string? CustomerName { get; set; }
         public Guid? CustomerId { get; set; }

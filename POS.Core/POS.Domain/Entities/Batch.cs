@@ -40,7 +40,7 @@ public class Batch : BaseEntity
     public virtual PurchaseEntryItem? PurchaseEntryItem { get; set; }
     
     // Supplier Information
-    public Guid SupplierId { get; set; }
+    public Guid? SupplierId { get; set; }
     public virtual Supplier? Supplier { get; set; }
     
     // Location (for multi-location support)

@@ -23,6 +23,8 @@ namespace POS.AuthService.Repositories
             _factory = factory;
         }
 
+        public System.Data.IDbConnection GetConnection() => _factory.Create();
+
         public User GetUserByUsername(string username)
         {
             using var db = _factory.Create();

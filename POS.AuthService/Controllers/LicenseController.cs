@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/local-license")]
@@ -14,17 +14,16 @@ public class LocalLicenseController : ControllerBase
     [HttpPost("activate")]
     public async Task<IActionResult> Activate(ActivateLocalRequest req)
     {
-        var result = await _activation.ActivateOnlineAsync(req.LicenseKey, req.StoreId);
+        var result = await _activation.ActivateOnlineAsync(req.LicenseKey);
 
         if (!result.success)
             return BadRequest(result.message);
 
-        return Ok(result.message);
+        return Ok(new { result.message, result.store });
     }
 }
 
 public class ActivateLocalRequest
 {
-    public string LicenseKey { get; set; }
-    public int StoreId { get; set; }
+    public string LicenseKey { get; set; } = string.Empty;
 }

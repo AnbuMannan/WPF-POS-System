@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using POS.Domain.Interfaces;
 
 namespace POS.Domain.Entities;
 
 /// <summary>
 /// Customer ledger entry - tracks all transactions with customers (Sale, Payment, Return, CreditNote)
 /// </summary>
-public class CustomerTransaction : BaseEntity
+public class CustomerTransaction : BaseEntity, IStoreEntity
 {
+    public int StoreCode { get; set; }
     [NotMapped]
     public Guid CustomerTransactionId
     {

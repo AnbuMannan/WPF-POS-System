@@ -1,0 +1,67 @@
+<Window x:Class="POS.UI.Modules.Utilities.SystemHealth.SystemHealthDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:syshealth="clr-namespace:POS.UI.Modules.Utilities.SystemHealth"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize">
+    <Grid Margin="20">
+        <Border Background="{StaticResource BrushPrimaryDark}" CornerRadius="12" Padding="16">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18" ShadowDepth="4" Opacity="0.4"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Unified premium header -->
+                <Border Grid.Row="0" Background="{StaticResource BrushPrimary}" CornerRadius="8,8,0,0" Padding="12,8">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="System Diagnostics"
+                                   Foreground="{StaticResource BrushTextWhite}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"/>
+                        <Button Grid.Column="1"
+                                Click="Close_Click"
+                                Padding="8,2"
+                                ToolTip="Close"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="{StaticResource BrushTextWhite}">
+                            <Button.Content>
+                                <TextBlock Text="✕" FontSize="16" FontWeight="Bold"/>
+                            </Button.Content>
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextWhite}"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource BrushDanger}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" Background="{StaticResource BrushWindowBg}" CornerRadius="8" Padding="12">
+                    <syshealth:SystemHealthView/>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

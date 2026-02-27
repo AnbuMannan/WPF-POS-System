@@ -14,8 +14,10 @@
 
                 <!-- Core Component Styles -->
                 <ResourceDictionary Source="/Styles/TextBoxes.xaml"/>
+                <ResourceDictionary Source="/Styles/Buttons.xaml"/>
                 <ResourceDictionary Source="/Styles/DataGrid.xaml"/>
                 <ResourceDictionary Source="/Styles/Forms.xaml"/>
+                <ResourceDictionary Source="/Styles/Menu.xaml"/>
 
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

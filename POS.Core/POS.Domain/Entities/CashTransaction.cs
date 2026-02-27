@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using POS.Domain.Interfaces;
 
 namespace POS.Domain.Entities
 {
-    public class CashTransaction : BaseEntity
+    public class CashTransaction : BaseEntity, IStoreEntity
     {
+        public int StoreCode { get; set; }
         [Required]
         public DateTime TransactionDate { get; set; }
 

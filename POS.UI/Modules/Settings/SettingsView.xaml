@@ -1,7 +1,98 @@
 <UserControl x:Class="POS.UI.Modules.Settings.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid>
-        <TextBlock Text="Settings" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-    </Grid>
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:POS.UI.Modules.Settings"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="900"
+             Background="{StaticResource BrushWindowBg}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="30" MaxWidth="800" HorizontalAlignment="Left">
+            <TextBlock Text="Terminal &amp; Hardware Settings" FontSize="28" FontWeight="Bold" Margin="0,0,0,30" Foreground="{StaticResource BrushPrimary}"/>
+
+            <!-- 1. Store Configuration (Read-Only via Activation) -->
+            <Border Background="White" CornerRadius="12" Margin="0,0,0,25" Padding="25" BorderBrush="{StaticResource BrushBorderSoft}" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                        <TextBlock Text="Branch / Store Configuration" FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushPrimary}"/>
+                        <TextBlock Text="🔒 Licensed" Margin="15,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource BrushTextTertiary}" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0" Margin="0,0,15,0">
+                            <TextBlock Text="Store Name" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <Border Height="45" Background="#F9F9F9" BorderBrush="{StaticResource BrushBorderSoft}" BorderThickness="1" CornerRadius="4" Padding="10,0">
+                                <TextBlock Text="{Binding StoreName}" VerticalAlignment="Center" Foreground="{StaticResource BrushTextSecondary}" FontWeight="Medium"/>
+                            </Border>
+                            <TextBlock Text="Store Code: " FontSize="11" Foreground="{StaticResource BrushTextTertiary}" Margin="0,5,0,0">
+                                <Run Text="{Binding StoreCode}" FontWeight="Bold"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="15,0,0,0">
+                            <TextBlock Text="Terminal ID" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <TextBox Text="{Binding TerminalId, UpdateSourceTrigger=PropertyChanged}" 
+                                     Height="45" VerticalContentAlignment="Center" Padding="10,0"
+                                     Tag="e.g., POS-01"/>
+                            <TextBlock Text="Unique ID for this physical terminal." FontSize="11" Foreground="{StaticResource BrushTextTertiary}" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 2. Hardware Profile (Local Peripherals) -->
+            <Border Background="White" CornerRadius="12" Margin="0,0,0,25" Padding="25" BorderBrush="{StaticResource BrushBorderSoft}" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="Hardware Profile (Local Peripherals)" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="{StaticResource BrushPrimary}"/>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0" Margin="0,0,15,0">
+                            <TextBlock Text="Receipt Printer" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <ComboBox ItemsSource="{Binding InstalledPrinters}" 
+                                      SelectedItem="{Binding SelectedPrinter}" 
+                                      Height="45" VerticalContentAlignment="Center" Padding="10,0"/>
+                            <TextBlock Text="Select the connected thermal receipt printer." FontSize="11" Foreground="{StaticResource BrushTextTertiary}" Margin="0,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="15,0,0,0">
+                            <TextBlock Text="Scanner COM Port" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <TextBox Text="{Binding ScannerPort, UpdateSourceTrigger=PropertyChanged}" 
+                                     Height="45" VerticalContentAlignment="Center" Padding="10,0"
+                                     Tag="e.g., COM3"/>
+                            <TextBlock Text="COM port for serial barcode scanners (if applicable)." FontSize="11" Foreground="{StaticResource BrushTextTertiary}" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Footer: Save Button -->
+            <Button Content="SAVE CONFIGURATION" 
+                    Command="{Binding SaveSettingsCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}" 
+                    Height="55" Width="250" HorizontalAlignment="Left"
+                    FontSize="16" FontWeight="Bold" Cursor="Hand"/>
+            
+            <TextBlock Text="* Restart the application after saving to apply the new hardware context." 
+                       Margin="0,15,0,0" Foreground="{StaticResource BrushAccentRed}" 
+                       FontStyle="Italic" FontWeight="SemiBold"/>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

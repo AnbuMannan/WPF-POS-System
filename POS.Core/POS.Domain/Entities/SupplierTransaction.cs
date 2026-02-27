@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using POS.Domain.Interfaces;
 
 namespace POS.Domain.Entities;
 
 /// <summary>
 /// Supplier ledger entry - tracks all transactions with suppliers
 /// </summary>
-public class SupplierTransaction : BaseEntity
+public class SupplierTransaction : BaseEntity, IStoreEntity
 {
+    public int StoreCode { get; set; }
     [NotMapped]
     public Guid SupplierTransactionId
     {

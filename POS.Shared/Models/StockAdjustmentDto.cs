@@ -74,8 +74,9 @@ public static class AdjustmentReasons
     public const string Expiry = "Expiry";
     public const string Correction = "Correction";
     public const string Other = "Other";
+    public const string Audit = "Physical Stock Audit";
 
-    public static readonly string[] All = { Damage, Theft, Expiry, Correction, Other };
+    public static readonly string[] All = { Damage, Theft, Expiry, Correction, Other, Audit };
 }
 
 /// <summary>

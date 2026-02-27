@@ -48,15 +48,24 @@
                                 <DataTemplate>
                                     <Grid Margin="8,4">
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1.5*"/>
                                             <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding SKU}" FontWeight="SemiBold" 
+                                        
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,0,10,0"/>
+                                        
+                                        <TextBlock Grid.Column="1" Text="{Binding SKU}" FontWeight="SemiBold" 
                                                    Margin="0,0,12,0" Foreground="{StaticResource BrushPrimary}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding ProductName}" TextWrapping="Wrap"/>
+                                        
                                         <TextBlock Grid.Column="2" Text="{Binding SellingPrice, StringFormat='₹ {0:N2}'}" 
-                                                   FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}"/>
+                                                   FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Margin="0,0,15,0"/>
+
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal">
+                                            <TextBlock Text="Stock: " Foreground="{StaticResource BrushTextTertiary}" FontSize="11" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding AvailableStock, StringFormat='N2'}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        </StackPanel>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

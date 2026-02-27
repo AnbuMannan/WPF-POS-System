@@ -31,6 +31,7 @@ namespace POS.UI.Infrastructure
 
             // Add Configuration
             services.AddSingleton<IConfiguration>(configuration);
+            services.AddSingleton<LocalSettingsService>();
 
             // Add Logging
             services.AddLogging(config => config.AddSerilog());
@@ -266,6 +267,17 @@ namespace POS.UI.Infrastructure
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(circuitBreakerPolicy);
 
+            // Register HttpClient for StoreApiService
+            services
+                .AddHttpClient<StoreApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
             // Register HttpClient for EODReportApiService
             services
                 .AddHttpClient<EODReportApiService>(client =>
@@ -476,6 +488,25 @@ namespace POS.UI.Infrastructure
             services.AddSingleton<IPrintService, PrintService>();
             services.AddSingleton<IPrintSettingsService, PrintSettingsService>();
             services.AddSingleton<IEmailReceiptService, EmailReceiptService>();
+
+            // System Health
+            services.AddSingleton<SystemHealthService>();
+            services.AddTransient<POS.UI.Modules.Utilities.SystemHealth.SystemHealthViewModel>();
+
+            // ViewModels
+            services.AddTransient<POS.UI.Modules.Billing.QuickSale.QuickSaleViewModel>(sp => 
+            {
+                return new POS.UI.Modules.Billing.QuickSale.QuickSaleViewModel(
+                    sp.GetRequiredService<ProductApiService>(),
+                    sp.GetRequiredService<CategoryApiService>(),
+                    sp.GetRequiredService<BillingApiService>(),
+                    sp.GetRequiredService<StockApiService>(),
+                    sp.GetRequiredService<IPrintSettingsService>()
+                );
+            });
+
+            services.AddTransient<POS.UI.Modules.Settings.SettingsViewModel>();
+            services.AddTransient<POS.UI.Modules.Diagnostics.HealthViewModel>();
         }
 
         /// <summary>
@@ -484,7 +515,10 @@ namespace POS.UI.Infrastructure
         public static void RegisterAuthenticationServices(IServiceCollection services, IConfiguration configuration)
         {
             var authSettings = configuration.GetSection("AuthSettings");
-            var authBaseUrl = authSettings["BaseUrl"] ?? "https://localhost:7286/";  // Different port for auth service
+            var configuredBaseUrl = configuration["AuthApiBaseUrl"];
+            var authBaseUrl = !string.IsNullOrWhiteSpace(configuredBaseUrl)
+                ? configuredBaseUrl
+                : (authSettings["BaseUrl"] ?? "https://localhost:7143/");  // fallback for auth service
             var timeoutSeconds = int.TryParse(authSettings["TimeoutSeconds"], out var timeout) ? timeout : 30;
 
             var logger = Log.ForContext("Component", "AuthenticationConfiguration");
@@ -521,8 +555,9 @@ namespace POS.UI.Infrastructure
             // Register services as singletons (one instance per app)
             services.AddSingleton<AuthenticationService>();
             services.AddSingleton<LicenseService>();
-            // Register LoginViewModel
+            // Register ViewModels
             services.AddTransient<LoginViewModel>();
+            services.AddTransient<ActivationViewModel>();
 
 
             logger.Information("Authentication services registered successfully");

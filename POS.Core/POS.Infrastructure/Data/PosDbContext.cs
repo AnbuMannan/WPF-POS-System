@@ -1,13 +1,21 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using POS.Domain.Entities;
 using POS.Domain.Enums;
+using POS.Domain.Interfaces;
 
 namespace POS.Infrastructure.Data;
 
 public class PosDbContext : DbContext
 {
-    public PosDbContext(DbContextOptions<PosDbContext> options) : base(options) { }
+    private readonly IHttpContextAccessor? _httpContextAccessor;
 
+    public PosDbContext(DbContextOptions<PosDbContext> options, IHttpContextAccessor? httpContextAccessor = null) : base(options)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public DbSet<Store> Stores { get; set; }
     public DbSet<TaxProfile> TaxProfiles { get; set; }
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -381,7 +389,7 @@ public class PosDbContext : DbContext
         batch.Property(b => b.AdjustedQuantity).HasPrecision(12, 3);
         batch.Property(b => b.PurchaseEntryId);
         batch.Property(b => b.PurchaseEntryItemId);
-        batch.Property(b => b.SupplierId).IsRequired();
+        batch.Property(b => b.SupplierId).IsRequired(false);
         batch.Property(b => b.LocationCode).HasMaxLength(50);
         batch.Property(b => b.BinLocation).HasMaxLength(50);
         batch.Property(b => b.ReorderLevel).HasPrecision(12, 3);
@@ -1050,5 +1058,44 @@ public class PosDbContext : DbContext
                     .WithOne()
                     .HasForeignKey<StockSummary>(ss => ss.ProductId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+        // Store configuration
+        var store = modelBuilder.Entity<Store>();
+        store.ToTable("Stores");
+        store.HasKey(s => s.StoreCode);
+        store.Property(s => s.StoreCode).ValueGeneratedNever();
+        store.Property(s => s.StoreName).IsRequired().HasMaxLength(200);
+        store.Property(s => s.Address).HasMaxLength(500);
+        store.Property(s => s.ContactNumber).HasMaxLength(20);
+        store.Property(s => s.TaxId).HasMaxLength(20);
+        store.Property(s => s.IsActive).HasDefaultValue(true);
+
+        // Add StoreCode properties for entities implementing IStoreEntity in OnModelCreating
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(IStoreEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                modelBuilder.Entity(entityType.ClrType)
+                    .Property(nameof(IStoreEntity.StoreCode))
+                    .IsRequired();
+                
+                modelBuilder.Entity(entityType.ClrType)
+                    .HasIndex(nameof(IStoreEntity.StoreCode));
+            }
+        }
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var storeCodeStr = _httpContextAccessor?.HttpContext?.Request.Headers["X-Store-Code"].FirstOrDefault();
+        if (int.TryParse(storeCodeStr, out int storeCode))
+        {
+            foreach (var entry in ChangeTracker.Entries<IStoreEntity>().Where(e => e.State == EntityState.Added))
+            {
+                entry.Entity.StoreCode = storeCode;
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
     }
 }

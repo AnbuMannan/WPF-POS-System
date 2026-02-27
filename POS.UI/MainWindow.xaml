@@ -745,12 +745,12 @@
             <Border Background="{StaticResource BrushSidebarBg}" Width="260" Padding="5" CornerRadius="0,8,8,0" BorderThickness="2,1,1,1" BorderBrush="{StaticResource BrushPrimary}">
                 <Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.35"/></Border.Effect>
                 <StackPanel>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8B6;" Content="Data Import / Export"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE753;" Content="Cloud Sync"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE750;" Content="Database Backup"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7BA;" Content="Log Viewer"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE964;" Content="Device Diagnostics"/>
-                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9D9;" Content="System Health"/>
+                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8B6;" Content="Data Import / Export" Click="SubMenuUtilities_Click"/>
+                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE753;" Content="Cloud Sync" Click="SubMenuUtilities_Click"/>
+                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE750;" Content="Database Backup" Click="SubMenuUtilities_Click"/>
+                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE7BA;" Content="Log Viewer" Click="SubMenuUtilities_Click"/>
+                    <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE964;" Content="Device Diagnostics" Click="SubMenuUtilities_Click"/>
+                    <Button x:Name="BtnSystemHealth" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE9D9;" Content="System Health" Click="SubMenuUtilities_Click"/>
                 </StackPanel>
             </Border>
         </Popup>

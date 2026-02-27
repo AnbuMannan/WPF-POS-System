@@ -45,6 +45,7 @@ using POS.UI.Modules.Sales.Returns;
 using POS.UI.Modules.Sales.Quotations;
 using POS.UI.Modules.Customers.Outstanding;
 using POS.Shared.Models;
+using POS.UI.Modules.Utilities.SystemHealth;
 
 namespace POS.UI
 {
@@ -288,7 +289,19 @@ namespace POS.UI
                 }
                 else if (btn.Name == "BtnQuickSale")
                 {
-                    OpenQuickSaleDialog();
+                    var view = ViewResolver.Resolve("QuickSaleView");
+                    
+                    // Inject ViewModel from DI
+                    var vm = App.ServiceProvider?.GetService(typeof(POS.UI.Modules.Billing.QuickSale.QuickSaleViewModel)) as POS.UI.Modules.Billing.QuickSale.QuickSaleViewModel;
+                    
+                    if (vm != null)
+                    {
+                        view.DataContext = vm;
+                        _ = vm.InitializeAsync();
+                    }
+                    
+                    MainContent.Content = view;
+                    HeaderTitle.Text = "Billing / Quick Sale";
                 }
             }
         }
@@ -711,6 +724,32 @@ namespace POS.UI
                 var printService = App.ServiceProvider?.GetService(typeof(POS.UI.Core.Services.IPrintService)) as POS.UI.Core.Services.IPrintService;
                 var dialog = new POS.UI.Modules.Settings.PrintSettingsDialog(printSettings, printService) { Owner = this };
                 dialog.ShowDialog();
+            }
+            else if (btn.Name == "BtnGeneralSettings")
+            {
+                var view = ViewResolver.Resolve("SettingsView");
+                var vm = App.ServiceProvider?.GetService(typeof(POS.UI.Modules.Settings.SettingsViewModel)) as POS.UI.Modules.Settings.SettingsViewModel;
+                if (vm != null)
+                {
+                    view.DataContext = vm;
+                }
+                MainContent.Content = view;
+                HeaderTitle.Text = "Settings / General Configuration";
+            }
+        }
+
+        // ================= UTILITIES SUBMENU =================
+        private void SubMenuUtilities_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn) return;
+            PopupUtilities.IsOpen = false;
+
+            switch (btn.Name)
+            {
+                case "BtnSystemHealth":
+                    MainContent.Content = new SystemHealthView();
+                    HeaderTitle.Text = "System Health";
+                    break;
             }
         }
 

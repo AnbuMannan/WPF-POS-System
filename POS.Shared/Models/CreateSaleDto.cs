@@ -3,7 +3,6 @@ namespace POS.Shared.Models
     public class CreateSaleDto
     {
         public string? BillNumber { get; set; }
-        public DateTime SaleDate { get; set; }
         public Guid? CustomerId { get; set; }
         public List<SaleItemDto> Items { get; set; } = new();
         public List<PaymentDto> Payments { get; set; } = new();

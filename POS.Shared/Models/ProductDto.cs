@@ -34,4 +34,8 @@ public class ProductDto
 
     /// <summary>Concurrency token (MySQL TIMESTAMP).</summary>
     public byte[]? RowVersion { get; set; }
+
+    // Extension properties for UI
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public decimal AvailableStock { get; set; }
 }

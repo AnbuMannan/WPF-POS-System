@@ -56,6 +56,9 @@
     <SolidColorBrush x:Key="BrushAccentGreen" Color="{StaticResource ColorAccentGreen}" />
     <SolidColorBrush x:Key="BrushAccentRed" Color="{StaticResource ColorAccentRed}" />
     <SolidColorBrush x:Key="BrushAccentOrange" Color="{StaticResource ColorAccentOrange}" />
+    <!-- Enterprise semantics -->
+    <SolidColorBrush x:Key="BrushSuccess" Color="#2ECC71" />
+    <SolidColorBrush x:Key="BrushDanger" Color="#E74C3C" />
 
     <!-- Background Brushes -->
     <SolidColorBrush x:Key="BrushWindowBg" Color="{StaticResource ColorWindowBg}" />
