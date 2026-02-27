@@ -46,6 +46,7 @@ using POS.UI.Modules.Sales.Quotations;
 using POS.UI.Modules.Customers.Outstanding;
 using POS.Shared.Models;
 using POS.UI.Modules.Utilities.SystemHealth;
+using POS.UI.Modules.Finance.Expenses;
 
 namespace POS.UI
 {
@@ -735,6 +736,30 @@ namespace POS.UI
                 }
                 MainContent.Content = view;
                 HeaderTitle.Text = "Settings / General Configuration";
+            }
+        }
+
+        // ================= FINANCE SUBMENU =================
+        private void SubMenuFinance_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn) return;
+            PopupFinance.IsOpen = false;
+
+            switch (btn.Name)
+            {
+                case "BtnExpenses":
+                    var expenseService = App.ServiceProvider?.GetService(typeof(ExpenseApiService)) as ExpenseApiService;
+                    if (expenseService == null)
+                    {
+                        Components.DialogService.Warning("Expenses", "Expense service not available.");
+                        return;
+                    }
+                    var vm = new ExpenseViewModel(expenseService);
+                    var view = new ExpenseView { DataContext = vm };
+                    _ = vm.InitializeAsync();
+                    MainContent.Content = view;
+                    HeaderTitle.Text = "Expenses / Petty Cash";
+                    break;
             }
         }
 

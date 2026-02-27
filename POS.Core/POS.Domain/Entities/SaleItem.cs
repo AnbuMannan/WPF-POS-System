@@ -1,7 +1,10 @@
+using POS.Domain.Interfaces;
+
 namespace POS.Domain.Entities
 {
-    public class SaleItem
+    public class SaleItem : IStoreEntity
     {
+        public int StoreCode { get; set; } = 1;
         public long SaleItemId { get; set; }
         public long SaleId { get; set; }
         public Sale? Sale { get; set; }

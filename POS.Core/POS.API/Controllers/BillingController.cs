@@ -22,7 +22,8 @@ namespace POS.API.Controllers
             var userId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
                 ?? User?.Identity?.Name
                 ?? "System";
-            var receipt = await _billingService.CreateSaleAsync(dto, userId);
+            int storeCode = int.TryParse(Request.Headers["X-Store-Code"], out int sc) ? sc : 1;
+            var receipt = await _billingService.CreateSaleAsync(dto, userId, storeCode);
             return Ok(receipt);
         }
 

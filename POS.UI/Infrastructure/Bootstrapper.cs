@@ -299,6 +299,17 @@ namespace POS.UI.Infrastructure
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(circuitBreakerPolicy);
 
+            // Register HttpClient for ExpenseApiService
+            services
+                .AddHttpClient<ExpenseApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
             // Register HttpClient for AuditLogApiService
             services
                 .AddHttpClient<AuditLogApiService>(client =>

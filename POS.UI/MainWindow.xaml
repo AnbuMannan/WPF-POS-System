@@ -696,6 +696,7 @@
             <Border Background="{StaticResource BrushSidebarBg}" Width="260" Padding="5" CornerRadius="0,8,8,0" BorderThickness="2,1,1,1" BorderBrush="{StaticResource BrushPrimary}">
                 <Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.35"/></Border.Effect>
                 <StackPanel>
+                    <Button x:Name="BtnExpenses" Click="SubMenuFinance_Click" Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE1C5;" Content="Expenses / Petty Cash"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE80F;" Content="Chart of Accounts"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE825;" Content="Ledgers"/>
                     <Button Style="{StaticResource SidebarSubMenuStyle}" Tag="&#xE8C6;" Content="Journal Entries"/>

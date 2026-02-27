@@ -64,6 +64,10 @@ public class PosDbContext : DbContext
     public DbSet<Quotation> Quotations { get; set; }
     public DbSet<QuotationItem> QuotationItems { get; set; }
     public DbSet<StockSummary> StockSummaries { get; set; }
+    public DbSet<ProductBundleItem> ProductBundleItems { get; set; }
+    public DbSet<Promotion> Promotions { get; set; }
+    public DbSet<Expense> Expenses { get; set; }
+    public DbSet<DeliveryOrder> DeliveryOrders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1058,6 +1062,18 @@ public class PosDbContext : DbContext
                     .WithOne()
                     .HasForeignKey<StockSummary>(ss => ss.ProductId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProductBundleItem>()
+            .HasOne(p => p.ParentProduct)
+            .WithMany()
+            .HasForeignKey(p => p.ParentProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<ProductBundleItem>()
+            .HasOne(p => p.ChildProduct)
+            .WithMany()
+            .HasForeignKey(p => p.ChildProductId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Store configuration
         var store = modelBuilder.Entity<Store>();

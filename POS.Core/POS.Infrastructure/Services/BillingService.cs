@@ -18,7 +18,7 @@ public class BillingService : IBillingService
         _loyaltyService = loyaltyService;
     }
 
-    public async Task<ReceiptDto> CreateSaleAsync(CreateSaleDto dto, string userId, CancellationToken cancellationToken = default)
+    public async Task<ReceiptDto> CreateSaleAsync(CreateSaleDto dto, string userId, int storeCode, CancellationToken cancellationToken = default)
     {
         int defaultTaxProfileId = 0;
         if (dto.Items.Any(i => i.TaxProfileId <= 0))
@@ -37,6 +37,7 @@ public class BillingService : IBillingService
         var now = DateTime.Now;
         var sale = new Sale
         {
+            StoreCode = storeCode,
             BillNumber = dto.BillNumber ?? $"INV{DateTime.Now:yyyyMMddHHmmss}",
             CustomerId = dto.CustomerId,
             SaleType = SaleType.Regular,
@@ -63,6 +64,7 @@ public class BillingService : IBillingService
             int taxProfileId = item.TaxProfileId > 0 ? item.TaxProfileId : defaultTaxProfileId;
             sale.SaleItems.Add(new SaleItem
             {
+                StoreCode = storeCode,
                 ProductId = GuidToLong(item.ProductId),
                 ProductName = item.ProductName ?? "Product",
                 SKU = item.SKU ?? "",
@@ -93,6 +95,7 @@ public class BillingService : IBillingService
             var method = ParsePaymentMethod(pay.PaymentMethod);
             sale.Payments.Add(new Payment
             {
+                StoreCode = storeCode,
                 PaymentMethod = method,
                 Amount = pay.Amount,
                 Status = PaymentStatus.Completed,

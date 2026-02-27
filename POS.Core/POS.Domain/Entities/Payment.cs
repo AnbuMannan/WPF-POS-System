@@ -1,9 +1,11 @@
 using POS.Domain.Enums;
+using POS.Domain.Interfaces;
 
 namespace POS.Domain.Entities
 {
-    public class Payment
+    public class Payment : IStoreEntity
     {
+        public int StoreCode { get; set; } = 1;
         public long PaymentId { get; set; }
         public long SaleId { get; set; }
         public Sale? Sale { get; set; }
