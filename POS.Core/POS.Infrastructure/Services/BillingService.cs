@@ -37,7 +37,7 @@ public class BillingService : IBillingService
         var now = DateTime.Now;
         var sale = new Sale
         {
-            StoreCode = storeCode,
+            StoreCode = storeCode, // A1-Grade: Assign explicit StoreCode to the main header
             BillNumber = dto.BillNumber ?? $"INV{DateTime.Now:yyyyMMddHHmmss}",
             CustomerId = dto.CustomerId,
             SaleType = SaleType.Regular,
@@ -89,6 +89,12 @@ public class BillingService : IBillingService
                 CreatedAt = now
             });
         }
+
+        // A1-Grade: Roll up line-item taxes to the header
+        sale.CGST = sale.SaleItems.Sum(x => x.CGST);
+        sale.SGST = sale.SaleItems.Sum(x => x.SGST);
+        sale.IGST = sale.SaleItems.Sum(x => x.IGST);
+        sale.TotalTax = sale.CGST + sale.SGST + sale.IGST; // Ensure total matches
 
         foreach (var pay in dto.Payments)
         {

@@ -11,6 +11,7 @@ namespace POS.UI.Core
         public static string? CompanyName { get; set; }
         public static string CurrencySymbol { get; set; } = "₹";
         public static string CurrencyCode { get; set; } = "INR";
+        public static int CurrentStoreCode { get; set; }
 
         public static void SetUser(string username, string? role = null)
         {

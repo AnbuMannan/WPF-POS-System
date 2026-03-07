@@ -8,19 +8,19 @@ namespace POS.UI.Core.MVVM
         private readonly Func<bool> _canExecute;
         private readonly Action _execute;
 
-        public RelayCommand(Action execute, Func<bool> canExecute = null)
+        public RelayCommand(Action execute, Func<bool>? canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
             => _canExecute == null || _canExecute();
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
             => _execute();
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         public void RaiseCanExecuteChanged()
             => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
@@ -31,26 +31,26 @@ namespace POS.UI.Core.MVVM
         private readonly Predicate<T> _canExecute;
         private readonly Action<T> _execute;
 
-        public RelayCommand(Action<T> execute, Predicate<T> canExecute = null)
+        public RelayCommand(Action<T> execute, Predicate<T>? canExecute = null)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             if (parameter is T tParam) return _canExecute == null || _canExecute(tParam);
             if (parameter == null && typeof(T).IsValueType) return false;
-            return _canExecute == null || _canExecute(default);
+            return _canExecute == null || _canExecute(default!);
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             if (parameter is T tParam) _execute(tParam);
-            else if (parameter == null && !typeof(T).IsValueType) _execute(default);
+            else if (parameter == null && !typeof(T).IsValueType) _execute(default!);
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
         public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

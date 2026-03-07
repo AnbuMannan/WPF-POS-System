@@ -138,7 +138,7 @@
                         <DataGridTextColumn Header="Date" Binding="{Binding ExpenseDate, StringFormat=\{0:dd MMM yyyy HH:mm\}}" Width="140"/>
                         <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="120"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
-                        <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=C}" Width="100">
+                        <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat='₹ {0:N2}'}" Width="100">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -177,7 +177,7 @@
                                    FontWeight="Bold"
                                    VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1"
-                                   Text="{Binding TotalExpenses, StringFormat=C}"
+                                   Text="{Binding TotalExpenses, StringFormat='₹ {0:N2}'}"
                                    Foreground="White"
                                    FontSize="18"
                                    FontWeight="Bold"

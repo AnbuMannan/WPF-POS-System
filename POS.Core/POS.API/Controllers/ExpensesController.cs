@@ -56,22 +56,21 @@ public class ExpensesController : ControllerBase
         if (dto.Amount <= 0)
             return BadRequest(new { message = "Amount must be greater than zero" });
 
-        // Extract StoreCode from the JWT token (Fallback to 1 for development if missing)
-        var storeCodeClaim = User.Claims.FirstOrDefault(c => c.Type == "StoreCode")?.Value;
-        int storeCode = int.TryParse(storeCodeClaim, out int sc) ? sc : 1;
+        // A1-Grade: Extract Dynamic StoreCode from Header
+        int storeCode = Request.Headers.TryGetValue("X-Store-Code", out var scVal) && int.TryParse(scVal, out int parsedSc) ? parsedSc : 1;
 
         var expense = new Expense
-        {
-            Id = dto.Id != Guid.Empty ? dto.Id : Guid.NewGuid(),
-            StoreCode = storeCode,
-            ExpenseDate = dto.ExpenseDate == default ? DateTime.Now : dto.ExpenseDate,
-            Category = dto.Category,
-            Description = dto.Description ?? string.Empty,
-            Amount = dto.Amount,
-            CreatedBy = dto.CreatedBy ?? "System",
-            IsActive = true,
-            CreatedAt = DateTime.Now
-        };
+            {
+                Id = dto.Id != Guid.Empty ? dto.Id : Guid.NewGuid(),
+                StoreCode = storeCode,
+                ExpenseDate = dto.ExpenseDate == default ? DateTime.Now : dto.ExpenseDate,
+                Category = dto.Category,
+                Description = dto.Description ?? string.Empty,
+                Amount = dto.Amount,
+                CreatedBy = dto.CreatedBy ?? "System",
+                IsActive = true,
+                CreatedAt = DateTime.Now
+            };
 
         _context.Set<Expense>().Add(expense);
         await _context.SaveChangesAsync();
@@ -95,13 +94,5 @@ public class ExpensesController : ControllerBase
         return NoContent();
     }
 
-    private int ParseStoreCodeFromHeader()
-    {
-        if (Request.Headers.TryGetValue("X-Store-Code", out var values))
-        {
-            if (int.TryParse(values.FirstOrDefault(), out int code))
-                return code;
-        }
-        return 0;
-    }
+
 }

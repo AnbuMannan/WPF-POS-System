@@ -22,7 +22,10 @@ namespace POS.API.Controllers
             var userId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
                 ?? User?.Identity?.Name
                 ?? "System";
-            int storeCode = int.TryParse(Request.Headers["X-Store-Code"], out int sc) ? sc : 1;
+
+            // A1-Grade: Extract Dynamic StoreCode from Header
+            int storeCode = Request.Headers.TryGetValue("X-Store-Code", out var scVal) && int.TryParse(scVal, out int parsedSc) ? parsedSc : 1;
+
             var receipt = await _billingService.CreateSaleAsync(dto, userId, storeCode);
             return Ok(receipt);
         }

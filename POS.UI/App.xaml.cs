@@ -145,6 +145,8 @@ namespace POS.UI
 
                     activationViewModel.ActivationSuccess += () => 
                     {
+                        var updatedConfig = localSettings?.GetConfig();
+                        POS.UI.Core.AppState.CurrentStoreCode = updatedConfig?.StoreCode ?? 0;
                         ShowLogin();
                         activationWindow.Close();
                     };
@@ -180,8 +182,9 @@ namespace POS.UI
 
             loginViewModel.LoginSucceeded += (s, args) =>
             {
-                POS.UI.Core.AppState.SetUser(loginViewModel.Username, "Cashier");
-                var mainWindow = new MainWindow();
+                POS.UI.Core.AppState.SetUser(loginViewModel.Username ?? "System", "Cashier");
+                // Resolve MainWindow from DI to ensure dependencies are injected
+                var mainWindow = ServiceProvider?.GetService<MainWindow>() ?? new MainWindow();
                 Current.MainWindow = mainWindow;
                 mainWindow.Show();
                 loginView.Close();

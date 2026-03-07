@@ -19,6 +19,8 @@ public class ExpenseApiService : BaseApiService
 
     public async Task<ExpenseDto?> CreateExpenseAsync(ExpenseDto dto)
     {
+        // A1-Grade: Ensure StoreCode is attached from AppState before sending to API
+        dto.StoreCode = POS.UI.Core.AppState.CurrentStoreCode;
         var response = await _http.PostAsJsonAsync("api/expenses", dto);
         await EnsureSuccessAsync(response, "CreateExpense");
         var saved = await response.Content.ReadFromJsonAsync<ExpenseDto>();

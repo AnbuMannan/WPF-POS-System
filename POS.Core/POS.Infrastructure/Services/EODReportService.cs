@@ -62,8 +62,17 @@ public class EODReportService : IEODReportService
             .Where(r => r.CreatedAt >= start && r.CreatedAt < end);
         var returnsCount = await returnsQuery.CountAsync(cancellationToken);
         var totalRefunds = await returnsQuery.SumAsync(r => r.RefundAmount, cancellationToken);
-        // Cash refunds: if we don't track payment method on returns, use 0 or assume proportional; here we use 0 for simplicity
-        decimal cashRefunds = 0;
+        // Cash refunds: query for cash refunds specifically
+        decimal cashRefunds = await _db.Payments
+            .Where(p => p.CreatedAt >= start && p.CreatedAt < end
+                        && p.PaymentMethod == PaymentMethod.Cash
+                        && _db.Returns.Any(r => r.ReturnId == p.SaleId)) // Assuming SaleId in Payment refers to ReturnId for refunds
+            .SumAsync(p => p.Amount, cancellationToken);
+        // Sum expenses for the day
+        var totalExpenses = await _db.Expenses
+            .Where(e => e.ExpenseDate >= start && e.ExpenseDate < end
+                        && e.IsActive)
+            .SumAsync(e => e.Amount, cancellationToken);
 
         // Top 10 sales by total amount
         var topSales = await salesQuery
@@ -107,24 +116,25 @@ public class EODReportService : IEODReportService
         }).ToList();
 
         return new EODReportDto
-        {
-            Date = date.Date,
-            SaleCount = saleCount,
-            SubtotalSum = totals?.SubtotalSum ?? 0,
-            TaxSum = totals?.TaxSum ?? 0,
-            DiscountSum = totals?.DiscountSum ?? 0,
-            TotalSales = totals?.TotalSales ?? 0,
-            TotalCGST = totals?.TotalCGST ?? 0,
-            TotalSGST = totals?.TotalSGST ?? 0,
-            TotalIGST = totals?.TotalIGST ?? 0,
-            PaymentBreakdown = breakdownDict,
-            CashSalesAmount = cashSales,
-            CashRefundAmount = cashRefunds,
-            TotalReturnsCount = returnsCount,
-            TotalRefunds = totalRefunds,
-            TopSales = topSales,
-            TopSellingProducts = topProductDtos
-        };
+            {
+                Date = date.Date,
+                SaleCount = saleCount,
+                SubtotalSum = totals?.SubtotalSum ?? 0,
+                TaxSum = totals?.TaxSum ?? 0,
+                DiscountSum = totals?.DiscountSum ?? 0,
+                TotalSales = totals?.TotalSales ?? 0,
+                TotalCGST = totals?.TotalCGST ?? 0,
+                TotalSGST = totals?.TotalSGST ?? 0,
+                TotalIGST = totals?.TotalIGST ?? 0,
+                PaymentBreakdown = breakdownDict,
+                CashSalesAmount = cashSales,
+                CashRefundAmount = cashRefunds,
+                TotalExpenses = totalExpenses,
+                TotalReturnsCount = returnsCount,
+                TotalRefunds = totalRefunds,
+                TopSales = topSales,
+                TopSellingProducts = topProductDtos
+            };
     }
 
     public async Task CloseDayReportAsync(DateTime date, string? lockedBy = null, CancellationToken cancellationToken = default)

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using POS.Shared.Models;
+using POS.UI.Core;
 using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
 using DialogService = POS.UI.Components.DialogService;
@@ -71,6 +72,7 @@ namespace POS.UI.Modules.Reports.EODReport
         public decimal TotalRefunds => Report?.TotalRefunds ?? 0;
         public decimal CashSalesAmount => Report?.CashSalesAmount ?? 0;
         public decimal CashRefundAmount => Report?.CashRefundAmount ?? 0;
+        public int StoreCode => POS.UI.Core.AppState.CurrentStoreCode;
 
         public ObservableCollection<PaymentBreakdownItem> PaymentBreakdownList { get; } = new();
         public ObservableCollection<EODSaleSummaryDto> TopSales { get; } = new();
@@ -146,7 +148,8 @@ namespace POS.UI.Modules.Reports.EODReport
         {
             decimal cashSales = Report?.CashSalesAmount ?? 0;
             decimal cashRefunds = Report?.CashRefundAmount ?? 0;
-            _expectedCash = OpeningCash + cashSales - cashRefunds;
+            decimal totalExpenses = Report?.TotalExpenses ?? 0;
+            _expectedCash = OpeningCash + cashSales - cashRefunds - totalExpenses;
             _cashDifference = ActualCash - _expectedCash;
             OnPropertyChanged(nameof(ExpectedCash));
             OnPropertyChanged(nameof(CashDifference));

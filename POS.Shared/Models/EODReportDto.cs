@@ -46,6 +46,7 @@ namespace POS.Shared.Models
         // Cash reconciliation support
         public decimal CashSalesAmount { get; set; }
         public decimal CashRefundAmount { get; set; }
+        public decimal TotalExpenses { get; set; }
 
         // Top sales (e.g. top 10 by amount)
         public List<EODSaleSummaryDto> TopSales { get; set; } = new();

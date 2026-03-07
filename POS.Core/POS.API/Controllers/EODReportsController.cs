@@ -17,6 +17,7 @@ public class EODReportsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] DateTime date, CancellationToken cancellationToken = default)
     {
+
         var report = await _service.GetEODReportAsync(date.Date, cancellationToken);
         return Ok(report);
     }
@@ -25,6 +26,7 @@ public class EODReportsController : ControllerBase
     [HttpPost("close-day")]
     public async Task<IActionResult> CloseDay([FromQuery] DateTime date, [FromQuery] string? lockedBy = null, CancellationToken cancellationToken = default)
     {
+
         await _service.CloseDayReportAsync(date.Date, lockedBy, cancellationToken);
         return Ok(new { closed = true, date = date.Date });
     }
