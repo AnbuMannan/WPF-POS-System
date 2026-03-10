@@ -57,7 +57,7 @@ public class CustomerRepository : ICustomerRepository
         existing.Address = customer.Address;
         existing.LoyaltyPoints = customer.LoyaltyPoints;
         existing.IsActive = customer.IsActive;
-        existing.UpdatedAt = customer.UpdatedAt ?? DateTime.UtcNow;
+        existing.UpdatedAt = customer.UpdatedAt ?? DateTime.Now;
 
         await _db.SaveChangesAsync();
     }

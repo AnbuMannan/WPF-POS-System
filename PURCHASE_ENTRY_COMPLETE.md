@@ -92,7 +92,7 @@ The **Purchase Entry (Goods Receipt Note)** module is now **100% complete** with
 
            // 5. Mark as Processed
            entry.IsProcessed = true;
-           entry.ProcessedAt = DateTime.UtcNow;
+           entry.ProcessedAt = DateTime.Now;
            entry.ProcessedBy = "System";
            
            await transaction.CommitAsync();  // COMMIT ALL CHANGES

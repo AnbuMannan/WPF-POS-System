@@ -193,8 +193,8 @@ namespace POS.UI.Modules.Admin.Customers
                 Address = string.IsNullOrWhiteSpace(Address) ? null : Address.Trim(),
                 LoyaltyPoints = LoyaltyPoints,
                 IsActive = IsActiveChecked,
-                CreatedAt = _isEdit && _editDto != null ? _editDto.CreatedAt : DateTime.UtcNow,
-                UpdatedAt = _isEdit ? DateTime.UtcNow : null
+                CreatedAt = _isEdit && _editDto != null ? _editDto.CreatedAt : DateTime.Now,
+                UpdatedAt = _isEdit ? DateTime.Now : null
             };
 
             try

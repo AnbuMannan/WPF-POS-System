@@ -27,12 +27,8 @@ namespace POS.UI.Modules.Admin.Categories
         private bool _isSaving;
 
         public ObservableCollection<LookupDto> Categories { get; set; } = new();
-        public ObservableCollection<LookupDto> Brands { get; set; }
-        public ObservableCollection<LookupDto> TaxProfiles { get; set; }
 
-        public long ProductId { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -44,7 +40,7 @@ namespace POS.UI.Modules.Admin.Categories
 
         public bool HasErrors => _errors.Any();
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         // Removed SKU/Barcode debounce fields; Category form does not validate product identifiers
 
@@ -59,7 +55,7 @@ namespace POS.UI.Modules.Admin.Categories
             }
         }
 
-        private Control FindFirstInvalid(DependencyObject parent)
+        private Control? FindFirstInvalid(DependencyObject parent)
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
@@ -112,7 +108,7 @@ namespace POS.UI.Modules.Admin.Categories
 
         // ---------------- BASIC FIELDS ----------------
 
-        private string _categoryName;
+        private string _categoryName = string.Empty;
         public string CategoryName
         {
             get => _categoryName;
@@ -126,7 +122,7 @@ namespace POS.UI.Modules.Admin.Categories
             }
         }
 
-        private string _parentCategoryName;
+        private string _parentCategoryName = string.Empty;
         public string ParentCategoryName
         {
             get => _parentCategoryName;
@@ -160,165 +156,13 @@ namespace POS.UI.Modules.Admin.Categories
         }
 
         /// <summary>0 = no parent. Bound to ComboBox; when saving we send null when 0.</summary>
-        public long ParentCategoryId { get; set; }
+        public int ParentCategoryId { get; set; }
         public string? Code { get; set; }
         public string? Slug { get; set; }
         public string? ImageUrl { get; set; }
 
-        private string _productName;
-        public string ProductName
-        {
-            get => _productName;
-            set
-            {
-                _productName = value;
-                OnPropertyChanged(nameof(ProductName));
-
-                ClearErrors(nameof(ProductName));
-
-                if (string.IsNullOrWhiteSpace(ProductName))
-                    AddError(nameof(ProductName), "Product name is required");
-            }
-        }
-
-
-        private string _sku;
-        public string SKU
-        {
-            get => _sku;
-            set
-            {
-                _sku = value;
-                OnPropertyChanged(nameof(SKU));
-            }
-        }
-
-
-        private string _barcode;
-        public string Barcode
-        {
-            get => _barcode;
-            set
-            {
-                _barcode = value;
-                OnPropertyChanged(nameof(Barcode));
-            }
-        }
-
-
-        private string _description;
-        public string Description { get => _description; set { _description = value; OnPropertyChanged(nameof(Description)); } }
-
-        private string _unit;
-        public string Unit { get => _unit; set { _unit = value; OnPropertyChanged(nameof(Unit)); } }
-
-        private string _hsnCode;
-        public string HSNCode
-        {
-            get => _hsnCode;
-            set
-            {
-                _hsnCode = value;
-                OnPropertyChanged(nameof(HSNCode));
-
-                ClearErrors(nameof(HSNCode));
-
-                if (string.IsNullOrWhiteSpace(HSNCode))
-                    AddError(nameof(HSNCode), "HSN Code is required");
-            }
-        }
-
-
-        private decimal _costPrice;
-        public decimal CostPrice
-        {
-            get => _costPrice;
-            set
-            {
-                _costPrice = value;
-                OnPropertyChanged(nameof(CostPrice));
-
-                ValidatePrices();
-            }
-        }
-
-
-        private decimal _sellingPrice;
-        public decimal SellingPrice
-        {
-            get => _sellingPrice;
-            set
-            {
-                _sellingPrice = value;
-                OnPropertyChanged(nameof(SellingPrice));
-
-                ValidatePrices();
-            }
-        }
-
-
-        private decimal _mrp;
-        public decimal MRP
-        {
-            get => _mrp;
-            set
-            {
-                _mrp = value;
-                OnPropertyChanged(nameof(MRP));
-
-                ValidatePrices();
-            }
-        }
-
-
-        private bool _isWeighable;
-        public bool IsWeighable { get => _isWeighable; set { _isWeighable = value; OnPropertyChanged(nameof(IsWeighable)); } }
-
-        private bool _isManufactured;
-        public bool IsManufactured { get => _isManufactured; set { _isManufactured = value; OnPropertyChanged(nameof(IsManufactured)); } }
-
-        private bool _isTaxInclusive;
-        public bool IsTaxInclusive { get => _isTaxInclusive; set { _isTaxInclusive = value; OnPropertyChanged(nameof(IsTaxInclusive)); } }
-
-        private bool _isProductActive = true;
-        public bool IsProductActive { get => _isProductActive; set { _isProductActive = value; OnPropertyChanged(nameof(IsProductActive)); } }
-
-        // ---------------- FK IDS ----------------
-
-        private int _categoryId;
-        public int CategoryId
-        {
-            get => _categoryId;
-            set
-            {
-                _categoryId = value;
-                OnPropertyChanged(nameof(CategoryId));
-                ClearErrors(nameof(CategoryId));
-                // Only require CategoryId when editing an existing category (Add Root / Add Sub use CategoryId = 0)
-                if (_editDto != null && _editDto.CategoryId > 0 && CategoryId <= 0)
-                    AddError(nameof(CategoryId), "Category is required");
-            }
-        }
-
-        private int _brandId;
-        public int BrandId { get => _brandId; set { _brandId = value; OnPropertyChanged(nameof(BrandId)); } }
-
-        private int _taxProfileId;
-        public int TaxProfileId
-        {
-            get => _taxProfileId;
-            set
-            {
-                _taxProfileId = value;
-                OnPropertyChanged(nameof(TaxProfileId));
-                ClearErrors(nameof(TaxProfileId));
-                if (TaxProfileId <= 0)
-                    AddError(nameof(TaxProfileId), "Tax Profile is required");
-            }
-        }
-
-
-
+        private string? _description;
+        public string? Description { get => _description; set { _description = value; OnPropertyChanged(nameof(Description)); } }
 
         // ---------------- COMMANDS ----------------
 
@@ -328,7 +172,7 @@ namespace POS.UI.Modules.Admin.Categories
 
         public CategoryFormView() : this(null) { }
 
-        public CategoryFormView(CategoryDto dto)
+        public CategoryFormView(CategoryDto? dto)
         {
             InitializeComponent();
             DataContext = this;
@@ -338,7 +182,7 @@ namespace POS.UI.Modules.Admin.Categories
                 // Get CategoryApiService from DI container
                 if (App.ServiceProvider != null)
                 {
-                    _service = (CategoryApiService)App.ServiceProvider.GetService(typeof(CategoryApiService));
+                    _service = (CategoryApiService)App.ServiceProvider.GetService(typeof(CategoryApiService))!;
                 }
                 else
                 {
@@ -351,6 +195,7 @@ namespace POS.UI.Modules.Admin.Categories
             }
 
             _editDto = dto;
+            _isEdit = dto != null;
 
             Loaded += ProductFormView_Loaded;
 
@@ -362,9 +207,10 @@ namespace POS.UI.Modules.Admin.Categories
             // Prefill for AddSub/Edit
             if (_editDto != null)
             {
-                CategoryId = _editDto.CategoryId;
+                // CategoryId is not directly editable in the form, it's derived from the selected parent
+                // ParentCategoryId is bound to the ComboBox
                 ParentCategoryId = _editDto.ParentCategoryId ?? 0;
-                ParentCategoryName = _editDto.ParentCategoryName;
+                ParentCategoryName = _editDto.ParentCategoryName ?? string.Empty;
                 CategoryName = _editDto.Name ?? string.Empty;
                 IsCategoryActive = _editDto.IsActive;
                 DisplayOrder = _editDto.DisplayOrder;
@@ -402,8 +248,6 @@ namespace POS.UI.Modules.Admin.Categories
             }
         }
 
-        // Category form does not need product masters; remove
-
         // ---------------- SAVE ----------------
 
         private async Task SaveAsync()
@@ -423,9 +267,9 @@ namespace POS.UI.Modules.Admin.Categories
 
             var dto = new CategoryDto
             {
-                CategoryId = CategoryId <= 0 ? 0 : CategoryId,
+                CategoryId = _editDto?.CategoryId ?? 0, // Use existing CategoryId if editing, otherwise 0
                 Name = CategoryName ?? string.Empty,
-                ParentCategoryId = ParentCategoryId <= 0 ? null : (int?)ParentCategoryId,
+                ParentCategoryId = ParentCategoryId <= 0 ? null : ParentCategoryId,
                 IsActive = IsCategoryActive,
                 DisplayOrder = DisplayOrder,
                 Code = Code,
@@ -443,7 +287,7 @@ namespace POS.UI.Modules.Admin.Categories
                     FocusFirstInvalidControl();
                     return;
                 }
-                if (_editDto != null && _editDto.CategoryId > 0)
+                if (_isEdit)
                 {
                     dto.UpdatedAt = DateTime.Now;
                     await _service.UpdateAsync(dto);
@@ -498,17 +342,6 @@ namespace POS.UI.Modules.Admin.Categories
             IsCategoryActive = true;
         }
 
-        private void ValidatePrices()
-        {
-            ClearErrors(nameof(SellingPrice));
-            ClearErrors(nameof(MRP));
-
-            if (SellingPrice < CostPrice)
-                AddError(nameof(SellingPrice), "Selling price must be >= Cost price");
-
-            if (MRP < SellingPrice)
-                AddError(nameof(MRP), "MRP must be >= Selling price");
-        }
         private void ValidateAll()
         {
             CategoryName = CategoryName;

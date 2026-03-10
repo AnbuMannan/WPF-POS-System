@@ -19,7 +19,7 @@ namespace POS.LicenseServer.Services
             if (lic.IsRevoked)
                 return (false, null, null, default, "License revoked");
 
-            if (lic.ExpiryDate < DateTime.UtcNow)
+            if (lic.ExpiryDate < DateTime.Now)
                 return (false, null, null, default, "License expired");
 
             // Idempotency: allow safe retry from the same machine

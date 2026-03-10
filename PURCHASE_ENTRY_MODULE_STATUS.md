@@ -66,7 +66,7 @@ public async Task<PurchaseEntryDto> ProcessEntryAsync(Guid id, bool updateProduc
 
     // 5. Mark entry as processed
     entry.IsProcessed = true;
-    entry.ProcessedAt = DateTime.UtcNow;
+    entry.ProcessedAt = DateTime.Now;
     
     // Commit or rollback on error
 }

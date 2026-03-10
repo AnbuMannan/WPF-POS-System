@@ -71,7 +71,7 @@ namespace POS.AuthService.Services
 
         public void SaveRefreshToken(int userId, string refreshToken, int expirationDays = 7)
         {
-            _repo.SaveRefreshToken(userId, refreshToken, DateTime.UtcNow.AddDays(expirationDays));
+            _repo.SaveRefreshToken(userId, refreshToken, DateTime.Now.AddDays(expirationDays));
         }
 
         public bool ValidateRefreshToken(int userId, string refreshToken)

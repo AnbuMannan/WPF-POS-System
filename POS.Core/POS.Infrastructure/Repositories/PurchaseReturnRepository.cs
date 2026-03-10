@@ -119,7 +119,7 @@ public class PurchaseReturnRepository : IPurchaseReturnRepository
         existing.ProcessedAt = purchaseReturn.ProcessedAt;
         existing.ProcessedBy = purchaseReturn.ProcessedBy;
         existing.IsActive = purchaseReturn.IsActive;
-        existing.UpdatedAt = DateTime.UtcNow;
+        existing.UpdatedAt = DateTime.Now;
 
         // Remove existing items
         _db.PurchaseReturnItems.RemoveRange(existing.Items);
@@ -160,7 +160,7 @@ public class PurchaseReturnRepository : IPurchaseReturnRepository
     /// Process a purchase return and reduce stock from batches
     /// CRITICAL logic for market-standard POS system
     /// </summary>
-    public async Task ProcessReturnWithInventoryUpdateAsync(Guid purchaseReturnId)
+    public async Task ProcessReturnWithInventoryUpdateAsync(Guid purchaseReturnId, int storeCode)
     {
         using var transaction = await _db.Database.BeginTransactionAsync();
         
@@ -217,19 +217,20 @@ public class PurchaseReturnRepository : IPurchaseReturnRepository
                 // 2. Reduce stock from batch
                 batch.CurrentQuantity -= item.Quantity;
                 batch.ReturnedQuantity += item.Quantity;
-                batch.LastTransactionDate = DateTime.UtcNow;
-                batch.UpdatedAt = DateTime.UtcNow;
+                batch.LastTransactionDate = DateTime.Now;
+                batch.UpdatedAt = DateTime.Now;
 
                 // 3. Create Stock Ledger Entry for audit trail
                 var ledgerEntry = new StockLedgerEntry
                 {
                     StockEntryId = Guid.NewGuid(),
+                    StoreCode = storeCode,
                     ProductId = item.ProductId,
                     Quantity = -item.Quantity, // Negative for stock reduction
                     EntryType = "OUT",
                     ReferenceType = "PURCHASE_RETURN",
                     ReferenceId = returnEntry.Id,
-                    EntryDate = DateTime.UtcNow,
+                    EntryDate = DateTime.Now,
                     Remarks = $"Purchase Return: {returnEntry.ReturnNo} - Batch: {batch.BatchNo}"
                 };
 
@@ -238,7 +239,7 @@ public class PurchaseReturnRepository : IPurchaseReturnRepository
 
             // 4. Mark return as processed
             returnEntry.IsProcessed = true;
-            returnEntry.ProcessedAt = DateTime.UtcNow;
+            returnEntry.ProcessedAt = DateTime.Now;
             returnEntry.ProcessedBy = "System"; // TODO: Get from auth context
             returnEntry.Status = "Processed";
 

@@ -77,7 +77,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapGet("/api/health/ping", () =>
-    Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow })
+    Results.Ok(new { Status = "Healthy", Timestamp = DateTime.Now })
 ).AllowAnonymous();
 
 app.Run();

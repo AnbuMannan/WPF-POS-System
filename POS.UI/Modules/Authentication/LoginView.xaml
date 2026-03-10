@@ -8,7 +8,8 @@
         Loaded="Window_Loaded"
         ResizeMode="NoResize"
         Background="{StaticResource BrushWindowBg}"
-        Foreground="{StaticResource BrushTextPrimary}">
+        Foreground="{StaticResource BrushTextPrimary}"
+        FocusManager.FocusedElement="{Binding ElementName=txtUsername}">
 
     <!-- ================== MAIN LAYOUT ================== -->
     <Grid>
@@ -94,6 +95,7 @@
                                            Mode=TwoWay,
                                            UpdateSourceTrigger=PropertyChanged}"
                              Margin="0,0,0,12"
+                             x:Name="txtUsername" TabIndex="0" KeyDown="TxtUsername_KeyDown"
                              AutomationProperties.Name="Username" />
 
                     <!-- ================= PASSWORD FIELD ================= -->
@@ -103,8 +105,9 @@
                                FontSize="13"
                                Margin="0,0,0,6" />
 
-                    <PasswordBox x:Name="PasswordBox"
+                    <PasswordBox x:Name="txtPassword"
                                  Margin="0,0,0,12"
+                                 TabIndex="1"
                                  AutomationProperties.Name="Password" />
 
                     <!-- ================= STATUS MESSAGE ================= -->
@@ -122,6 +125,7 @@
                             Style="{StaticResource PrimaryButton}"
                             Margin="0,10,0,10"
                             Command="{Binding LoginCommand}"
+                            TabIndex="2" IsDefault="True"
                             AutomationProperties.Name="Login" />
 
                     <!-- CLEAR BUTTON -->

@@ -42,7 +42,8 @@ public class PurchaseEntriesController : ControllerBase
     {
         try
         {
-            var created = await _service.CreateAsync(dto);
+            int storeCode = Request.Headers.TryGetValue("X-Store-Code", out var scVal) && int.TryParse(scVal, out int parsedSc) ? parsedSc : 1;
+            var created = await _service.CreateAsync(dto, storeCode);
             return Ok(created);
         }
         catch (ValidationException vex)
@@ -66,7 +67,8 @@ public class PurchaseEntriesController : ControllerBase
     {
         try
         {
-            var updated = await _service.UpdateAsync(id, dto);
+            int storeCode = Request.Headers.TryGetValue("X-Store-Code", out var scVal) && int.TryParse(scVal, out int parsedSc) ? parsedSc : 1;
+            var updated = await _service.UpdateAsync(id, dto, storeCode);
             return Ok(updated);
         }
         catch (ValidationException vex)
@@ -94,7 +96,8 @@ public class PurchaseEntriesController : ControllerBase
     {
         try
         {
-            var processed = await _service.ProcessEntryAsync(id, updateProductPrices);
+            int storeCode = Request.Headers.TryGetValue("X-Store-Code", out var scVal) && int.TryParse(scVal, out int parsedSc) ? parsedSc : 1;
+            var processed = await _service.ProcessEntryAsync(id, storeCode, updateProductPrices);
             return Ok(processed);
         }
         catch (ValidationException vex)

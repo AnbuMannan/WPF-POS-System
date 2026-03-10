@@ -51,7 +51,7 @@ public class ImportController : ControllerBase
         workbook.SaveAs(stream);
         stream.Position = 0;
 
-        var fileName = $"ProductImportTemplate_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+        var fileName = $"ProductImportTemplate_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
         return File(stream.ToArray(), MediaTypeNames.Application.Octet, fileName);
     }
 }

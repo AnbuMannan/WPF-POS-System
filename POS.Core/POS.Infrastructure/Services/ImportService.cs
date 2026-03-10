@@ -144,7 +144,7 @@ public class ImportService : IImportService
                             IsWeighable = false,
                             IsManufactured = false,
                             IsActive = true,
-                            CreatedAt = DateTime.UtcNow,
+                            CreatedAt = DateTime.Now,
                             CreatedBy = "Import"
                         };
 
@@ -163,7 +163,7 @@ public class ImportService : IImportService
                         product.CostPrice = cost;
                         product.SellingPrice = price;
                         product.MRP = price;
-                        product.UpdatedAt = DateTime.UtcNow;
+                        product.UpdatedAt = DateTime.Now;
                         product.UpdatedBy = "Import";
 
                         _db.Products.Update(product);
@@ -179,14 +179,14 @@ public class ImportService : IImportService
                             {
                                 ProductId = product.ProductId,
                                 AvailableStock = stock,
-                                LastUpdated = DateTime.UtcNow
+                                LastUpdated = DateTime.Now
                             };
                             _db.StockSummaries.Add(summary);
                         }
                         else
                         {
                             summary.AvailableStock = stock;
-                            summary.LastUpdated = DateTime.UtcNow;
+                            summary.LastUpdated = DateTime.Now;
                             _db.StockSummaries.Update(summary);
                         }
 
@@ -231,7 +231,7 @@ public class ImportService : IImportService
                 Code = normalized.Replace(" ", string.Empty),
                 DisplayOrder = 0,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now
             };
             _db.Categories.Add(existing);
             await _db.SaveChangesAsync();
@@ -261,7 +261,7 @@ public class ImportService : IImportService
                 Name = normalized,
                 Code = normalized.Replace(" ", string.Empty),
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now
             };
             _db.Brands.Add(existing);
             await _db.SaveChangesAsync();
@@ -292,7 +292,7 @@ public class ImportService : IImportService
                 Symbol = normalized,
                 DecimalPlaces = 0,
                 Description = null,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 IsActive = true
             };
             _db.Uoms.Add(existing);

@@ -157,14 +157,14 @@ namespace POS.UI.Modules.Admin.Uom
                 DecimalPlaces = dec,
                 Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
                 IsActive = IsActiveChecked,
-                CreatedAt = _isEdit && _editDto != null ? _editDto.CreatedAt : DateTime.UtcNow
+                CreatedAt = _isEdit && _editDto != null ? _editDto.CreatedAt : DateTime.Now
             };
 
             try
             {
                 if (_isEdit && _editDto != null)
                 {
-                    dto.UpdatedAt = DateTime.UtcNow;
+                    dto.UpdatedAt = DateTime.Now;
                     await _service.UpdateAsync(dto.Id, dto);
                 }
                 else

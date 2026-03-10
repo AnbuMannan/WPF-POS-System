@@ -150,7 +150,7 @@ public class EODReportService : IEODReportService
                 && !s.IsLocked)
             .ToListAsync(cancellationToken);
 
-        var now = DateTime.UtcNow;
+        var now = DateTime.Now;
         foreach (var s in sales)
         {
             s.IsLocked = true;

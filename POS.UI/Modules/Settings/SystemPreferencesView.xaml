@@ -1,0 +1,155 @@
+<UserControl x:Class="POS.UI.Modules.Settings.SystemPreferencesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:POS.UI.Modules.Settings"
+             xmlns:converters="clr-namespace:POS.UI.Core.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800"
+             Background="{StaticResource BrushWindowBg}">
+    
+    <UserControl.Resources>
+        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="30" MaxWidth="800" HorizontalAlignment="Left">
+            <TextBlock Text="System Preferences" FontSize="28" FontWeight="Bold" Margin="0,0,0,30" Foreground="#1E293B"/>
+
+            <!-- UI Behavior Settings Card -->
+            <Border Background="White" CornerRadius="12" Margin="0,0,0,25" Padding="25" BorderBrush="{StaticResource BrushBorderSoft}" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                
+                <StackPanel>
+                    <TextBlock Text="UI Behavior Settings" FontSize="18" FontWeight="Bold" Foreground="#334155" Margin="0,0,0,20"/>
+                    
+                    <!-- Sidebar Idle Timeout -->
+                    <StackPanel Margin="0,0,0,25">
+                        <TextBlock Text="Sidebar Idle Timeout" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Slider Grid.Column="0" 
+                                    Value="{Binding SidebarIdleTimeoutSeconds, UpdateSourceTrigger=PropertyChanged}"
+                                    Minimum="5" Maximum="60" TickFrequency="5" TickPlacement="BottomRight"
+                                    Margin="0,0,15,0" Height="30" VerticalAlignment="Center"/>
+                            
+                            <Border Grid.Column="1" 
+                                    Background="{StaticResource BrushPrimaryLight}" 
+                                    CornerRadius="8" 
+                                    Padding="12,6" 
+                                    Width="60" 
+                                    HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding SidebarIdleTimeoutSeconds}" 
+                                           FontWeight="Bold" 
+                                           Foreground="{StaticResource BrushPrimary}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        
+                        <TextBlock Text="Controls how long the sidebar stays visible after user interaction stops. Lower values provide better security but may be less convenient." 
+                                   FontSize="11" Foreground="#64748B" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock Text="Recommended: " FontSize="11" Foreground="#64748B"/>
+                            <TextBlock Text="10-15 seconds" FontSize="11" Foreground="#64748B" FontWeight="SemiBold"/>
+                            <TextBlock Text=" for optimal balance" FontSize="11" Foreground="#64748B" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Save Button -->
+                    <Button Command="{Binding SavePreferencesCommand}" HorizontalAlignment="Left" Margin="0,20,0,0" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="BtnBorder" Background="{StaticResource BrushPrimary}" CornerRadius="6" Padding="32,12">
+                                    <TextBlock Text="Save Preferences" Foreground="White" FontWeight="SemiBold" FontSize="14" HorizontalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Opacity" Value="0.9"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Opacity" Value="0.75"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Status Information Card -->
+            <Border Background="White" CornerRadius="12" Margin="0,0,0,35" Padding="25" BorderBrush="{StaticResource BrushBorderSoft}" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <Path Data="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                              Stroke="{Binding IsStatusSuccess, Converter={StaticResource BoolToBrushConverter}, ConverterParameter='Success|Danger'}"
+                              StrokeThickness="2" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        
+                        <TextBlock Text="{Binding StatusMessage}" 
+                                   Foreground="{Binding IsStatusSuccess, Converter={StaticResource BoolToBrushConverter}, ConverterParameter='Success|Danger'}"
+                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <ProgressBar IsIndeterminate="True" 
+                                Height="4" 
+                                Margin="0,10,0,0"
+                                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Future Settings Placeholder Card -->
+            <Border Background="White" CornerRadius="12" Margin="0,0,0,25" Padding="25" BorderBrush="{StaticResource BrushBorderSoft}" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                
+                <StackPanel>
+                    <TextBlock Text="Additional Settings (Coming Soon)" FontSize="18" FontWeight="Bold" Foreground="#334155" Margin="0,0,0,15"/>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <Path Data="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                              Stroke="{StaticResource BrushTextTertiary}" StrokeThickness="2" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        
+                        <TextBlock Text="Theme preferences, notification settings, and other UI customization options will be available here in future updates." 
+                                   Foreground="#64748B" TextWrapping="Wrap" FontSize="12"/>
+                    </StackPanel>
+
+                    <ItemsControl Margin="0,10,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Ellipse Width="8" Height="8" Fill="{StaticResource BrushPrimary}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding}" Foreground="#64748B" FontSize="11"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        
+                        <ItemsControl.ItemsSource>
+                            <x:Array Type="sys:String" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <sys:String>Light/Dark theme toggle</sys:String>
+                                <sys:String>Default dashboard view selection</sys:String>
+                                <sys:String>Notification preferences</sys:String>
+                                <sys:String>Language and regional settings</sys:String>
+                                <sys:String>Accessibility options</sys:String>
+                            </x:Array>
+                        </ItemsControl.ItemsSource>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

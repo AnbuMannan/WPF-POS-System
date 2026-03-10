@@ -117,7 +117,7 @@ public class PurchaseEntryRepository : IPurchaseEntryRepository
         existing.ProcessedAt = purchaseEntry.ProcessedAt;
         existing.ProcessedBy = purchaseEntry.ProcessedBy;
         existing.IsActive = purchaseEntry.IsActive;
-        existing.UpdatedAt = DateTime.UtcNow;
+        existing.UpdatedAt = DateTime.Now;
 
         // Remove existing items
         _db.PurchaseEntryItems.RemoveRange(existing.Items);
@@ -158,7 +158,7 @@ public class PurchaseEntryRepository : IPurchaseEntryRepository
     /// Process a purchase entry and create batches for stock management
     /// This is the CRITICAL logic for market-standard POS system
     /// </summary>
-    public async Task ProcessEntryWithInventoryUpdateAsync(Guid purchaseEntryId, bool updateProductPrices)
+    public async Task ProcessEntryWithInventoryUpdateAsync(Guid purchaseEntryId, bool updateProductPrices, int storeCode)
     {
         using var transaction = await _db.Database.BeginTransactionAsync();
         
@@ -175,6 +175,9 @@ public class PurchaseEntryRepository : IPurchaseEntryRepository
             if (entry.IsProcessed)
                 throw new InvalidOperationException("This purchase entry has already been processed.");
 
+            // Update entry's StoreCode just in case
+            entry.StoreCode = storeCode;
+
             // CRITICAL: Create Batches for each Purchase Entry Item
             foreach (var item in entry.Items)
             {
@@ -183,7 +186,7 @@ public class PurchaseEntryRepository : IPurchaseEntryRepository
                 {
                     Id = Guid.NewGuid(),
                     ProductId = item.ProductId,
-                    BatchNo = item.BatchNo ?? $"AUTO-{DateTime.UtcNow:yyyyMMddHHmmss}-{item.ProductId}",
+                    BatchNo = item.BatchNo ?? $"AUTO-{DateTime.Now:yyyyMMddHHmmss}-{item.ProductId}",
                     ExpiryDate = item.ExpiryDate,
                     ManufactureDate = null, // Can be added later if needed
                     CostPrice = item.CostPrice,
@@ -198,15 +201,15 @@ public class PurchaseEntryRepository : IPurchaseEntryRepository
                     PurchaseEntryId = entry.Id,
                     PurchaseEntryItemId = item.Id,
                     SupplierId = entry.SupplierId,
-                    LocationCode = null, // Can be set from warehouse/location
+                    LocationCode = storeCode.ToString(), // Using StoreCode as LocationCode if needed
                     BinLocation = null,
                     ReorderLevel = 0,
                     ReceivedDate = entry.ReceivedDate,
                     ReceivedBy = entry.ProcessedBy ?? "System",
-                    LastTransactionDate = DateTime.UtcNow,
+                    LastTransactionDate = DateTime.Now,
                     IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
 
                 _db.Batches.Add(batch);
@@ -219,26 +222,27 @@ public class PurchaseEntryRepository : IPurchaseEntryRepository
                     {
                         ProductId = item.ProductId,
                         AvailableStock = item.Quantity,
-                        LastUpdated = DateTime.UtcNow
+                        LastUpdated = DateTime.Now
                     };
                     _db.StockSummaries.Add(stockSummary);
                 }
                 else
                 {
                     stockSummary.AvailableStock += item.Quantity;
-                    stockSummary.LastUpdated = DateTime.UtcNow;
+                    stockSummary.LastUpdated = DateTime.Now;
                 }
 
                 // 3. Add StockLedgerEntry (Audit Trail)
                 var ledgerEntry = new StockLedgerEntry
                 {
                     StockEntryId = Guid.NewGuid(),
+                    StoreCode = storeCode,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     EntryType = "IN",
                     ReferenceType = "PURCHASE_ENTRY",
                     ReferenceId = entry.Id,
-                    EntryDate = DateTime.UtcNow,
+                    EntryDate = DateTime.Now,
                     Remarks = $"Purchase Entry: {entry.InvoiceNo}, Batch: {batch.BatchNo}"
                 };
                 _db.StockLedgerEntries.Add(ledgerEntry);
@@ -252,7 +256,7 @@ public class PurchaseEntryRepository : IPurchaseEntryRepository
                         product.CostPrice = item.CostPrice;
                         product.SellingPrice = item.SellingPrice;
                         product.MRP = item.MRP;
-                        product.UpdatedAt = DateTime.UtcNow;
+                        product.UpdatedAt = DateTime.Now;
                     }
                 }
             }
@@ -264,13 +268,13 @@ public class PurchaseEntryRepository : IPurchaseEntryRepository
                 if (purchaseOrder != null)
                 {
                     purchaseOrder.Status = POS.Domain.Enums.PurchaseOrderStatus.Received;
-                    purchaseOrder.UpdatedAt = DateTime.UtcNow;
+                    purchaseOrder.UpdatedAt = DateTime.Now;
                 }
             }
 
             // 4. Mark entry as processed
             entry.IsProcessed = true;
-            entry.ProcessedAt = DateTime.UtcNow;
+            entry.ProcessedAt = DateTime.Now;
             entry.ProcessedBy = "System"; // TODO: Get from auth context
 
             await _db.SaveChangesAsync();

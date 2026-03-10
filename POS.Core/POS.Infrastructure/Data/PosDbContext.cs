@@ -68,6 +68,7 @@ public class PosDbContext : DbContext
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<Expense> Expenses { get; set; }
     public DbSet<DeliveryOrder> DeliveryOrders { get; set; }
+    public DbSet<SystemPreference> SystemPreferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1074,6 +1075,22 @@ public class PosDbContext : DbContext
             .WithMany()
             .HasForeignKey(p => p.ChildProductId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // SystemPreference configuration
+        var systemPreference = modelBuilder.Entity<SystemPreference>();
+        systemPreference.ToTable("SystemPreferences");
+        systemPreference.HasKey(sp => sp.Id);
+        systemPreference.Property(sp => sp.Id).ValueGeneratedOnAdd();
+        systemPreference.Property(sp => sp.StoreCode).IsRequired();
+        systemPreference.Property(sp => sp.SidebarIdleTimeoutSeconds).IsRequired().HasDefaultValue(10);
+        systemPreference.Property(sp => sp.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP");
+        systemPreference.Property(sp => sp.UpdatedAt).HasColumnType("datetime").ValueGeneratedOnAddOrUpdate();
+        
+        // Seed data for StoreCode 1 and 2
+        systemPreference.HasData(
+            new SystemPreference { Id = 1, StoreCode = 1, SidebarIdleTimeoutSeconds = 10 },
+            new SystemPreference { Id = 2, StoreCode = 2, SidebarIdleTimeoutSeconds = 10 }
+        );
 
         // Store configuration
         var store = modelBuilder.Entity<Store>();

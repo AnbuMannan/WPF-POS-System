@@ -252,7 +252,7 @@ builder.Services.AddScoped<IBatchService, BatchService>();
 
 4. ✅ **Mark Entry as Processed:**
    - Set `IsProcessed = true`
-   - Set `ProcessedAt = DateTime.UtcNow`
+   - Set `ProcessedAt = DateTime.Now`
    - Set `ProcessedBy = "System"` (TODO: Get from auth context)
 
 5. ✅ **Transaction Scope:**

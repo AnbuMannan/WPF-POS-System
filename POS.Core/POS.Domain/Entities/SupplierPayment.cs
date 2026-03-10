@@ -54,6 +54,11 @@ public class SupplierPayment : BaseEntity
     /// </summary>
     public string PaymentNo { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Store code where this payment was made
+    /// </summary>
+    public int StoreCode { get; set; } = 1;
+
     // Navigation properties
     public virtual Supplier? Supplier { get; set; }
 }

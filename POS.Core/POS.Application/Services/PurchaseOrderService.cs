@@ -82,7 +82,7 @@ public class PurchaseOrderService : IPurchaseOrderService
             ReferenceNo = dto.ReferenceNo,
             Notes = dto.Notes,
             Status = PurchaseOrderStatus.Draft,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.Now,
             IsActive = true,
             Items = new List<PurchaseOrderItem>()
         };
@@ -99,7 +99,7 @@ public class PurchaseOrderService : IPurchaseOrderService
                 UnitPrice = itemDto.UnitPrice,
                 TaxAmount = itemDto.TaxAmount,
                 TotalAmount = itemTotal,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 IsActive = true
             };
             entity.Items.Add(item);
@@ -152,7 +152,7 @@ public class PurchaseOrderService : IPurchaseOrderService
         existing.ExpectedDeliveryDate = dto.ExpectedDeliveryDate;
         existing.ReferenceNo = dto.ReferenceNo;
         existing.Notes = dto.Notes;
-        existing.UpdatedAt = DateTime.UtcNow;
+        existing.UpdatedAt = DateTime.Now;
 
         // Rebuild items
         existing.Items.Clear();
@@ -168,7 +168,7 @@ public class PurchaseOrderService : IPurchaseOrderService
                 UnitPrice = itemDto.UnitPrice,
                 TaxAmount = itemDto.TaxAmount,
                 TotalAmount = itemTotal,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 IsActive = true
             };
             existing.Items.Add(item);
@@ -190,7 +190,7 @@ public class PurchaseOrderService : IPurchaseOrderService
             return false;
 
         existing.Status = status;
-        existing.UpdatedAt = DateTime.UtcNow;
+        existing.UpdatedAt = DateTime.Now;
         await _repo.UpdateAsync(existing);
         return true;
     }

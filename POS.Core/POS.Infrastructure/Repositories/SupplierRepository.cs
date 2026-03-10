@@ -47,7 +47,7 @@ public class SupplierRepository : ISupplierRepository
         existing.CreditPeriodDays = supplier.CreditPeriodDays;
         existing.CreditLimit = supplier.CreditLimit;
         existing.IsActive = supplier.IsActive;
-        existing.UpdatedAt = supplier.UpdatedAt ?? DateTime.UtcNow;
+        existing.UpdatedAt = supplier.UpdatedAt ?? DateTime.Now;
 
         await _db.SaveChangesAsync();
     }

@@ -25,7 +25,7 @@ public class LoyaltySettingsRepository : ILoyaltySettingsRepository
 
         if (existing == null)
         {
-            entity.CreatedAt = DateTime.UtcNow;
+            entity.CreatedAt = DateTime.Now;
             entity.IsActive = true;
             await _db.LoyaltySettings.AddAsync(entity);
         }
@@ -35,7 +35,7 @@ public class LoyaltySettingsRepository : ILoyaltySettingsRepository
             existing.RedemptionValuePerPoint = entity.RedemptionValuePerPoint;
             existing.MinimumRedeemPoints = entity.MinimumRedeemPoints;
             existing.IsActive = true;
-            existing.UpdatedAt = DateTime.UtcNow;
+            existing.UpdatedAt = DateTime.Now;
             entity = existing;
         }
 

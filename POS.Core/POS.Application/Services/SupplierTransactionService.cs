@@ -61,11 +61,12 @@ public class SupplierTransactionService : ISupplierTransactionService
         return result;
     }
 
-    public async Task RecordPurchaseAsync(Guid supplierId, Guid purchaseEntryId, string invoiceNo, decimal amount, string? description = null)
+    public async Task RecordPurchaseAsync(Guid supplierId, Guid purchaseEntryId, string invoiceNo, decimal amount, int storeCode, string? description = null)
     {
         var transaction = new SupplierTransaction
         {
             Id = Guid.NewGuid(),
+            StoreCode = storeCode,
             SupplierId = supplierId,
             TransactionDate = DateTime.Now,
             TransactionType = "Purchase",
@@ -73,19 +74,21 @@ public class SupplierTransactionService : ISupplierTransactionService
             ReferenceNo = invoiceNo,
             DebitAmount = 0,
             CreditAmount = amount,
-            Description = description ?? $"Purchase - Invoice: {invoiceNo}",
-            IsActive = true,
-            CreatedAt = DateTime.Now
+            Description = description ?? $"Purchase Entry: {invoiceNo}",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now,
+            IsActive = true
         };
 
         await _transactionRepository.CreateWithBalanceAsync(transaction);
     }
 
-    public async Task RecordPurchaseReturnAsync(Guid supplierId, Guid purchaseReturnId, string returnNo, decimal amount, string? description = null)
+    public async Task RecordPurchaseReturnAsync(Guid supplierId, Guid purchaseReturnId, string returnNo, decimal amount, int storeCode, string? description = null)
     {
         var transaction = new SupplierTransaction
         {
             Id = Guid.NewGuid(),
+            StoreCode = storeCode,
             SupplierId = supplierId,
             TransactionDate = DateTime.Now,
             TransactionType = "PurchaseReturn",
@@ -93,19 +96,21 @@ public class SupplierTransactionService : ISupplierTransactionService
             ReferenceNo = returnNo,
             DebitAmount = amount,
             CreditAmount = 0,
-            Description = description ?? $"Purchase Return - {returnNo}",
-            IsActive = true,
-            CreatedAt = DateTime.Now
+            Description = description ?? $"Purchase Return: {returnNo}",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now,
+            IsActive = true
         };
 
         await _transactionRepository.CreateWithBalanceAsync(transaction);
     }
 
-    public async Task RecordPaymentAsync(Guid supplierId, Guid paymentId, string paymentNo, decimal amount, string? description = null)
+    public async Task RecordPaymentAsync(Guid supplierId, Guid paymentId, string paymentNo, decimal amount, int storeCode, string? description = null)
     {
         var transaction = new SupplierTransaction
         {
             Id = Guid.NewGuid(),
+            StoreCode = storeCode,
             SupplierId = supplierId,
             TransactionDate = DateTime.Now,
             TransactionType = "Payment",
@@ -113,9 +118,10 @@ public class SupplierTransactionService : ISupplierTransactionService
             ReferenceNo = paymentNo,
             DebitAmount = amount,
             CreditAmount = 0,
-            Description = description ?? $"Payment - {paymentNo}",
-            IsActive = true,
-            CreatedAt = DateTime.Now
+            Description = description ?? $"Payment: {paymentNo}",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now,
+            IsActive = true
         };
 
         await _transactionRepository.CreateWithBalanceAsync(transaction);

@@ -18,7 +18,7 @@ public class InvoiceService : IInvoiceService
     public async Task<Guid> CreateInvoiceAsync(Invoice invoice)
     {
         invoice.InvoiceId = Guid.NewGuid();
-        invoice.InvoiceDate = DateTime.UtcNow;
+        invoice.InvoiceDate = DateTime.Now;
 
         decimal totalTax = 0;
         decimal totalAmount = 0;

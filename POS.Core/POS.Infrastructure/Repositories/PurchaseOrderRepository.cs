@@ -99,7 +99,7 @@ public class PurchaseOrderRepository : IPurchaseOrderRepository
         existing.ReferenceNo = purchaseOrder.ReferenceNo;
         existing.Notes = purchaseOrder.Notes;
         existing.IsActive = purchaseOrder.IsActive;
-        existing.UpdatedAt = DateTime.UtcNow;
+        existing.UpdatedAt = DateTime.Now;
 
         // Remove existing items
         _db.PurchaseOrderItems.RemoveRange(existing.Items);

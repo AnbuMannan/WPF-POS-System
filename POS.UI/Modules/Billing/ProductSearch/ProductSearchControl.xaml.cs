@@ -114,6 +114,22 @@ namespace POS.UI.Modules.Billing.ProductSearch
             }
         }
 
+        private void SearchResultsList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var listBox = sender as System.Windows.Controls.ListBox;
+            if (listBox == null) return;
+
+            // Find the clicked item
+            var item = ItemsControl.ContainerFromElement(listBox, e.OriginalSource as DependencyObject) as ListBoxItem;
+
+            if (item != null && item.DataContext is ProductDto product)
+            {
+                listBox.SelectedItem = product;
+                AddSelectedProduct();
+                e.Handled = true;
+            }
+        }
+
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             AddSelectedProduct();

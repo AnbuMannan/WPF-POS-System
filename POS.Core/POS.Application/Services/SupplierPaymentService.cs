@@ -39,7 +39,7 @@ public class SupplierPaymentService : ISupplierPaymentService
         return payments.Select(MapToDto);
     }
 
-    public async Task<SupplierPaymentDto> CreateAsync(CreateSupplierPaymentDto dto)
+    public async Task<SupplierPaymentDto> CreateAsync(CreateSupplierPaymentDto dto, int storeCode)
     {
         // Validate supplier exists
         var supplier = await _supplierRepository.GetByIdAsync(dto.SupplierId);
@@ -56,6 +56,7 @@ public class SupplierPaymentService : ISupplierPaymentService
         var payment = new SupplierPayment
         {
             Id = Guid.NewGuid(),
+            StoreCode = storeCode,
             SupplierId = dto.SupplierId,
             PaymentDate = dto.PaymentDate,
             Amount = dto.Amount,
@@ -76,6 +77,7 @@ public class SupplierPaymentService : ISupplierPaymentService
             created.Id,
             paymentNo,
             dto.Amount,
+            storeCode,
             $"Payment via {dto.PaymentMode}" + (string.IsNullOrEmpty(dto.ReferenceNo) ? "" : $" - Ref: {dto.ReferenceNo}")
         );
 
@@ -84,7 +86,7 @@ public class SupplierPaymentService : ISupplierPaymentService
         return MapToDto(result!);
     }
 
-    public async Task<SupplierPaymentDto> UpdateAsync(Guid id, CreateSupplierPaymentDto dto)
+    public async Task<SupplierPaymentDto> UpdateAsync(Guid id, CreateSupplierPaymentDto dto, int storeCode)
     {
         var existing = await _paymentRepository.GetByIdAsync(id);
         if (existing == null)
@@ -92,6 +94,7 @@ public class SupplierPaymentService : ISupplierPaymentService
 
         // Note: Updating payments after ledger entry is complex
         // For now, we only allow updating non-financial fields
+        existing.StoreCode = storeCode;
         existing.PaymentDate = dto.PaymentDate;
         existing.PaymentMode = dto.PaymentMode;
         existing.ReferenceNo = dto.ReferenceNo;

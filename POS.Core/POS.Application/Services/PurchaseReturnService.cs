@@ -58,7 +58,7 @@ public class PurchaseReturnService : IPurchaseReturnService
         return list.Select(MapToDto).ToList();
     }
 
-    public async Task<PurchaseReturnDto> CreateAsync(CreatePurchaseReturnDto dto)
+    public async Task<PurchaseReturnDto> CreateAsync(CreatePurchaseReturnDto dto, int storeCode)
     {
         // Validate Supplier exists
         var supplier = await _supplierRepo.GetByIdAsync(dto.SupplierId);
@@ -103,6 +103,7 @@ public class PurchaseReturnService : IPurchaseReturnService
         var entity = new PurchaseReturn
         {
             Id = Guid.NewGuid(),
+            StoreCode = storeCode,
             SupplierId = dto.SupplierId,
             PurchaseEntryId = dto.PurchaseEntryId,
             ReturnNo = dto.ReturnNo,
@@ -111,7 +112,7 @@ public class PurchaseReturnService : IPurchaseReturnService
             Notes = dto.Notes,
             Status = "Draft",
             IsProcessed = false,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.Now,
             IsActive = true,
             Items = new List<PurchaseReturnItem>()
         };
@@ -134,7 +135,7 @@ public class PurchaseReturnService : IPurchaseReturnService
                 TaxAmount = itemDto.TaxAmount,
                 TotalAmount = itemDto.TotalAmount,
                 Reason = itemDto.Reason,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 IsActive = true
             };
 
@@ -151,7 +152,7 @@ public class PurchaseReturnService : IPurchaseReturnService
         return MapToDto(entity);
     }
 
-    public async Task<PurchaseReturnDto> UpdateAsync(Guid id, CreatePurchaseReturnDto dto)
+    public async Task<PurchaseReturnDto> UpdateAsync(Guid id, CreatePurchaseReturnDto dto, int storeCode)
     {
         var entity = await _repo.GetByIdAsync(id, includeItems: true);
         if (entity == null)
@@ -189,13 +190,14 @@ public class PurchaseReturnService : IPurchaseReturnService
         }
 
         // Update header
+        entity.StoreCode = storeCode;
         entity.SupplierId = dto.SupplierId;
         entity.PurchaseEntryId = dto.PurchaseEntryId;
         entity.ReturnNo = dto.ReturnNo;
         entity.ReturnDate = dto.ReturnDate;
         entity.Reason = dto.Reason;
         entity.Notes = dto.Notes;
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.Now;
 
         // Clear existing items and add new ones
         entity.Items.Clear();
@@ -218,7 +220,7 @@ public class PurchaseReturnService : IPurchaseReturnService
                 TaxAmount = itemDto.TaxAmount,
                 TotalAmount = itemDto.TotalAmount,
                 Reason = itemDto.Reason,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 IsActive = true
             };
 
@@ -235,7 +237,7 @@ public class PurchaseReturnService : IPurchaseReturnService
         return MapToDto(entity);
     }
 
-    public async Task<PurchaseReturnDto> ProcessReturnAsync(Guid id)
+    public async Task<PurchaseReturnDto> ProcessReturnAsync(Guid id, int storeCode)
     {
         var entity = await _repo.GetByIdAsync(id, includeItems: true);
         if (entity == null)
@@ -248,7 +250,7 @@ public class PurchaseReturnService : IPurchaseReturnService
             throw new ValidationException("Items", "Cannot process a return with no items.");
 
         // Process the return with inventory update (atomic transaction in repository)
-        await _repo.ProcessReturnWithInventoryUpdateAsync(id);
+        await _repo.ProcessReturnWithInventoryUpdateAsync(id, storeCode);
 
         // Record supplier transaction (Debit entry - reduces amount owed to supplier)
         await _transactionService.RecordPurchaseReturnAsync(
@@ -256,6 +258,7 @@ public class PurchaseReturnService : IPurchaseReturnService
             entity.Id,
             entity.ReturnNo ?? string.Empty,
             entity.TotalAmount,
+            storeCode,
             $"Purchase Return: {entity.ReturnNo}"
         );
 

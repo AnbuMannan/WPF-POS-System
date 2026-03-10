@@ -36,7 +36,7 @@ public class SupplierService : ISupplierService
             throw new ValidationException("Code", "Supplier code already exists.");
         
         entity.Id = Guid.NewGuid();
-        entity.CreatedAt = DateTime.UtcNow;
+        entity.CreatedAt = DateTime.Now;
         entity.IsActive = true;
         await _repo.AddAsync(entity);
     }
@@ -49,7 +49,7 @@ public class SupplierService : ISupplierService
         if (await _repo.CheckCodeExistsAsync(entity.Code, entity.Id))
             throw new ValidationException("Code", "Supplier code already exists.");
         
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.Now;
         await _repo.UpdateAsync(entity);
     }
 

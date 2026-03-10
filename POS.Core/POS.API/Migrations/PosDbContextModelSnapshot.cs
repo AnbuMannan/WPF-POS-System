@@ -1108,6 +1108,9 @@ namespace POS.API.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
+                    b.Property<int>("StoreCode")
+                        .HasColumnType("int");
+
                     b.Property<decimal?>("TenderedAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -1123,6 +1126,8 @@ namespace POS.API.Migrations
 
                     b.HasIndex("SaleId")
                         .HasDatabaseName("idx_payments_saleid");
+
+                    b.HasIndex("StoreCode");
 
                     b.ToTable("Payments", (string)null);
                 });
@@ -2321,6 +2326,9 @@ namespace POS.API.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("StoreCode")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Subtotal")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -2355,6 +2363,8 @@ namespace POS.API.Migrations
 
                     b.HasIndex("SaleId")
                         .HasDatabaseName("idx_saleitems_saleid");
+
+                    b.HasIndex("StoreCode");
 
                     b.HasIndex("TaxProfileId");
 
@@ -2836,6 +2846,9 @@ namespace POS.API.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp");
+
+                    b.Property<int>("StoreCode")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("SupplierId")
                         .HasColumnType("char(36)");

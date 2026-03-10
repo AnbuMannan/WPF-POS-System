@@ -50,7 +50,7 @@ namespace POS.UI.Core.Services
         {
             get
             {
-                if (!_currentLicense?.ExpiryDate.HasValue == true)
+                if (_currentLicense?.ExpiryDate == null)
                     return 0;
 
                 var daysRemaining = (_currentLicense.ExpiryDate.Value - DateTime.Now).Days;
@@ -96,7 +96,7 @@ namespace POS.UI.Core.Services
 
                 var validationResponse = await response.Content.ReadFromJsonAsync<LicenseValidationResponse>();
 
-                if (validationResponse != null)
+                if (validationResponse is not null) // Use pattern matching for null check
                 {
                     _currentLicense = validationResponse;
 

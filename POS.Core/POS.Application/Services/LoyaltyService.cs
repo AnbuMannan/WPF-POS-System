@@ -94,7 +94,7 @@ public class LoyaltyService : ILoyaltyService
         var redemptionAmount = points * settings.RedemptionValuePerPoint;
 
         customer.LoyaltyPoints -= points;
-        customer.UpdatedAt = DateTime.UtcNow;
+        customer.UpdatedAt = DateTime.Now;
         await _customerRepository.UpdateAsync(customer);
 
         return new RedeemPointsResponse

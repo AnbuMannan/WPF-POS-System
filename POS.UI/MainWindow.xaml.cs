@@ -10,6 +10,7 @@ using Button = System.Windows.Controls.Button;
 using Size = System.Windows.Size;
 using Point = System.Windows.Point;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using POS.UI.Core;
 using POS.UI.Modules.Admin.Products;
 using POS.UI.Modules.Admin.Categories;
@@ -54,8 +55,11 @@ namespace POS.UI
     {
         private bool _isSidebarCollapsed = false;
         private DispatcherTimer _clockTimer;
+        private DispatcherTimer _sidebarIdleTimer;
         private List<ToggleButton> _allMenuButtons = new List<ToggleButton>();
         private ToggleButton _previousSelectedMenu = null;
+        private readonly SystemPreferenceApiService _systemPreferenceService;
+        private int _sidebarIdleTimeoutSeconds = 10;
 
         // Sidebar width constants
         private const double SIDEBAR_EXPANDED_WIDTH = 260;
@@ -64,6 +68,9 @@ namespace POS.UI
 
         public MainWindow()
         {
+            // Initialize services
+            _systemPreferenceService = App.ServiceProvider.GetService<SystemPreferenceApiService>();
+            
             InitializeComponent();
             DataContext = this;
         }
@@ -98,6 +105,7 @@ namespace POS.UI
             };
 
             StartClock();
+            InitializeSidebarIdleTimer();
             UpdateStatusBar();
             NavigateToDashboardView();
         }
@@ -235,6 +243,16 @@ namespace POS.UI
             }
         }
 
+        private void ActivateParentMenu(ToggleButton parentMenu)
+        {
+            ClearAllMenuChecks();
+            if (parentMenu != null)
+            {
+                parentMenu.IsChecked = true;
+                _previousSelectedMenu = parentMenu;
+            }
+        }
+
         private void UpdateHeaderTitle(string menuName)
         {
             // Update the header title based on selected menu
@@ -259,6 +277,7 @@ namespace POS.UI
         {
             if (sender is Button btn)
             {
+                ActivateParentMenu(BtnSales);
                 PopupSales.IsOpen = false;
 
                 if (btn.Name == "BtnBilling")
@@ -368,6 +387,7 @@ namespace POS.UI
         {
             if (sender is Button btn)
             {
+                ActivateParentMenu(BtnProducts);
                 // Close the popup manually as we are navigating
                 PopupProducts.IsOpen = false;
 
@@ -417,6 +437,7 @@ namespace POS.UI
         {
             if (sender is Button btn)
             {
+                ActivateParentMenu(BtnCustomers);
                 PopupCustomers.IsOpen = false;
                 switch (btn.Name)
                 {
@@ -439,6 +460,7 @@ namespace POS.UI
         {
             if (sender is Button btn)
             {
+                ActivateParentMenu(BtnSuppliers);
                 PopupSuppliers.IsOpen = false;
                 switch (btn.Name)
                 {
@@ -528,6 +550,7 @@ namespace POS.UI
         private void SubMenuInventory_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn) return;
+            ActivateParentMenu(BtnInventory);
             PopupInventory.IsOpen = false;
             
             switch (btn.Name)
@@ -670,6 +693,7 @@ namespace POS.UI
         private void SubMenuReports_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn) return;
+            ActivateParentMenu(BtnReports);
             PopupReports.IsOpen = false;
 
             switch (btn.Name)
@@ -717,6 +741,7 @@ namespace POS.UI
         private void SubMenuSettings_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn) return;
+            ActivateParentMenu(BtnSettings);
             PopupSettings.IsOpen = false;
             if (btn.Name == "BtnPrintSettings")
             {
@@ -737,12 +762,29 @@ namespace POS.UI
                 MainContent.Content = view;
                 HeaderTitle.Text = "Settings / General Configuration";
             }
+            else if (btn.Name == "BtnSystemPreferences")
+            {
+                var systemPreferenceService = _systemPreferenceService ?? (App.ServiceProvider?.GetService(typeof(SystemPreferenceApiService)) as SystemPreferenceApiService);
+                var localSettings = App.ServiceProvider?.GetService(typeof(LocalSettingsService)) as LocalSettingsService;
+                if (systemPreferenceService == null || localSettings == null)
+                {
+                    Components.DialogService.Warning("System Preferences", "System Preferences services are not available.");
+                    return;
+                }
+
+                var vm = new POS.UI.Modules.Settings.SystemPreferencesViewModel(systemPreferenceService, localSettings);
+                var view = new POS.UI.Modules.Settings.SystemPreferencesView { DataContext = vm };
+
+                MainContent.Content = view;
+                HeaderTitle.Text = "Settings / System Preferences";
+            }
         }
 
         // ================= FINANCE SUBMENU =================
         private void SubMenuFinance_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn) return;
+            ActivateParentMenu(BtnFinance);
             PopupFinance.IsOpen = false;
 
             switch (btn.Name)
@@ -767,6 +809,7 @@ namespace POS.UI
         private void SubMenuUtilities_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn) return;
+            ActivateParentMenu(BtnUtilities);
             PopupUtilities.IsOpen = false;
 
             switch (btn.Name)
@@ -782,6 +825,7 @@ namespace POS.UI
         private void SubMenuUsers_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn) return;
+            ActivateParentMenu(BtnUsers);
             PopupUsers.IsOpen = false;
 
             switch (btn.Name)
@@ -829,6 +873,7 @@ namespace POS.UI
         private void SubMenuPayments_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn) return;
+            ActivateParentMenu(BtnPayments);
             PopupPayments.IsOpen = false;
 
             switch (btn.Name)
@@ -858,6 +903,7 @@ namespace POS.UI
         private void SubMenuOrganization_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn) return;
+            ActivateParentMenu(BtnOrganization);
             PopupOrganization.IsOpen = false;
 
             switch (btn.Name)
@@ -943,13 +989,68 @@ namespace POS.UI
 
         private void ShowCreateSaleReturn(SaleReturnApiService service)
         {
-            var viewModel = new CreateSaleReturnViewModel(service);
-            viewModel.ReturnSaved += () => ShowSalesReturnList();
-            viewModel.RequestClose += () => ShowSalesReturnList();
+            // Implementation here...
+        }
 
-            var view = new CreateSaleReturnView { DataContext = viewModel };
-            MainContent.Content = view;
-            HeaderTitle.Text = "Create Sales Return";
+        // ================= SIDEBAR IDLE TIMER IMPLEMENTATION =================
+        private async void InitializeSidebarIdleTimer()
+        {
+            if (_sidebarIdleTimer == null)
+            {
+                _sidebarIdleTimer = new DispatcherTimer();
+                _sidebarIdleTimer.Tick += SidebarIdleTimer_Tick;
+            }
+
+            _sidebarIdleTimer.Interval = TimeSpan.FromSeconds(_sidebarIdleTimeoutSeconds);
+
+            try
+            {
+                var config = App.ServiceProvider.GetService<LocalSettingsService>()?.GetConfig();
+                if (config != null && _systemPreferenceService != null)
+                {
+                    var preferences = await _systemPreferenceService.GetByStoreAsync(config.StoreCode);
+                    _sidebarIdleTimeoutSeconds = preferences?.SidebarIdleTimeoutSeconds ?? 10;
+                    _sidebarIdleTimer.Interval = TimeSpan.FromSeconds(_sidebarIdleTimeoutSeconds);
+                }
+            }
+            catch (Exception ex)
+            {
+                _sidebarIdleTimeoutSeconds = 10;
+                _sidebarIdleTimer.Interval = TimeSpan.FromSeconds(_sidebarIdleTimeoutSeconds);
+                Console.WriteLine($"Failed to load sidebar timeout preference: {ex.Message}");
+            }
+        }
+
+        private void SidebarIdleTimer_Tick(object sender, EventArgs e)
+        {
+            // Collapse sidebar when timer elapses
+            if (IsSidebarOpen && !_isSidebarCollapsed)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    AnimateSidebarToggle();
+                });
+            }
+            _sidebarIdleTimer.Stop();
+        }
+
+        public void ResetSidebarTimer()
+        {
+            if (_sidebarIdleTimer == null)
+            {
+                return;
+            }
+
+            if (IsSidebarOpen && !_isSidebarCollapsed)
+            {
+                _sidebarIdleTimer.Stop();
+                _sidebarIdleTimer.Start();
+            }
+        }
+
+        private void SidebarContainer_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ResetSidebarTimer();
         }
 
         // ================= CUSTOMER OUTSTANDING MODULE =================

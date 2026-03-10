@@ -464,6 +464,17 @@ namespace POS.UI.Infrastructure
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(circuitBreakerPolicy);
 
+            // Register HttpClient for SystemPreferenceApiService
+            services
+                .AddHttpClient<SystemPreferenceApiService>(client =>
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("User-Agent", "POS-Client/1.0");
+                    client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+                })
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(circuitBreakerPolicy);
+
             services
                 .AddHttpClient<ImportApiService>(client =>
                 {
@@ -499,6 +510,7 @@ namespace POS.UI.Infrastructure
             services.AddSingleton<IPrintService, PrintService>();
             services.AddSingleton<IPrintSettingsService, PrintSettingsService>();
             services.AddSingleton<IEmailReceiptService, EmailReceiptService>();
+            services.AddSingleton<PdfExportService>();
 
             // System Health
             services.AddSingleton<SystemHealthService>();

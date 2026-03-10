@@ -5,7 +5,8 @@
         xmlns:local="clr-namespace:POS.UI.Modules.Billing.PaymentDialog"
         Title="Payment" Height="620" Width="520"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
-        Background="{StaticResource BrushWindowBg}">
+        Background="{StaticResource BrushWindowBg}"
+        FocusManager.FocusedElement="{Binding ElementName=txtAmountTendered}">
     <Window.Resources>
         <conv:DecimalToCurrencyConverter x:Key="DecimalToCurrency"/>
     </Window.Resources>
@@ -45,10 +46,12 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Amount Tendered:" VerticalAlignment="Center" Margin="0,0,8,8"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CashTenderedText, UpdateSourceTrigger=PropertyChanged}" 
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtAmountTendered" TabIndex="0"
+                         Text="{Binding CashTenderedText, UpdateSourceTrigger=PropertyChanged}" 
                          Margin="0,0,0,8" Padding="8,6" FontSize="14" VerticalContentAlignment="Center"/>
                 <Button Grid.Row="0" Grid.Column="2" Content="Add Cash Payment" Margin="8,0,0,8"
-                        Style="{StaticResource PrimaryButton}" Command="{Binding AddCashPaymentCommand}"/>
+                        Style="{StaticResource PrimaryButton}" TabIndex="1" IsDefault="True"
+                        Command="{Binding AddCashPaymentCommand}"/>
                 <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,0,0,4">
                     <TextBlock Text="Change to give: ₹ " FontWeight="SemiBold" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding ChangeAmountText}" Foreground="{StaticResource BrushAccentGreen}" FontWeight="Bold" VerticalAlignment="Center"/>
@@ -123,9 +126,9 @@
         <!-- Action Buttons -->
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Cancel" Width="100" Height="40" Margin="0,0,10,0"
-                    Style="{StaticResource SecondaryButton}" Click="Cancel_Click"/>
+                    Style="{StaticResource SecondaryButton}" Click="Cancel_Click" TabIndex="3"/>
             <Button Content="Complete Sale" Width="140" Height="40"
-                    Style="{StaticResource PrimaryButton}" Command="{Binding CompleteSaleCommand}"/>
+                    Style="{StaticResource PrimaryButton}" Command="{Binding CompleteSaleCommand}" TabIndex="2"/>
         </StackPanel>
     </Grid>
 </Window>

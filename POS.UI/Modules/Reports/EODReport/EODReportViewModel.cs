@@ -1,234 +1,307 @@
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using POS.Shared.Models;
-using POS.UI.Core;
-using POS.UI.Core.MVVM;
 using POS.UI.Core.Services;
-using DialogService = POS.UI.Components.DialogService;
+using POS.UI.Core.MVVM; // Corrected namespace
+using POS.Shared.Models; // Corrected namespace
+using POS.UI.Components; // Added for DialogService
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Linq; // For LINQ operations
+using System.Collections.Generic; // For Dictionary
 
 namespace POS.UI.Modules.Reports.EODReport
 {
-    /// <summary>Display item for payment method breakdown (for binding in view).</summary>
-    public class PaymentBreakdownItem
-    {
-        public string Method { get; set; } = string.Empty;
-        public decimal Amount { get; set; }
-        public string AmountFormatted => Amount.ToString("N2");
-    }
-
     public class EODReportViewModel : ViewModelBase
     {
         private readonly EODReportApiService _service;
-        private readonly IPrintService? _printService;
+        private readonly IPrintService _printService;
+        private readonly PdfExportService _pdfExportService; // Injected for PDF export
 
         private DateTime _reportDate = DateTime.Today;
+        private EODReportDto? _report;
+        private bool _isLoading;
+        private string _message = string.Empty;
+
+        // Cash Reconciliation properties
+        private decimal _openingCash;
+        private decimal _actualCash;
+        private decimal _expectedCash;
+        private decimal _cashDifference;
+
+        // Observable collections for UI binding
+        private ObservableCollection<PaymentBreakdownItem> _paymentBreakdownList = new();
+        private ObservableCollection<EODSaleSummaryDto> _topSales = new();
+        private ObservableCollection<EODTopProductDto> _topSellingProducts = new();
+
+        public EODReportViewModel(EODReportApiService service, IPrintService printService, PdfExportService pdfExportService)
+        {
+            _service = service;
+            _printService = printService;
+            _pdfExportService = pdfExportService;
+
+            GenerateReportCommand = new RelayCommand(async () => await GenerateReport(), () => !IsLoading);
+            PrintReportCommand = new RelayCommand(PrintReport, () => Report != null);
+            PrintToPdfCommand = new RelayCommand(PrintToPdf, () => Report != null); // New command for PDF
+            CloseDayCommand = new RelayCommand(async () => await CloseDay(), () => Report != null && !IsLoading);
+            ExportToExcelCommand = new RelayCommand(ExportToExcel, () => Report != null);
+
+            // Initial report generation
+            // Task.Run(GenerateReport); // This might cause issues with UI thread access, better to call it explicitly or on load.
+        }
+
         public DateTime ReportDate
         {
             get => _reportDate;
-            set { _reportDate = value; OnPropertyChanged(); }
+            set
+            {
+                _reportDate = value;
+                OnPropertyChanged(nameof(ReportDate));
+                (GenerateReportCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
         }
 
-        private EODReportDto? _report;
         public EODReportDto? Report
         {
             get => _report;
             set
             {
                 _report = value;
-                OnPropertyChanged();
-                RefreshDerivedFromReport();
+                OnPropertyChanged(nameof(Report));
+                OnPropertyChanged(nameof(TotalSalesCount));
+                OnPropertyChanged(nameof(TotalRevenue));
+                OnPropertyChanged(nameof(TotalDiscountsGiven));
+                
+                // Update PaymentBreakdownList
+                PaymentBreakdownList.Clear();
+                if (value?.PaymentBreakdown != null)
+                {
+                    foreach (var item in value.PaymentBreakdown)
+                    {
+                        PaymentBreakdownList.Add(new PaymentBreakdownItem { Method = item.Key, Amount = item.Value });
+                    }
+                }
+
+                // Update TopSales
+                TopSales.Clear();
+                if (value?.TopSales != null)
+                {
+                    foreach (var item in value.TopSales)
+                    {
+                        TopSales.Add(item);
+                    }
+                }
+
+                // Update TopSellingProducts
+                TopSellingProducts.Clear();
+                if (value?.TopSellingProducts != null)
+                {
+                    foreach (var item in value.TopSellingProducts)
+                    {
+                        TopSellingProducts.Add(item);
+                    }
+                }
+
+                OnPropertyChanged(nameof(TotalCGST));
+                OnPropertyChanged(nameof(TotalSGST));
+                OnPropertyChanged(nameof(TotalIGST));
+                OnPropertyChanged(nameof(TotalReturnsCount));
+                OnPropertyChanged(nameof(TotalRefunds));
+                OnPropertyChanged(nameof(CashSalesAmount));
+                OnPropertyChanged(nameof(CashRefundAmount));
+                OnPropertyChanged(nameof(TotalExpenses));
+                OnPropertyChanged(nameof(ExpectedCash));
+                OnPropertyChanged(nameof(IsCashShortage));
+                OnPropertyChanged(nameof(IsCashOverage));
+                OnPropertyChanged(nameof(CashDifference));
+                
+
+                (PrintReportCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (PrintToPdfCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (CloseDayCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (ExportToExcelCommand as RelayCommand)?.RaiseCanExecuteChanged();
             }
         }
 
-        private decimal _openingCash;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+                (GenerateReportCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (CloseDayCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+        public string Message
+        {
+            get => _message;
+            set
+            {
+                _message = value;
+                OnPropertyChanged(nameof(Message));
+            }
+        }
+
+        // Properties for Cash Reconciliation
         public decimal OpeningCash
         {
             get => _openingCash;
-            set { _openingCash = value; OnPropertyChanged(); RecomputeCash(); }
+            set
+            {
+                _openingCash = value;
+                OnPropertyChanged(nameof(OpeningCash));
+                CalculateCashDifference();
+            }
         }
 
-        private decimal _actualCash;
         public decimal ActualCash
         {
             get => _actualCash;
-            set { _actualCash = value; OnPropertyChanged(); RecomputeCash(); }
+            set
+            {
+                _actualCash = value;
+                OnPropertyChanged(nameof(ActualCash));
+                CalculateCashDifference();
+            }
         }
 
-        public decimal ExpectedCash => _expectedCash;
-        public decimal CashDifference => _cashDifference;
-        public bool IsCashShortage => _cashDifference < 0;
-        public bool IsCashOverage => _cashDifference > 0;
+        public decimal ExpectedCash
+        {
+            get => _expectedCash;
+            set
+            {
+                _expectedCash = value;
+                OnPropertyChanged(nameof(ExpectedCash));
+                CalculateCashDifference();
+            }
+        }
 
-        private decimal _expectedCash;
-        private decimal _cashDifference;
+        public decimal CashDifference
+        {
+            get => _cashDifference;
+            set
+            {
+                _cashDifference = value;
+                OnPropertyChanged(nameof(CashDifference));
+            }
+        }
 
-        public int TotalSalesCount => Report?.SaleCount ?? 0;
-        public decimal TotalRevenue => Report?.TotalSales ?? 0;
+        public bool IsCashShortage => CashDifference < 0;
+        public bool IsCashOverage => CashDifference > 0;
+
+        // Report Summary Properties (derived from Report DTO)
+        public int TotalSalesCount => Report?.SaleCount ?? 0; // Corrected to SaleCount
+        public decimal TotalRevenue => Report?.TotalRevenue ?? 0;
+        public decimal TotalDiscountsGiven => Report?.TotalDiscountsGiven ?? 0;
+        public ObservableCollection<PaymentBreakdownItem> PaymentBreakdownList
+        {
+            get => _paymentBreakdownList;
+            set
+            {
+                _paymentBreakdownList = value;
+                OnPropertyChanged(nameof(PaymentBreakdownList));
+            }
+        }
         public decimal TotalCGST => Report?.TotalCGST ?? 0;
         public decimal TotalSGST => Report?.TotalSGST ?? 0;
         public decimal TotalIGST => Report?.TotalIGST ?? 0;
-        public decimal TotalDiscountsGiven => Report?.DiscountSum ?? 0;
         public int TotalReturnsCount => Report?.TotalReturnsCount ?? 0;
         public decimal TotalRefunds => Report?.TotalRefunds ?? 0;
         public decimal CashSalesAmount => Report?.CashSalesAmount ?? 0;
         public decimal CashRefundAmount => Report?.CashRefundAmount ?? 0;
-        public int StoreCode => POS.UI.Core.AppState.CurrentStoreCode;
-
-        public ObservableCollection<PaymentBreakdownItem> PaymentBreakdownList { get; } = new();
-        public ObservableCollection<EODSaleSummaryDto> TopSales { get; } = new();
-        public ObservableCollection<EODTopProductDto> TopSellingProducts { get; } = new();
-
-        private bool _isLoading;
-        public bool IsLoading
+        public decimal TotalExpenses => Report?.TotalExpenses ?? 0; // This was the one with the binding issue
+        public ObservableCollection<EODSaleSummaryDto> TopSales
         {
-            get => _isLoading;
-            set { _isLoading = value; OnPropertyChanged(); }
+            get => _topSales;
+            set
+            {
+                _topSales = value;
+                OnPropertyChanged(nameof(TopSales));
+            }
+        }
+        public ObservableCollection<EODTopProductDto> TopSellingProducts
+        {
+            get => _topSellingProducts;
+            set
+            {
+                _topSellingProducts = value;
+                OnPropertyChanged(nameof(TopSellingProducts));
+            }
         }
 
-        private string? _message;
-        public string? Message
-        {
-            get => _message;
-            set { _message = value; OnPropertyChanged(); }
-        }
 
         public ICommand GenerateReportCommand { get; }
         public ICommand PrintReportCommand { get; }
+        public ICommand PrintToPdfCommand { get; }
         public ICommand CloseDayCommand { get; }
         public ICommand ExportToExcelCommand { get; }
 
-        public EODReportViewModel(EODReportApiService? service, IPrintService? printService = null)
+        private async Task GenerateReport()
         {
-            _service = service!;
-            _printService = printService;
-            GenerateReportCommand = new RelayCommand(async () => await GenerateReportAsync(), () => !IsLoading);
-            PrintReportCommand = new RelayCommand(PrintReport, () => Report != null);
-            CloseDayCommand = new RelayCommand(async () => await CloseDayAsync(), () => Report != null && !IsLoading);
-            ExportToExcelCommand = new RelayCommand(ExportToExcel, () => Report != null);
-        }
-
-        private void RefreshDerivedFromReport()
-        {
-            OnPropertyChanged(nameof(TotalSalesCount));
-            OnPropertyChanged(nameof(TotalRevenue));
-            OnPropertyChanged(nameof(TotalCGST));
-            OnPropertyChanged(nameof(TotalSGST));
-            OnPropertyChanged(nameof(TotalIGST));
-            OnPropertyChanged(nameof(TotalDiscountsGiven));
-            OnPropertyChanged(nameof(TotalReturnsCount));
-            OnPropertyChanged(nameof(TotalRefunds));
-            OnPropertyChanged(nameof(CashSalesAmount));
-            OnPropertyChanged(nameof(CashRefundAmount));
-
-            PaymentBreakdownList.Clear();
-            if (Report?.PaymentBreakdown != null)
-            {
-                foreach (var kv in Report.PaymentBreakdown)
-                    PaymentBreakdownList.Add(new PaymentBreakdownItem { Method = kv.Key, Amount = kv.Value });
-            }
-
-            TopSales.Clear();
-            if (Report?.TopSales != null)
-            {
-                foreach (var s in Report.TopSales)
-                    TopSales.Add(s);
-            }
-
-            TopSellingProducts.Clear();
-            if (Report?.TopSellingProducts != null)
-            {
-                foreach (var p in Report.TopSellingProducts)
-                    TopSellingProducts.Add(p);
-            }
-
-            RecomputeCash();
-        }
-
-        private void RecomputeCash()
-        {
-            decimal cashSales = Report?.CashSalesAmount ?? 0;
-            decimal cashRefunds = Report?.CashRefundAmount ?? 0;
-            decimal totalExpenses = Report?.TotalExpenses ?? 0;
-            _expectedCash = OpeningCash + cashSales - cashRefunds - totalExpenses;
-            _cashDifference = ActualCash - _expectedCash;
-            OnPropertyChanged(nameof(ExpectedCash));
-            OnPropertyChanged(nameof(CashDifference));
-            OnPropertyChanged(nameof(IsCashShortage));
-            OnPropertyChanged(nameof(IsCashOverage));
-        }
-
-        private async Task GenerateReportAsync()
-        {
-            if (_service == null)
-            {
-                Message = "Report service not available.";
-                return;
-            }
             IsLoading = true;
-            Message = null;
-            Report = null;
+            Message = "Generating report...";
             try
             {
-                var dto = await _service.GetEODReportAsync(ReportDate);
-                Report = dto;
-                if (dto != null)
-                    Message = $"Report generated for {ReportDate:dd-MMM-yyyy}.";
-                else
-                    Message = "No data returned.";
+                Report = await _service.GetEODReportAsync(ReportDate);
+                // OpeningCash = Report?.OpeningCash ?? 0; // Removed incorrect assignment
+                ExpectedCash = OpeningCash + CashSalesAmount - CashRefundAmount - TotalExpenses;
+                CalculateCashDifference();
+                Message = "Report generated successfully.";
             }
             catch (Exception ex)
             {
-                Message = "Failed to load report: " + ex.Message;
-                DialogService.Error("EOD Report", ex.Message);
+                Report = null;
+                Message = $"Error generating report: {ex.Message}";
+                DialogService.Error("Report Error", ex.Message);
             }
             finally
             {
                 IsLoading = false;
-                RaiseCommandsCanExecuteChanged();
             }
-        }
-
-        private void RaiseCommandsCanExecuteChanged()
-        {
-            if (GenerateReportCommand is RelayCommand rc) rc.RaiseCanExecuteChanged();
-            if (PrintReportCommand is RelayCommand rc2) rc2.RaiseCanExecuteChanged();
-            if (CloseDayCommand is RelayCommand rc3) rc3.RaiseCanExecuteChanged();
-            if (ExportToExcelCommand is RelayCommand rc4) rc4.RaiseCanExecuteChanged();
         }
 
         private void PrintReport()
         {
             if (Report == null) return;
-            try
-            {
-                _printService?.PrintEODReport(Report, ReportDate, OpeningCash, ActualCash, ExpectedCash, CashDifference);
-                Message = "Print requested.";
-            }
-            catch (Exception ex)
-            {
-                DialogService.Error("Print EOD Report", ex.Message);
-            }
+            _printService?.PrintEODReport(Report, ReportDate, OpeningCash, ActualCash, ExpectedCash, CashDifference);
+            Message = "Print requested.";
         }
 
-        private async Task CloseDayAsync()
+        private void PrintToPdf()
         {
             if (Report == null) return;
             try
             {
-                var confirm = DialogService.Confirm("Close Day", $"Lock all sales for {ReportDate:dd-MMM-yyyy}? This will prevent editing of those transactions.");
-                if (confirm != System.Windows.MessageBoxResult.Yes) return;
-                await _service.CloseDayAsync(ReportDate);
-                Message = "Day closed. Sales for this date are now locked.";
-                DialogService.Info("Close Day", Message);
+                _pdfExportService?.ExportEODReportToPdf(Report, ReportDate, OpeningCash, ActualCash, ExpectedCash, CashDifference);
+                Message = "PDF export requested.";
             }
             catch (Exception ex)
             {
-                Message = "Close day failed: " + ex.Message;
-                DialogService.Error("Close Day", ex.Message);
+                DialogService.Error("PDF Export", ex.Message);
+            }
+        }
+
+        private async Task CloseDay()
+        {
+            IsLoading = true;
+            Message = "Closing day...";
+            try
+            {
+                await _service.CloseDayAsync(ReportDate);
+                Message = "Day closed successfully.";
+                DialogService.Info("Day Close", "Day has been successfully closed.");
+                await GenerateReport(); // Regenerate report after closing
+            }
+            catch (Exception ex)
+            {
+                Message = $"Error closing day: {ex.Message}";
+                DialogService.Error("Day Close Error", ex.Message);
             }
             finally
             {
-                RaiseCommandsCanExecuteChanged();
+                IsLoading = false;
             }
         }
 
@@ -245,6 +318,43 @@ namespace POS.UI.Modules.Reports.EODReport
             {
                 DialogService.Error("Export", ex.Message);
             }
+        }
+
+        private void CalculateCashDifference()
+        {
+            CashDifference = ActualCash - ExpectedCash;
+            OnPropertyChanged(nameof(CashDifference));
+            OnPropertyChanged(nameof(IsCashShortage));
+            OnPropertyChanged(nameof(IsCashOverage));
+        }
+
+        // Nested class for Payment Breakdown UI binding
+        public class PaymentBreakdownItem : ViewModelBase
+        {
+            private string _method = string.Empty;
+            public string Method
+            {
+                get => _method;
+                set
+                {
+                    _method = value;
+                    OnPropertyChanged(nameof(Method));
+                }
+            }
+
+            private decimal _amount;
+            public decimal Amount
+            {
+                get => _amount;
+                set
+                {
+                    _amount = value;
+                    OnPropertyChanged(nameof(Amount));
+                    OnPropertyChanged(nameof(AmountFormatted));
+                }
+            }
+
+            public string AmountFormatted => Amount.ToString("N2");
         }
     }
 }

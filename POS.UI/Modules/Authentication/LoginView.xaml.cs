@@ -25,14 +25,14 @@ namespace POS.UI.Modules.Authentication
 
         private void AttachPasswordBox(LoginViewModel viewModel)
         {
-            PasswordBox.PasswordChanged += (s, e) =>
+            txtPassword.PasswordChanged += (s, e) =>
             {
-                viewModel.Password = PasswordBox.Password;
+                viewModel.Password = txtPassword.Password;
             };
 
 
             // Allow ViewModel to clear password securely
-            viewModel.ClearPasswordAction = () => PasswordBox.Password = string.Empty;
+            viewModel.ClearPasswordAction = () => txtPassword.Password = string.Empty;
         }
 
 
@@ -46,6 +46,15 @@ namespace POS.UI.Modules.Authentication
         {
             var dlg = new SystemHealthDialog { Owner = this };
             dlg.ShowDialog();
+        }
+
+        private void TxtUsername_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                txtPassword.Focus();
+                e.Handled = true; // Prevents the IsDefault Login button from firing early
+            }
         }
     }
 }

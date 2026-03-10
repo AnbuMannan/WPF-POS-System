@@ -9,9 +9,9 @@ public interface IPurchaseReturnService
     Task<List<PurchaseReturnDto>> GetBySupplierAsync(Guid supplierId);
     Task<List<PurchaseReturnDto>> GetByPurchaseEntryIdAsync(Guid purchaseEntryId);
     Task<List<PurchaseReturnDto>> GetUnprocessedAsync();
-    Task<PurchaseReturnDto> CreateAsync(CreatePurchaseReturnDto dto);
-    Task<PurchaseReturnDto> UpdateAsync(Guid id, CreatePurchaseReturnDto dto);
-    Task<PurchaseReturnDto> ProcessReturnAsync(Guid id);
+    Task<PurchaseReturnDto> CreateAsync(CreatePurchaseReturnDto dto, int storeCode);
+    Task<PurchaseReturnDto> UpdateAsync(Guid id, CreatePurchaseReturnDto dto, int storeCode);
+    Task<PurchaseReturnDto> ProcessReturnAsync(Guid id, int storeCode);
     Task<bool> DisableAsync(Guid id);
     Task<bool> CheckReturnNoExistsAsync(string returnNo, Guid? excludeId);
 }

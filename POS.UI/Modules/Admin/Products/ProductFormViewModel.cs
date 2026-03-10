@@ -25,14 +25,14 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
         private bool _isEdit;
         private ProductDto _editDto;
         private bool _isSaving;
-        private CancellationTokenSource _skuCts;
-        private CancellationTokenSource _barcodeCts;
+        private CancellationTokenSource? _skuCts;
+        private CancellationTokenSource? _barcodeCts;
 
         // ================= COLLECTIONS =================
 
-        public ObservableCollection<LookupDto> Categories { get; set; }
-        public ObservableCollection<LookupDto> Brands { get; set; }
-        public ObservableCollection<LookupDto> TaxProfiles { get; set; }
+        public ObservableCollection<LookupDto> Categories { get; set; } = new();
+        public ObservableCollection<LookupDto> Brands { get; set; } = new();
+        public ObservableCollection<LookupDto> TaxProfiles { get; set; } = new();
 
         // ================= VALIDATION ENGINE =================
 
@@ -40,7 +40,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
         public bool HasErrors => _errors.Any();
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public System.Collections.IEnumerable GetErrors(string propertyName)
         {
@@ -121,7 +121,7 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
             }
         }
 
-        private byte[] _rowVersion;
+        private byte[]? _rowVersion;
         public byte[] RowVersion
         {
             get => _rowVersion;
@@ -389,8 +389,8 @@ namespace POS.UI.Modules.Admin.Products.ViewModels
 
         // ================= EVENTS =================
 
-        public event EventHandler RequestClose;
-        public event EventHandler<bool> RequestCloseWithResult;
+        public event EventHandler? RequestClose;
+        public event EventHandler<bool>? RequestCloseWithResult;
 
         // ================= CONSTRUCTOR =================
 

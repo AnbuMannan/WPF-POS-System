@@ -18,5 +18,5 @@ public interface IPurchaseReturnRepository
     /// Process purchase return with full inventory update (atomic transaction)
     /// Reduces stock and creates ledger entries
     /// </summary>
-    Task ProcessReturnWithInventoryUpdateAsync(Guid purchaseReturnId);
+    Task ProcessReturnWithInventoryUpdateAsync(Guid purchaseReturnId, int storeCode);
 }

@@ -132,7 +132,7 @@ public class BatchRepository : IBatchRepository
         existing.ReorderLevel = batch.ReorderLevel;
         existing.LastTransactionDate = batch.LastTransactionDate;
         existing.IsActive = batch.IsActive;
-        existing.UpdatedAt = DateTime.UtcNow;
+        existing.UpdatedAt = DateTime.Now;
 
         await _db.SaveChangesAsync();
     }
@@ -143,7 +143,7 @@ public class BatchRepository : IBatchRepository
         if (batch != null)
         {
             batch.IsActive = false;
-            batch.UpdatedAt = DateTime.UtcNow;
+            batch.UpdatedAt = DateTime.Now;
             await _db.SaveChangesAsync();
         }
     }

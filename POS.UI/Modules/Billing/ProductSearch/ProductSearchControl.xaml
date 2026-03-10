@@ -43,6 +43,7 @@
                                  SelectedItem="{Binding SelectedProduct}"
                                  SelectionChanged="SearchResultsList_SelectionChanged"
                                  PreviewKeyDown="SearchResultsList_PreviewKeyDown"
+                                 PreviewMouseLeftButtonUp="SearchResultsList_PreviewMouseLeftButtonUp"
                                  MaxHeight="380" MinWidth="400">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>

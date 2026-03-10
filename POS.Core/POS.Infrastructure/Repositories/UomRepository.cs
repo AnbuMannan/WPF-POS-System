@@ -46,7 +46,7 @@ public class UomRepository : IUomRepository
         existing.DecimalPlaces = uom.DecimalPlaces;
         existing.Description = uom.Description;
         existing.IsActive = uom.IsActive;
-        existing.UpdatedAt = uom.UpdatedAt ?? DateTime.UtcNow;
+        existing.UpdatedAt = uom.UpdatedAt ?? DateTime.Now;
 
         await _db.SaveChangesAsync();
     }

@@ -128,6 +128,10 @@ builder.Services.AddScoped<IQuotationService, QuotationService>();
 builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
+// System Preferences
+builder.Services.AddScoped<ISystemPreferenceRepository, SystemPreferenceRepository>();
+builder.Services.AddScoped<ISystemPreferenceService, SystemPreferenceService>();
+
 WebApplication app;
 try
 {
@@ -167,7 +171,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapGet("/api/health/ping", () =>
-    Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow })
+    Results.Ok(new { Status = "Healthy", Timestamp = DateTime.Now })
 ).AllowAnonymous();
 
 app.Run();

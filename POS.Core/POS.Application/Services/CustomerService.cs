@@ -37,7 +37,7 @@ public class CustomerService : ICustomerService
             Address = dto.Address,
             LoyaltyPoints = 0,
             IsActive = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.Now
         };
         Validate(entity);
         if (!string.IsNullOrWhiteSpace(entity.Phone) && await _repo.CheckPhoneExistsAsync(entity.Phone, null))
@@ -52,7 +52,7 @@ public class CustomerService : ICustomerService
         if (entity == null)
             throw new ValidationException("CustomerId", "Customer not found.");
         entity.LoyaltyPoints = points;
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.Now;
         await _repo.UpdateAsync(entity);
     }
 
@@ -69,7 +69,7 @@ public class CustomerService : ICustomerService
         if (!string.IsNullOrWhiteSpace(entity.Phone) && await _repo.CheckPhoneExistsAsync(entity.Phone, null))
             throw new ValidationException("Phone", "Phone number already exists.");
         entity.Id = Guid.NewGuid();
-        entity.CreatedAt = DateTime.UtcNow;
+        entity.CreatedAt = DateTime.Now;
         entity.IsActive = true;
         await _repo.AddAsync(entity);
     }
@@ -80,7 +80,7 @@ public class CustomerService : ICustomerService
         Validate(entity);
         if (!string.IsNullOrWhiteSpace(entity.Phone) && await _repo.CheckPhoneExistsAsync(entity.Phone, entity.Id))
             throw new ValidationException("Phone", "Phone number already exists.");
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.Now;
         await _repo.UpdateAsync(entity);
     }
 

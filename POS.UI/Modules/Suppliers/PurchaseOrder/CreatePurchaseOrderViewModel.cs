@@ -20,7 +20,7 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
         private readonly Guid? _purchaseOrderId;
         private readonly bool _isReadOnly;
 
-        public event Action OnSaved;
+        public event Action? OnSaved;
 
         // ================= BUSY INDICATOR =================
 
@@ -44,7 +44,33 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
             set { _supplierId = value; OnPropertyChanged(); }
         }
 
-        private string _supplierName;
+        private SupplierDto? _selectedSupplier;
+        public SupplierDto? SelectedSupplier
+        {
+            get => _selectedSupplier;
+            set
+            {
+                _selectedSupplier = value;
+                OnPropertyChanged();
+                
+                // Update related properties when supplier is selected
+                if (value != null)
+                {
+                    SupplierId = value.Id;
+                    SupplierName = value.Name;
+                }
+                else
+                {
+                    SupplierId = Guid.Empty;
+                    SupplierName = string.Empty;
+                }
+                
+                // Force Save command to re-evaluate
+                ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            }
+        }
+
+        private string _supplierName = string.Empty;
         public string SupplierName
         {
             get => _supplierName;
@@ -65,14 +91,14 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
             set { _expectedDeliveryDate = value; OnPropertyChanged(); }
         }
 
-        private string _referenceNo;
+        private string _referenceNo = string.Empty;
         public string ReferenceNo
         {
             get => _referenceNo;
             set { _referenceNo = value; OnPropertyChanged(); }
         }
 
-        private string _notes;
+        private string _notes = string.Empty;
         public string Notes
         {
             get => _notes;
@@ -94,8 +120,8 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
 
         public ObservableCollection<PurchaseOrderItemRowViewModel> Items { get; set; } = new();
 
-        private PurchaseOrderItemRowViewModel _selectedItem;
-        public PurchaseOrderItemRowViewModel SelectedItem
+        private PurchaseOrderItemRowViewModel? _selectedItem;
+        public PurchaseOrderItemRowViewModel? SelectedItem
         {
             get => _selectedItem;
             set
@@ -117,7 +143,7 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
 
         // ================= PRODUCT SEARCH =================
 
-        private string _productSearchText;
+        private string _productSearchText = string.Empty;
         public string ProductSearchText
         {
             get => _productSearchText;
@@ -150,8 +176,8 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
             }
         }
 
-        private ProductDto _selectedProduct;
-        public ProductDto SelectedProduct
+        private ProductDto? _selectedProduct;
+        public ProductDto? SelectedProduct
         {
             get => _selectedProduct;
             set
@@ -192,11 +218,24 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
             LoadSuppliersCommand = new RelayCommand(async () => await LoadSuppliersAsync());
             FocusProductSearchCommand = new RelayCommand(() => { /* Will be handled in view */ });
 
-            _ = LoadSuppliersAsync();
+            InitializeViewModelAsync(); // Call the async initializer
+        }
 
-            if (_purchaseOrderId.HasValue)
+        // Async initializer to handle async operations in constructor
+        private async void InitializeViewModelAsync()
+        {
+            try
             {
-                _ = LoadPurchaseOrderAsync(_purchaseOrderId.Value);
+                await LoadSuppliersAsync();
+
+                if (_purchaseOrderId.HasValue)
+                {
+                    await LoadPurchaseOrderAsync(_purchaseOrderId.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                POS.UI.Components.DialogService.Error("Initialization Error", $"Failed to initialize purchase order view: {ex.Message}");
             }
         }
 
@@ -207,18 +246,21 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
             try
             {
                 var supplierService = App.ServiceProvider?.GetService(typeof(SupplierApiService)) as SupplierApiService;
-                if (supplierService != null)
+                if (supplierService == null)
                 {
-                    var suppliers = await supplierService.GetAllAsync(includeInactive: false);
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Suppliers.Clear();
-                        foreach (var supplier in suppliers)
-                        {
-                            Suppliers.Add(supplier);
-                        }
-                    });
+                    POS.UI.Components.DialogService.Warning("Error", "Supplier service not available.");
+                    return;
                 }
+                
+                var suppliers = await supplierService.GetAllAsync(includeInactive: false);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Suppliers.Clear();
+                    foreach (var supplier in suppliers)
+                    {
+                        Suppliers.Add(supplier);
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -276,7 +318,14 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
             try
             {
                 var productService = App.ServiceProvider?.GetService(typeof(ProductApiService)) as ProductApiService;
-                if (productService != null && !string.IsNullOrWhiteSpace(keyword))
+                if (productService == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Product service not available.");
+                    IsProductSearchPopupOpen = false;
+                    return;
+                }
+                
+                if (!string.IsNullOrWhiteSpace(keyword))
                 {
                     var results = await productService.SearchAsync(keyword);
                     Application.Current.Dispatcher.Invoke(() =>
@@ -343,7 +392,7 @@ namespace POS.UI.Modules.Suppliers.PurchaseOrder
             }
         }
 
-        private void ItemRow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ItemRow_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(PurchaseOrderItemRowViewModel.Total) ||
                 e.PropertyName == nameof(PurchaseOrderItemRowViewModel.Quantity) ||

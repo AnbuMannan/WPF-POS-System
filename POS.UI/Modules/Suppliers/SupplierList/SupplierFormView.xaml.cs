@@ -15,10 +15,10 @@ namespace POS.UI.Modules.Suppliers.SupplierList
     {
         private readonly SupplierApiService _service;
         private bool _isEdit;
-        private SupplierDto _editDto;
+        private SupplierDto? _editDto;
         private bool _isSaving;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -30,7 +30,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
 
         public bool HasErrors => _errors.Any();
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         private void FocusFirstInvalidControl()
         {
@@ -42,7 +42,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private System.Windows.Controls.Control FindFirstInvalid(System.Windows.DependencyObject parent)
+        private System.Windows.Controls.Control? FindFirstInvalid(System.Windows.DependencyObject parent)
         {
             for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
             {
@@ -93,7 +93,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
 
         // ---------------- FIELDS ----------------
 
-        private string _supplierName;
+        private string _supplierName = string.Empty;
         public string SupplierName
         {
             get => _supplierName;
@@ -107,7 +107,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private string _supplierCode;
+        private string _supplierCode = string.Empty;
         public string SupplierCode
         {
             get => _supplierCode;
@@ -123,7 +123,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private string _contactPerson;
+        private string _contactPerson = string.Empty;
         public string ContactPerson
         {
             get => _contactPerson;
@@ -134,7 +134,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private string _mobile;
+        private string _mobile = string.Empty;
         public string Mobile
         {
             get => _mobile;
@@ -148,7 +148,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private string _email;
+        private string _email = string.Empty;
         public string Email
         {
             get => _email;
@@ -162,7 +162,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private string _address;
+        private string _address = string.Empty;
         public string Address
         {
             get => _address;
@@ -173,7 +173,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private string _gstVatNumber;
+        private string _gstVatNumber = string.Empty;
         public string GstVatNumber
         {
             get => _gstVatNumber;
@@ -184,7 +184,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private string _creditPeriodDays;
+        private string _creditPeriodDays = string.Empty;
         public string CreditPeriodDays
         {
             get => _creditPeriodDays;
@@ -195,7 +195,7 @@ namespace POS.UI.Modules.Suppliers.SupplierList
             }
         }
 
-        private string _creditLimit;
+        private string _creditLimit = string.Empty;
         public string CreditLimit
         {
             get => _creditLimit;

@@ -37,7 +37,7 @@ public class InventoryService : IInventoryService
             EntryType = entryType,
             ReferenceType = refType,
             ReferenceId = refId,
-            EntryDate = DateTime.UtcNow,
+            EntryDate = DateTime.Now,
             Remarks = remarks
         };
 

@@ -34,7 +34,7 @@ public class UomService : IUomService
         if (await _repo.CodeExistsAsync(entity.Code))
             throw new ValidationException("Code", "UOM code already exists");
         entity.Id = Guid.NewGuid();
-        entity.CreatedAt = DateTime.UtcNow;
+        entity.CreatedAt = DateTime.Now;
         entity.IsActive = true;
         await _repo.AddAsync(entity);
     }
@@ -45,7 +45,7 @@ public class UomService : IUomService
         Validate(entity);
         if (await _repo.CodeExistsAsync(entity.Code, entity.Id))
             throw new ValidationException("Code", "UOM code already exists");
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.Now;
         await _repo.UpdateAsync(entity);
     }
 

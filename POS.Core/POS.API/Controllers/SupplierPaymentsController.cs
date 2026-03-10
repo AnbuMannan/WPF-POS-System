@@ -59,7 +59,8 @@ public class SupplierPaymentsController : ControllerBase
     {
         try
         {
-            var payment = await _paymentService.CreateAsync(dto);
+            int storeCode = Request.Headers.TryGetValue("X-Store-Code", out var scVal) && int.TryParse(scVal, out int parsedSc) ? parsedSc : 1;
+            var payment = await _paymentService.CreateAsync(dto, storeCode);
             return CreatedAtAction(nameof(GetById), new { id = payment.Id }, payment);
         }
         catch (InvalidOperationException ex)
@@ -76,7 +77,8 @@ public class SupplierPaymentsController : ControllerBase
     {
         try
         {
-            var payment = await _paymentService.UpdateAsync(id, dto);
+            int storeCode = Request.Headers.TryGetValue("X-Store-Code", out var scVal) && int.TryParse(scVal, out int parsedSc) ? parsedSc : 1;
+            var payment = await _paymentService.UpdateAsync(id, dto, storeCode);
             return Ok(payment);
         }
         catch (InvalidOperationException ex)

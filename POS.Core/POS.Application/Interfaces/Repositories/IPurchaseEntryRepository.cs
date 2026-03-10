@@ -17,5 +17,5 @@ public interface IPurchaseEntryRepository
     /// <summary>
     /// Process purchase entry with full inventory update (atomic transaction)
     /// </summary>
-    Task ProcessEntryWithInventoryUpdateAsync(Guid purchaseEntryId, bool updateProductPrices);
+    Task ProcessEntryWithInventoryUpdateAsync(Guid purchaseEntryId, bool updateProductPrices, int storeCode);
 }

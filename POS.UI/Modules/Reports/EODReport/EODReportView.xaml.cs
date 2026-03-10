@@ -11,7 +11,12 @@ namespace POS.UI.Modules.Reports.EODReport
             InitializeComponent();
             var service = App.ServiceProvider?.GetService(typeof(EODReportApiService)) as EODReportApiService;
             var printService = App.ServiceProvider?.GetService(typeof(IPrintService)) as IPrintService;
-            DataContext = new EODReportViewModel(service, printService);
+            var pdfExportService = App.ServiceProvider?.GetService(typeof(PdfExportService)) as PdfExportService;
+
+            if (service != null && printService != null && pdfExportService != null)
+            {
+                DataContext = new EODReportViewModel(service, printService, pdfExportService);
+            }
         }
     }
 }

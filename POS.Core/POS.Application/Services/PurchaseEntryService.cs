@@ -53,7 +53,7 @@ public class PurchaseEntryService : IPurchaseEntryService
         return list.Select(MapToDto).ToList();
     }
 
-    public async Task<PurchaseEntryDto> CreateAsync(CreatePurchaseEntryDto dto)
+    public async Task<PurchaseEntryDto> CreateAsync(CreatePurchaseEntryDto dto, int storeCode)
     {
         // Validate Supplier exists
         var supplier = await _supplierRepo.GetByIdAsync(dto.SupplierId);
@@ -90,6 +90,7 @@ public class PurchaseEntryService : IPurchaseEntryService
         var entity = new PurchaseEntry
         {
             Id = Guid.NewGuid(),
+            StoreCode = storeCode,
             SupplierId = dto.SupplierId,
             PurchaseOrderId = dto.PurchaseOrderId,
             InvoiceNo = dto.InvoiceNo,
@@ -97,7 +98,7 @@ public class PurchaseEntryService : IPurchaseEntryService
             ReceivedDate = dto.ReceivedDate,
             Notes = dto.Notes,
             IsProcessed = false,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.Now,
             IsActive = true,
             Items = new List<PurchaseEntryItem>()
         };
@@ -121,7 +122,7 @@ public class PurchaseEntryService : IPurchaseEntryService
                 MRP = itemDto.MRP,
                 TaxAmount = itemDto.TaxAmount,
                 TotalAmount = itemTotal,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 IsActive = true
             };
             entity.Items.Add(item);
@@ -137,7 +138,7 @@ public class PurchaseEntryService : IPurchaseEntryService
         return MapToDto(created!);
     }
 
-    public async Task<PurchaseEntryDto> UpdateAsync(Guid id, CreatePurchaseEntryDto dto)
+    public async Task<PurchaseEntryDto> UpdateAsync(Guid id, CreatePurchaseEntryDto dto, int storeCode)
     {
         var existing = await _repo.GetByIdAsync(id, includeItems: true);
         if (existing == null)
@@ -170,13 +171,14 @@ public class PurchaseEntryService : IPurchaseEntryService
                 throw new ValidationException("CostPrice", "Cost price cannot be negative.");
         }
 
+        existing.StoreCode = storeCode;
         existing.SupplierId = dto.SupplierId;
         existing.PurchaseOrderId = dto.PurchaseOrderId;
         existing.InvoiceNo = dto.InvoiceNo;
         existing.InvoiceDate = dto.InvoiceDate;
         existing.ReceivedDate = dto.ReceivedDate;
         existing.Notes = dto.Notes;
-        existing.UpdatedAt = DateTime.UtcNow;
+        existing.UpdatedAt = DateTime.Now;
 
         // Rebuild items
         existing.Items.Clear();
@@ -200,7 +202,7 @@ public class PurchaseEntryService : IPurchaseEntryService
                 MRP = itemDto.MRP,
                 TaxAmount = itemDto.TaxAmount,
                 TotalAmount = itemTotal,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 IsActive = true
             };
             existing.Items.Add(item);
@@ -219,7 +221,7 @@ public class PurchaseEntryService : IPurchaseEntryService
     /// <summary>
     /// CRITICAL LOGIC: Process the purchase entry and update inventory
     /// </summary>
-    public async Task<PurchaseEntryDto> ProcessEntryAsync(Guid id, bool updateProductPrices = true)
+    public async Task<PurchaseEntryDto> ProcessEntryAsync(Guid id, int storeCode, bool updateProductPrices = true)
     {
         var entry = await _repo.GetByIdAsync(id, includeItems: true);
         if (entry == null)
@@ -229,7 +231,7 @@ public class PurchaseEntryService : IPurchaseEntryService
             throw new ValidationException("IsProcessed", "This purchase entry has already been processed.");
 
         // Process the entry with inventory updates (handled at repository level with transaction)
-        await _repo.ProcessEntryWithInventoryUpdateAsync(id, updateProductPrices);
+        await _repo.ProcessEntryWithInventoryUpdateAsync(id, updateProductPrices, storeCode);
 
         // Record supplier transaction (Credit entry - amount owed to supplier)
         await _transactionService.RecordPurchaseAsync(
@@ -237,6 +239,7 @@ public class PurchaseEntryService : IPurchaseEntryService
             entry.Id,
             entry.InvoiceNo,
             entry.TotalAmount,
+            storeCode,
             $"Purchase Entry: {entry.InvoiceNo}"
         );
 

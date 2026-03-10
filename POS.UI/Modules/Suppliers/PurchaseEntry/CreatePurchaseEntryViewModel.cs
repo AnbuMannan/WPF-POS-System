@@ -515,7 +515,7 @@ namespace POS.UI.Modules.Suppliers.PurchaseEntry
             }
         }
 
-        private void ItemRow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ItemRow_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(PurchaseEntryItemRowViewModel.Total) ||
                 e.PropertyName == nameof(PurchaseEntryItemRowViewModel.TaxAmount))
